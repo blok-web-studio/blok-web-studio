@@ -1,0 +1,13 @@
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Build artifacts
+*.artifact.json
