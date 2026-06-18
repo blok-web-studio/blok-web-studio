@@ -1,487 +1,655 @@
 <!doctype html>
-<html lang="en" data-theme="light">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BLOK. — Websites Built Different</title>
-  <meta name="description" content="BLOK. WebDev Studio builds bold, brutalist websites for people who thought they couldn't afford it. Every block placed with intention." />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" />
-  <link rel="stylesheet" href="css/base.css" />
-  <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/components.css" />
-  <link rel="stylesheet" href="css/animations.css" />
+<html lang="en" data-viz="structure"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BLOK. — Structural Web Studio</title>
+  <meta name="description" content="BLOK. WebDev Studio builds monumental websites. Every block, from ground up.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/structural.css">
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 </head>
 <body>
 
-  <!-- ====== Navigation ====== -->
-  <nav class="nav" role="navigation">
-    <div class="nav__inner">
-      <a href="#" class="nav__logo">BLOK<span class="nav__logo-dot">.</span></a>
-      <div class="nav__links">
-        <a href="#services" class="nav__link">Services</a>
-        <a href="#work" class="nav__link">Work</a>
-        <a href="#process" class="nav__link">Process</a>
-        <a href="#pricing" class="nav__link">Pricing</a>
-        <a href="#contact" class="nav__link">Contact</a>
-      </div>
-      <div class="nav__actions">
-        <button class="theme-toggle" aria-label="Toggle dark mode">
-          <i class="ph ph-moon"></i>
-        </button>
-        <button class="nav__mobile-toggle" aria-label="Toggle menu">
-          <i class="ph ph-list"></i>
-        </button>
-      </div>
-    </div>
+  <!-- Structural grid overlay -->
+  <div class="structural-grid" aria-hidden="true"></div>
+
+  <!-- Structural navigation -- floor plan panel (left rail) -->
+  <nav class="structural-nav" role="navigation" aria-label="Floor plan">
+    <div class="structural-nav__indicator" aria-hidden="true"></div>
+    <a href="#hero" class="structural-nav__floor structural-nav__floor--active" data-floor="01" data-screen="Ground">Ground</a>
+    <a href="#philosophy" class="structural-nav__floor" data-floor="02" data-screen="Sub">Sub</a>
+    <a href="#services" class="structural-nav__floor" data-floor="03" data-screen="Lobby">Lobby</a>
+    <a href="#work" class="structural-nav__floor" data-floor="04" data-screen="Mezz">Mezz</a>
+    <a href="#process" class="structural-nav__floor" data-floor="05" data-screen="Core">Core</a>
+    <a href="#pricing" class="structural-nav__floor" data-floor="06" data-screen="Upper">Upper</a>
+    <a href="#contact" class="structural-nav__floor" data-floor="07" data-screen="Roof">Roof</a>
   </nav>
 
-  <!-- ====== Hero ====== -->
-  <section class="hero" id="hero">
-    <div class="hero__canvas">
-      <div class="hero__block hero__block--float" data-speed="25" style="width:320px;height:420px;top:10%;left:5%;"></div>
-      <div class="hero__block hero__block--float-d2" data-speed="15" style="width:200px;height:200px;bottom:20%;right:8%;"></div>
-      <div class="hero__block hero__block--float-d3" data-speed="30" style="width:160px;height:280px;top:30%;right:20%;"></div>
-      <div class="hero__block hero__block--float" data-speed="20" style="width:100px;height:100px;bottom:35%;left:45%;"></div>
-      <div class="hero__block hero__block--float-d2" data-speed="18" style="width:240px;height:180px;top:60%;left:60%;"></div>
-    </div>
-    <div class="hero__content">
-      <span class="hero__eyebrow load-fade-in">WebDev Studio</span>
-      <h1 class="hero__title load-fade-in load-fade-in--d2">
-        BLOK<span class="highlight">.</span>
-      </h1>
-      <p class="hero__subtitle load-fade-in load-fade-in--d3">
-        Websites built different.<br />
-        Same&nbsp;budget.
+  <!-- Floor indicator -->
+  <div class="floor-indicator" aria-hidden="true">
+    <span class="floor-indicator__num" id="floorNum">01</span>
+    <span id="floorLabel">GROUND</span>
+  </div>
+
+  <!-- View toggle -->
+  <div class="viz-toggle" role="radiogroup" aria-label="Visual mode">
+    <button class="viz-toggle__btn viz-toggle__btn--active" data-viz="structure" role="radio" aria-checked="true">Structure</button>
+    <button class="viz-toggle__btn" data-viz="blueprint" role="radio" aria-checked="false">Blueprint</button>
+  </div>
+
+  <div class="main-content">
+
+  <!-- HERO -- The Monument -->
+  <section class="hero" id="hero" data-screen="Ground">
+    <!-- Block assembly canvas -->
+    <div class="block-canvas" id="blockCanvas" aria-hidden="true"></div>
+
+    <div class="hero-content">
+      <div class="hero__eyebrow">
+        <span>WebDev Studio</span>
+      </div>
+
+      <div class="hero__monument">
+        <h1 class="hero__monument-text" id="heroTitle">
+          BLOK<span class="dot">.</span>
+        </h1>
+      </div>
+
+      <p class="hero__tagline">
+        We build sites, <span class="mono">block by BLOK.</span>
       </p>
-      <div class="hero__actions load-fade-in load-fade-in--d4">
-        <a href="#work" class="btn btn--primary btn--lg">See our work</a>
-        <a href="#contact" class="btn btn--secondary btn--lg">Start a project</a>
+
+      <div class="hero__actions">
+        <a href="#work" class="btn btn--primary">See the work</a>
+        <a href="#contact" class="btn btn--ghost">Start a project</a>
       </div>
     </div>
-    <div class="hero__scroll-indicator">
-      <span>Scroll</span>
-      <div class="hero__scroll-line"></div>
+
+    <div class="scroll-indicator">
+      <span>Traverse structure</span>
+      <div class="scroll-indicator__line"></div>
+    </div>
+
+    <!-- Block counter — anchored to hero, scrolls away -->
+    <div class="block-counter" aria-hidden="true">
+      <div class="block-counter__num"><span id="blocksLaid">0</span><span class="total"> / <span id="blocksTotal">0</span></span></div>
+      <div class="block-counter__label">Blocks laid</div>
     </div>
   </section>
 
-
-
-  <!-- ====== Marquee ====== -->
-  <div class="marquee">
-    <div class="marquee__track">
-      <span>Web Design<span class="dot"> • </span></span>
-      <span>Web Development<span class="dot"> • </span></span>
-      <span>E-Commerce<span class="dot"> • </span></span>
-      <span>Brand Identity<span class="dot"> • </span></span>
-      <span>UX Strategy<span class="dot"> • </span></span>
-      <span>Custom CMS<span class="dot"> • </span></span>
-      <span>Web Design<span class="dot"> • </span></span>
-      <span>Web Development<span class="dot"> • </span></span>
-      <span>E-Commerce<span class="dot"> • </span></span>
-      <span>Brand Identity<span class="dot"> • </span></span>
-      <span>UX Strategy<span class="dot"> • </span></span>
-      <span>Custom CMS<span class="dot"> • </span></span>
+  <!-- MARQUEE -- Material capabilities -->
+  <div class="marquee-structural" aria-hidden="true">
+    <div class="marquee-structural__track">
+      <span>Web Design</span>
+      <span>Web Development</span>
+      <span>E-Commerce</span>
+      <span>Brand Identity</span>
+      <span>UX Strategy</span>
+      <span>Custom CMS</span>
+      <span>Web Design</span>
+      <span>Web Development</span>
+      <span>E-Commerce</span>
+      <span>Brand Identity</span>
+      <span>UX Strategy</span>
+      <span>Custom CMS</span>
     </div>
   </div>
 
-  <!-- ====== What We Build (Services) ====== -->
-  <section class="section section--alt" id="services">
+  <!-- PHILOSOPHY -- Three Structural Principles -->
+  <section class="section" id="philosophy" data-screen="Sub">
     <div class="container">
-      <div class="section__header reveal">
+      <div class="section-header">
+        <span class="eyebrow">Our Philosophy</span>
+        <h2>Built block by block,<br>not template by template.</h2>
+      </div>
+
+      <div class="philosophy-stack">
+        <div class="philosophy-block reveal-block" data-reveal="">
+          <span class="philosophy-block__num">01</span>
+          <div>
+            <h3>Bold ≠ loud</h3>
+            <p>We make statements without shouting. Our work stands out because it's clear, confident, and honest — not because it's the brightest thing on the page. Structure speaks for itself.</p>
+          </div>
+        </div>
+        <div class="philosophy-block reveal-block" data-reveal="">
+          <span class="philosophy-block__num">02</span>
+          <div>
+            <h3>Brutalist ≠ ugly</h3>
+            <p>Brutalism is about raw honesty — showing the structure, celebrating the material. We soften it with warm concrete tones, generous whitespace, and intentional quirks that make people stop scrolling.</p>
+          </div>
+        </div>
+        <div class="philosophy-block reveal-block" data-reveal="">
+          <span class="philosophy-block__num">03</span>
+          <div>
+            <h3>Cheap ≠ low quality</h3>
+            <p>We make cool stuff for people who thought they couldn't afford it. No suits. No meetings that could've been emails. Just solid work, fair price, delivered on time. Every block accounted for.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -- Structural Systems -->
+  <section class="section" id="services" data-screen="Lobby">
+    <div class="container">
+      <div class="section-header">
         <span class="eyebrow">What We Build</span>
-        <h2 class="section__title">Three core<br />disciplines.</h2>
+        <h2>Every block, from ground up.</h2>
       </div>
 
-      <div class="build-grid stagger-children">
-        <!-- Block 01 -->
-        <div class="build-block">
-          <div class="build-block__side">
-            <span class="build-block__num">01</span>
-            <i class="build-block__icon ph ph-globe"></i>
+      <div class="structural-beam" aria-hidden="true"></div>
+
+      <div class="grid-3 grid-3--flush" id="serviceGrid">
+        <div class="service-card" data-expand="1">
+          <div class="service-card__header">
+            <i class="service-card__icon ph ph-globe"></i>
+            <h3>Web Design</h3>
+            <span class="service-card__toggle" aria-hidden="true">
+              <i class="ph ph-plus"></i>
+            </span>
           </div>
-          <div class="build-block__main">
-            <div class="build-block__header">
-              <h3 class="build-block__title">Web Design</h3>
-              <div class="build-block__line"></div>
+          <div class="service-card__body">
+            <div class="service-card__body-inner">
+              <p>Custom layouts, brutalist aesthetics, and intentional typography. No templates. No shortcuts. Every pixel placed with purpose.</p>
+              <ul class="service-card__list">
+                <li><i class="ph ph-check"></i> UI/UX strategy &amp; wireframes</li>
+                <li><i class="ph ph-check"></i> Responsive design systems</li>
+                <li><i class="ph ph-check"></i> Interactive prototypes</li>
+              </ul>
             </div>
-            <p class="build-block__desc">Custom layouts, brutalist aesthetics, and intentional typography. No templates. No shortcuts. Every pixel placed with purpose.</p>
-            <ul class="build-block__list">
-              <li><i class="ph ph-check"></i> UI/UX strategy &amp; wireframes</li>
-              <li><i class="ph ph-check"></i> Responsive design systems</li>
-              <li><i class="ph ph-check"></i> Interactive prototypes</li>
-            </ul>
-            <span class="build-block__stamp">BLOK<span class="text-red">.</span></span>
           </div>
         </div>
-
-        <!-- Block 02 -->
-        <div class="build-block build-block--alt">
-          <div class="build-block__side">
-            <span class="build-block__num">02</span>
-            <i class="build-block__icon ph ph-code"></i>
+        <div class="service-card" data-expand="2">
+          <div class="service-card__header">
+            <i class="service-card__icon ph ph-code"></i>
+            <h3>Web Development</h3>
+            <span class="service-card__toggle" aria-hidden="true">
+              <i class="ph ph-plus"></i>
+            </span>
           </div>
-          <div class="build-block__main">
-            <div class="build-block__header">
-              <h3 class="build-block__title">Web Development</h3>
-              <div class="build-block__line"></div>
+          <div class="service-card__body">
+            <div class="service-card__body-inner">
+              <p>Clean, semantic code that loads fast and scales well. From static sites to full-stack applications — we use the right tool for the job.</p>
+              <ul class="service-card__list">
+                <li><i class="ph ph-check"></i> Front-end (HTML, CSS, JS, React)</li>
+                <li><i class="ph ph-check"></i> Back-end &amp; API integration</li>
+                <li><i class="ph ph-check"></i> CMS &amp; admin panels</li>
+              </ul>
             </div>
-            <p class="build-block__desc">Clean, semantic code that loads fast and scales well. From static sites to full-stack applications — we use the right tool for the job.</p>
-            <ul class="build-block__list">
-              <li><i class="ph ph-check"></i> Front-end (HTML, CSS, JS, React)</li>
-              <li><i class="ph ph-check"></i> Back-end &amp; API integration</li>
-              <li><i class="ph ph-check"></i> CMS &amp; admin panels</li>
-            </ul>
-            <span class="build-block__stamp">BLOK<span class="text-red">.</span></span>
           </div>
         </div>
-
-        <!-- Block 03 -->
-        <div class="build-block">
-          <div class="build-block__side">
-            <span class="build-block__num">03</span>
-            <i class="build-block__icon ph ph-shopping-cart"></i>
+        <div class="service-card" data-expand="3">
+          <div class="service-card__header">
+            <i class="service-card__icon ph ph-shopping-cart"></i>
+            <h3>E-Commerce</h3>
+            <span class="service-card__toggle" aria-hidden="true">
+              <i class="ph ph-plus"></i>
+            </span>
           </div>
-          <div class="build-block__main">
-            <div class="build-block__header">
-              <h3 class="build-block__title">E-Commerce</h3>
-              <div class="build-block__line"></div>
+          <div class="service-card__body">
+            <div class="service-card__body-inner">
+              <p>Online stores that actually convert. Clean product pages, frictionless checkout, and inventory management that doesn't make you want to scream.</p>
+              <ul class="service-card__list">
+                <li><i class="ph ph-check"></i> Shopify &amp; WooCommerce</li>
+                <li><i class="ph ph-check"></i> Custom storefronts</li>
+                <li><i class="ph ph-check"></i> Payment &amp; shipping integration</li>
+              </ul>
             </div>
-            <p class="build-block__desc">Online stores that actually convert. Clean product pages, frictionless checkout, and inventory management that doesn't make you want to scream.</p>
-            <ul class="build-block__list">
-              <li><i class="ph ph-check"></i> Shopify &amp; WooCommerce</li>
-              <li><i class="ph ph-check"></i> Custom storefronts</li>
-              <li><i class="ph ph-check"></i> Payment &amp; shipping integration</li>
-            </ul>
-            <span class="build-block__stamp">BLOK<span class="text-red">.</span></span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-
-
-  <!-- ====== Work ====== -->
-  <section class="section" id="work">
+  <!-- STATS -- Structural Load Data -->
+  <section class="section" id="stats" data-screen="Lobby">
     <div class="container">
-      <div class="section__header reveal">
-        <span class="eyebrow">Featured Work</span>
-        <h2 class="section__title">Sites we're proud&nbsp;of.</h2>
+      <div class="stats-grid reveal-stagger" data-reveal-stagger="">
+        <div class="stat-block">
+          <div class="stat-block__num" data-count="127">0</div>
+          <div class="stat-block__label">Projects Delivered</div>
+          <span class="stat-block__annotation">structural load: 100%</span>
+          <div class="stat-block__meter"><div class="stat-block__meter-fill" style="--fill: 100%"></div></div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-block__num" data-count="48">0</div>
+          <div class="stat-block__label">Happy Clients</div>
+          <span class="stat-block__annotation">satisfaction index: 0.94</span>
+          <div class="stat-block__meter"><div class="stat-block__meter-fill" style="--fill: 94%"></div></div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-block__num" data-count="12">0</div>
+          <div class="stat-block__label">Years in Business</div>
+          <span class="stat-block__annotation">operational: continuous</span>
+          <div class="stat-block__meter"><div class="stat-block__meter-fill" style="--fill: 100%"></div></div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-block__num" data-count="100">0</div>
+          <div class="stat-block__label">On Time / On Budget</div>
+          <span class="stat-block__annotation">variance: ±0.02</span>
+          <div class="stat-block__meter"><div class="stat-block__meter-fill" style="--fill: 100%"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK -- Completed Structures -->
+  <section class="section" id="work" data-screen="Mezz">
+    <div class="container">
+      <div class="section-header">
+        <span class="eyebrow">Completed Structures</span>
+        <h2>Sites we're proud of.</h2>
       </div>
 
-      <div class="portfolio-filters reveal">
-        <button class="portfolio-filter portfolio-filter--active" data-filter="all">All</button>
-        <button class="portfolio-filter" data-filter="demos">Demos</button>
-        <button class="portfolio-filter" data-filter="clients">Clients</button>
+      <div class="work-filters" role="tablist">
+        <button class="work-filter work-filter--active" data-filter="all" role="tab">All</button>
+        <button class="work-filter" data-filter="design" role="tab">Design</button>
+        <button class="work-filter" data-filter="dev" role="tab">Development</button>
+        <button class="work-filter" data-filter="ecom" role="tab">E-Commerce</button>
       </div>
 
-      <div class="portfolio-grid stagger-children">
-        <div class="portfolio-item" data-category="demos">
-          <div class="portfolio-item__thumb">
-            <div class="portfolio-item__thumb-placeholder">F O R M</div>
+      <div class="work-grid reveal-stagger" data-reveal-stagger="">
+        <div class="work-item" data-category="design">
+          <div class="work-item__thumb">
+            <div class="work-item__thumb-grid"></div>
+            <span class="work-item__thumb-label">F O R M</span>
           </div>
-          <div class="portfolio-item__body">
-            <span class="portfolio-item__tag">Demo</span>
-            <h3 class="portfolio-item__title">FORM Architecture</h3>
-            <p class="portfolio-item__desc">Minimalist portfolio for an architecture firm. Full-bleed imagery, brutalist grid, subtle scroll narrative.</p>
-          </div>
-        </div>
-        <div class="portfolio-item" data-category="demos">
-          <div class="portfolio-item__thumb">
-            <div class="portfolio-item__thumb-placeholder">S H O P</div>
-          </div>
-          <div class="portfolio-item__body">
-            <span class="portfolio-item__tag">Demo</span>
-            <h3 class="portfolio-item__title">Rawsuit</h3>
-            <p class="portfolio-item__desc">Custom e-commerce backend with a headless front-end. Sub-second page loads, seamless checkout.</p>
+          <div class="work-item__body">
+            <span class="work-item__tag">Design</span>
+            <div class="work-item__title">FORM Architecture</div>
+            <p class="work-item__desc">Minimalist portfolio for an architecture firm. Full-bleed imagery, brutalist grid, subtle scroll narrative.</p>
           </div>
         </div>
-        <div class="portfolio-item portfolio-item--tall" data-category="demos">
-          <div class="portfolio-item__thumb">
-            <div class="portfolio-item__thumb-placeholder">S T U D I O</div>
+        <div class="work-item" data-category="dev">
+          <div class="work-item__thumb">
+            <div class="work-item__thumb-grid"></div>
+            <span class="work-item__thumb-label">S H O P</span>
           </div>
-          <div class="portfolio-item__body">
-            <span class="portfolio-item__tag">Demo</span>
-            <h3 class="portfolio-item__title">Bentley Creative</h3>
-            <p class="portfolio-item__desc">Agency rebrand and full website. Bold typography, high-contrast palette, immersive case studies.</p>
-          </div>
-        </div>
-        <div class="portfolio-item" data-category="clients">
-          <div class="portfolio-item__thumb">
-            <div class="portfolio-item__thumb-placeholder">G O O D S</div>
-          </div>
-          <div class="portfolio-item__body">
-            <span class="portfolio-item__tag">Client</span>
-            <h3 class="portfolio-item__title">Matter Goods</h3>
-            <p class="portfolio-item__desc">Sustainable goods store with a custom Shopify theme. Product-first layout, zero bloat.</p>
+          <div class="work-item__body">
+            <span class="work-item__tag">Dev</span>
+            <div class="work-item__title">Rawsuit</div>
+            <p class="work-item__desc">Custom e-commerce backend with a headless front-end. Sub-second page loads, seamless checkout.</p>
           </div>
         </div>
-        <div class="portfolio-item" data-category="clients">
-          <div class="portfolio-item__thumb">
-            <div class="portfolio-item__thumb-placeholder">A P P</div>
+        <div class="work-item" data-category="design">
+          <div class="work-item__thumb">
+            <div class="work-item__thumb-grid"></div>
+            <span class="work-item__thumb-label">S T U D I O</span>
           </div>
-          <div class="portfolio-item__body">
-            <span class="portfolio-item__tag">Client</span>
-            <h3 class="portfolio-item__title">Trackr</h3>
-            <p class="portfolio-item__desc">Real-time project dashboard with live updates, role-based access, and a clean data visualization layer.</p>
+          <div class="work-item__body">
+            <span class="work-item__tag">Design</span>
+            <div class="work-item__title">Bentley Creative</div>
+            <p class="work-item__desc">Agency rebrand and full website. Bold typography, high-contrast palette, immersive case studies.</p>
+          </div>
+        </div>
+        <div class="work-item" data-category="ecom">
+          <div class="work-item__thumb">
+            <div class="work-item__thumb-grid"></div>
+            <span class="work-item__thumb-label">G O O D S</span>
+          </div>
+          <div class="work-item__body">
+            <span class="work-item__tag">E-Commerce</span>
+            <div class="work-item__title">Matter Goods</div>
+            <p class="work-item__desc">Sustainable goods store with a custom Shopify theme. Product-first layout, zero bloat.</p>
+          </div>
+        </div>
+        <div class="work-item" data-category="dev">
+          <div class="work-item__thumb">
+            <div class="work-item__thumb-grid"></div>
+            <span class="work-item__thumb-label">A P P</span>
+          </div>
+          <div class="work-item__body">
+            <span class="work-item__tag">Dev</span>
+            <div class="work-item__title">Trackr</div>
+            <p class="work-item__desc">Real-time project dashboard with live updates, role-based access, and a clean data visualization layer.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ====== Process ====== -->
-  <section class="section section--dark" id="process">
+  <!-- PROCESS -- Construction Timeline -->
+  <section class="section" id="process" data-screen="Core">
     <div class="container">
-      <div class="section__header section__header--wide reveal">
-        <span class="eyebrow">How We Build</span>
-        <h2 class="section__title">From brief to&nbsp;launch.</h2>
-        <p class="section__subtitle">No endless revisions. No meetings that could've been an email. Here's exactly how a project goes:</p>
+      <div class="section-header">
+        <span class="eyebrow">Construction Schedule</span>
+        <h2>From brief to launch.</h2>
       </div>
-      <div class="process-steps stagger-children">
-        <div class="process-step">
-          <div class="process-step__number">01</div>
-          <h3 class="process-step__title">Brief &amp; Discovery</h3>
+
+      <div class="process-timeline reveal-stagger" data-reveal-stagger="">
+        <div class="process-step" data-step="1">
+          <div class="process-step__marker">01</div>
+          <div class="process-step__title">Brief &amp; Discovery</div>
           <p class="process-step__desc">We learn about your business, your audience, and what makes you different. One focused session, no fluff.</p>
+          <div class="process-step__meta">
+            <span>Duration: 1 week</span>
+            <span>Deliverable: brief document</span>
+          </div>
         </div>
-        <div class="process-step">
-          <div class="process-step__number">02</div>
-          <h3 class="process-step__title">Design &amp; Direction</h3>
+        <div class="process-step" data-step="2">
+          <div class="process-step__marker">02</div>
+          <div class="process-step__title">Design &amp; Direction</div>
           <p class="process-step__desc">We nail the visual direction fast — moodboards, typography, layout. You see options, pick one, we run.</p>
+          <div class="process-step__meta">
+            <span>Duration: 1–2 weeks</span>
+            <span>Deliverable: design system</span>
+          </div>
         </div>
-        <div class="process-step">
-          <div class="process-step__number">03</div>
-          <h3 class="process-step__title">Build &amp; Iterate</h3>
+        <div class="process-step" data-step="3">
+          <div class="process-step__marker">03</div>
+          <div class="process-step__title">Build &amp; Iterate</div>
           <p class="process-step__desc">We build block by block. You get a live preview as we go. Feedback is quick, changes are cheaper early.</p>
+          <div class="process-step__meta">
+            <span>Duration: 3–6 weeks</span>
+            <span>Deliverable: staging site</span>
+          </div>
         </div>
-        <div class="process-step">
-          <div class="process-step__number">04</div>
-          <h3 class="process-step__title">Launch &amp; Support</h3>
+        <div class="process-step" data-step="4">
+          <div class="process-step__marker">04</div>
+          <div class="process-step__title">Launch &amp; Support</div>
           <p class="process-step__desc">We deploy, test everything twice, and hand over the keys. You're never left hanging after launch day.</p>
+          <div class="process-step__meta">
+            <span>Duration: 1 week</span>
+            <span>Deliverable: live site</span>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ====== Testimonials ====== -->
-  <section class="section" id="testimonials">
+  <!-- TESTIMONIALS -->
+  <section class="section" id="testimonials" data-screen="Core">
     <div class="container container--narrow">
-      <div class="section__header section__header--center reveal">
-        <span class="eyebrow">Kind Words</span>
-        <h2 class="section__title">What clients say.</h2>
+      <div class="section-header section-header--center">
+        <span class="eyebrow">Structural Reports</span>
+        <h2>What clients say.</h2>
       </div>
-      <div class="testimonial reveal">
-        <blockquote class="testimonial__quote">&ldquo;I'd worked with three other agencies before BLOK. and every time I ended up with a site that looked like every other site in my industry. BLOK. was the first team that actually listened when I said I wanted something that didn't look like a template. The whole process took about five weeks and they came in under the estimate they gave me. I honestly didn't think that was possible anymore.&rdquo;</blockquote>
-        <div class="testimonial__author">
-          <div class="testimonial__avatar">JD</div>
-          <div>
-            <div class="testimonial__name">Jordan Davis</div>
-            <div class="testimonial__role">Founder, Bent Creative</div>
+
+      <div class="reveal-stagger" data-reveal-stagger="">
+        <div class="frame-corners">
+          <p class="testimonial-text">"BLOK. took our vague ideas and turned them into a site that actually feels like us. No template could've done what they did."</p>
+          <div class="testimonial-author">
+            <span class="testimonial-avatar">JD</span>
+            <span>Jordan Davis — Founder, Bent Creative</span>
           </div>
         </div>
-      </div>
-      <div class="testimonial reveal">
-        <blockquote class="testimonial__quote">&ldquo;I run an architecture firm, so I'm picky about visual details. The first mockup BLOK. sent was already 90% of the way there — we tweaked the type scale and swapped a few images and that was it. No endless revision cycles, no getting charged for changes that should've been included. I've already recommended them to two other firms.&rdquo;</blockquote>
-        <div class="testimonial__author">
-          <div class="testimonial__avatar">MK</div>
-          <div>
-            <div class="testimonial__name">Maya Krishnan</div>
-            <div class="testimonial__role">CEO, Form Architecture</div>
+
+        <div class="frame-corners">
+          <p class="testimonial-text">"The brutalist thing isn't usually my style, but BLOK. made it warm. We get compliments on the site constantly. Best investment we made this year."</p>
+          <div class="testimonial-author">
+            <span class="testimonial-avatar">AL</span>
+            <span>Alex Liu — Owner, Matter Goods</span>
           </div>
         </div>
-      </div>
-      <div class="testimonial reveal">
-        <blockquote class="testimonial__quote">&ldquo;I was honestly nervous about the budget going in — we're a small goods store and I'd been quoted twice as much by other studios for basically the same scope. BLOK. laid out exactly what everything would cost before we started and nothing changed. The site went live in six weeks and our conversion rate went up about 40% in the first month. That's not a flattering anecdote, that's literally the analytics.&rdquo;</blockquote>
-        <div class="testimonial__author">
-          <div class="testimonial__avatar">AL</div>
-          <div>
-            <div class="testimonial__name">Alex Liu</div>
-            <div class="testimonial__role">Owner, Matter Goods</div>
+
+        <div class="frame-corners">
+          <p class="testimonial-text">"We'd been burned by agencies before. BLOK. was straight up about timeline and budget — and they actually delivered on both. Novel concept, right?"</p>
+          <div class="testimonial-author">
+            <span class="testimonial-avatar">MK</span>
+            <span>Maya Krishnan — CEO, Form Architecture</span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ====== Pricing ====== -->
-  <section class="section section--alt" id="pricing">
+  <!-- PRICING -- Structural Tiers -->
+  <section class="section" id="pricing" data-screen="Upper">
     <div class="container">
-      <div class="section__header section__header--center reveal">
-        <span class="eyebrow">Pricing</span>
-        <h2 class="section__title">Straight up about&nbsp;cost.</h2>
-        <p class="section__subtitle">No hidden fees. No surprise charges. Pick the tier that fits your stage.</p>
+      <div class="section-header">
+        <span class="eyebrow">Structural Tiers</span>
+        <h2>Straight up about cost.</h2>
+        <p class="section-subtitle">No hidden fees. No surprise charges. Pick the tier that fits your stage.</p>
       </div>
 
-      <div class="pricing-toggle reveal">
-        <button class="pricing-toggle__btn pricing-toggle__btn--active" data-period="monthly">Monthly</button>
-        <button class="pricing-toggle__btn" data-period="yearly">Yearly</button>
-      </div>
-
-      <div class="pricing-grid stagger-children">
-        <div class="pricing-card">
-          <div class="pricing-card__name">Starter</div>
-          <div class="pricing-card__price" data-monthly="2500" data-yearly="24000">$2,500</div>
-          <div class="pricing-card__period">per month</div>
-          <ul class="pricing-card__features">
-            <li class="pricing-card__feature"><i class="ph ph-check"></i> <span>5-page custom design</span></li>
-            <li class="pricing-card__feature"><i class="ph ph-check"></i> <span>Responsive development</span></li>
-            <li class="pricing-card__feature"><i class="ph ph-check"></i> <span>Basic SEO setup</span></li>
-            <li class="pricing-card__feature pricing-card__feature--na"><i class="ph ph-x"></i> <span>CMS integration</span></li>
-            <li class="pricing-card__feature pricing-card__feature--na"><i class="ph ph-x"></i> <span>E-commerce</span></li>
-            <li class="pricing-card__feature pricing-card__feature--na"><i class="ph ph-x"></i> <span>Ongoing support</span></li>
+      <div class="pricing-towers reveal-stagger" data-reveal-stagger="">
+        <div class="pricing-tower" data-tower="1">
+          <div class="pricing-tower__skyline" data-bars="10,16,24,12,20,8,28,14" aria-hidden="true">
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+          </div>
+          <div class="pricing-tower__name">Starter</div>
+          <div class="pricing-tower__price">$2,500</div>
+          <div class="pricing-tower__period">per project</div>
+          <ul class="pricing-tower__features">
+            <li class="pricing-tower__feature"><i class="ph ph-check"></i> 5-page custom design</li>
+            <li class="pricing-tower__feature"><i class="ph ph-check"></i> Responsive development</li>
+            <li class="pricing-tower__feature"><i class="ph ph-check"></i> Basic SEO setup</li>
+            <li class="pricing-tower__feature pricing-tower__feature--na"><i class="ph ph-x"></i> CMS integration</li>
+            <li class="pricing-tower__feature pricing-tower__feature--na"><i class="ph ph-x"></i> E-commerce</li>
           </ul>
-          <a href="#contact" class="btn btn--secondary btn--block">Get Started</a>
+          <a href="#contact" class="btn btn--ghost btn--block">Get Started</a>
         </div>
 
-        <div class="pricing-card pricing-card--featured">
-          <span class="pricing-card__badge">Most Popular</span>
-          <div class="pricing-card__name">Growth</div>
-          <div class="pricing-card__price" data-monthly="6000" data-yearly="60000">$6,000</div>
-          <div class="pricing-card__period">per month</div>
-          <ul class="pricing-card__features">
-            <li class="pricing-card__feature"><i class="ph ph-check"></i> <span>10-page custom design</span></li>
-            <li class="pricing-card__feature"><i class="ph ph-check"></i> <span>Responsive development</span></li>
-            <li class="pricing-card__feature"><i class="ph ph-check"></i> <span>Advanced SEO &amp; analytics</span></li>
-            <li class="pricing-card__feature"><i class="ph ph-check"></i> <span>CMS integration</span></li>
-            <li class="pricing-card__feature pricing-card__feature--na"><i class="ph ph-x"></i> <span>E-commerce</span></li>
-            <li class="pricing-card__feature"><i class="ph ph-check"></i> <span>3 months support</span></li>
+        <div class="pricing-tower pricing-tower--featured" data-tower="2">
+          <span class="pricing-tower__badge">Most Popular</span>
+          <div class="pricing-tower__skyline" data-bars="10,24,40,16,32,20,48,12,36,28" aria-hidden="true">
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+          </div>
+          <div class="pricing-tower__name">Growth</div>
+          <div class="pricing-tower__price">$6,000</div>
+          <div class="pricing-tower__period">per project</div>
+          <ul class="pricing-tower__features">
+            <li class="pricing-tower__feature"><i class="ph ph-check"></i> 10-page custom design</li>
+            <li class="pricing-tower__feature"><i class="ph ph-check"></i> Responsive development</li>
+            <li class="pricing-tower__feature"><i class="ph ph-check"></i> Advanced SEO &amp; analytics</li>
+            <li class="pricing-tower__feature"><i class="ph ph-check"></i> CMS integration</li>
+            <li class="pricing-tower__feature pricing-tower__feature--na"><i class="ph ph-x"></i> E-commerce</li>
           </ul>
           <a href="#contact" class="btn btn--primary btn--block">Get Started</a>
         </div>
 
-        <div class="pricing-card">
-          <div class="pricing-card__name">Custom</div>
-          <div class="pricing-card__price" data-monthly="12000" data-yearly="120000">$12,000</div>
-          <div class="pricing-card__period">per month</div>
-          <ul class="pricing-card__features">
-            <li class="pricing-card__feature"><i class="ph ph-check"></i> <span>Unlimited pages</span></li>
-            <li class="pricing-card__feature"><i class="ph ph-check"></i> <span>Full-stack development</span></li>
-            <li class="pricing-card__feature"><i class="ph ph-check"></i> <span>Custom SEO strategy</span></li>
-            <li class="pricing-card__feature"><i class="ph ph-check"></i> <span>CMS integration</span></li>
-            <li class="pricing-card__feature"><i class="ph ph-check"></i> <span>E-commerce ready</span></li>
-            <li class="pricing-card__feature"><i class="ph ph-check"></i> <span>12 months support</span></li>
+        <div class="pricing-tower" data-tower="3">
+          <div class="pricing-tower__skyline" data-bars="10,36,60,24,48,16,72,30,56,20,44,28" aria-hidden="true">
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
+          </div>
+          <div class="pricing-tower__name">Custom</div>
+          <div class="pricing-tower__price">$12,000+</div>
+          <div class="pricing-tower__period">per project</div>
+          <ul class="pricing-tower__features">
+            <li class="pricing-tower__feature"><i class="ph ph-check"></i> Unlimited pages</li>
+            <li class="pricing-tower__feature"><i class="ph ph-check"></i> Full-stack development</li>
+            <li class="pricing-tower__feature"><i class="ph ph-check"></i> Custom SEO strategy</li>
+            <li class="pricing-tower__feature"><i class="ph ph-check"></i> CMS integration</li>
+            <li class="pricing-tower__feature"><i class="ph ph-check"></i> E-commerce ready</li>
           </ul>
-          <a href="#contact" class="btn btn--secondary btn--block">Get Started</a>
+          <a href="#contact" class="btn btn--ghost btn--block">Get Started</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ====== CTA ====== -->
-  <section class="section--dark cta" id="cta">
+  <!-- CTA -- Ready to build -->
+  <section class="section" id="cta" data-screen="Upper">
     <div class="container">
-      <div class="reveal">
-        <h2 class="cta__title">Ready to build<br />something cool?</h2>
-        <p class="cta__text">No pitch decks. No pressure. Just tell us about your thing and we'll see if we click.</p>
-        <a href="#contact" class="btn btn--accent btn--lg">Start a project</a>
+      <div class="frame-corners cta-frame">
+        <span class="eyebrow">Next Steps</span>
+        <h2>Ready to build<br>something monumental?</h2>
+        <p>
+          No pitch decks. No pressure. Just tell us about your thing and we'll see if we click.
+        </p>
+        <a href="#contact" class="btn btn--accent btn--lg">Start a project <i class="ph ph-arrow-right"></i></a>
       </div>
     </div>
   </section>
 
-  <!-- ====== Contact (hidden until "Start a project" clicked) ====== -->
-  <section class="section contact--hidden" id="contact">
+  <!-- CONTACT -- Site Office -->
+  <section class="section" id="contact" data-screen="Roof">
     <div class="container">
-      <div class="contact-grid">
-        <div class="reveal">
-          <span class="eyebrow">Get in Touch</span>
-          <h2 class="contact-info__heading">Tell us about<br />your thing.</h2>
-          <p class="contact-info__text">We'll listen, ask smart questions, and let you know if we're a good fit. No obligation, no follow-up spam — we hate that as much as you do.</p>
-          <div class="contact-info__item">
+      <div class="section-header">
+        <span class="eyebrow">Site Office</span>
+        <h2>Tell us about your thing.</h2>
+      </div>
+
+      <div class="contact-structural">
+        <div class="contact-info">
+          <p class="contact-info__text">
+            We'll listen, ask smart questions, and let you know if we're a good fit.
+            No obligation, no follow-up spam — we hate that as much as you do.
+          </p>
+          <div class="contact-info__detail">
             <i class="ph ph-envelope"></i>
             <span>hello@blok.studio</span>
           </div>
-          <div class="contact-info__item">
+          <div class="contact-info__detail">
             <i class="ph ph-map-pin"></i>
-            <span>Portland, OR &mdash; working remote worldwide</span>
+            <span>Portland, OR — working remote worldwide</span>
           </div>
-          <div class="contact-info__item">
+          <div class="contact-info__detail">
             <i class="ph ph-clock"></i>
             <span>Reply within 24 hours. Usually faster.</span>
           </div>
+          <div class="contact-info__detail">
+            <i class="ph ph-hard-hat"></i>
+            <span>Structural integrity: <strong>98.7%</strong></span>
+          </div>
         </div>
-        <div class="reveal reveal-right">
-          <form class="form" id="contact-form">
-            <div class="form__row">
-              <div class="form__group">
-                <label class="form__label" for="name">Your Name</label>
-                <input class="form__input" id="name" type="text" placeholder="e.g. Jamie Chen" required />
-              </div>
-              <div class="form__group">
-                <label class="form__label" for="email">Email</label>
-                <input class="form__input" id="email" type="email" placeholder="jamie@example.com" required />
-              </div>
-            </div>
-            <div class="form__group">
-              <label class="form__label" for="budget">Budget Range</label>
-              <select class="form__input" id="budget">
-                <option value="" disabled selected>Select range</option>
-                <option value="under-5k">Under $5,000</option>
-                <option value="5k-15k">$5,000 — $15,000</option>
-                <option value="15k-50k">$15,000 — $50,000</option>
-                <option value="over-50k">$50,000+</option>
-                <option value="not-sure">Not sure yet</option>
-              </select>
-            </div>
-            <div class="form__group">
-              <label class="form__label" for="message">Tell us about your project</label>
-              <textarea class="form__textarea" id="message" placeholder="What are you building? What's the timeline? Got a reference or a budget in mind?" required></textarea>
-            </div>
-            <button type="submit" class="btn btn--primary btn--lg">Send message <i class="ph ph-arrow-right"></i></button>
-          </form>
-        </div>
+
+        <form class="form-structural" id="contactForm">
+          <div class="form-group">
+            <label for="name">Your Name</label>
+            <input type="text" id="name" placeholder="e.g. Jamie Chen" required="">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="jamie@example.com" required="">
+          </div>
+          <div class="form-group">
+            <label for="budget">Budget Range</label>
+            <select id="budget">
+              <option value="" disabled="" selected="">Select range</option>
+              <option value="under-5k">Under $5,000</option>
+              <option value="5k-15k">$5,000 — $15,000</option>
+              <option value="15k-50k">$15,000 — $50,000</option>
+              <option value="over-50k">$50,000+</option>
+              <option value="not-sure">Not sure yet</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">Tell us about your project</label>
+            <textarea id="message" placeholder="What are you building? What's the timeline? Got a reference?" required=""></textarea>
+          </div>
+          <button type="submit" class="btn btn--primary">Send brief <i class="ph ph-arrow-right"></i></button>
+        </form>
       </div>
     </div>
   </section>
 
-  <!-- ====== Footer ====== -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer__grid">
-        <div>
-          <div class="footer__brand">BLOK<span class="text-red">.</span></div>
-          <p class="footer__tagline">WebDev Studio. Building bold websites for people who thought they couldn't afford it.</p>
+  </div><!-- /main-content -->
+
+  <!-- FOOTER -- The Foundation -->
+  <footer class="footer-foundation" id="footer">
+    <!-- Interactive tension monitor -->
+    <div class="tension-monitor" aria-hidden="true">
+      <div class="tension-monitor__inner">
+        <div class="tension-monitor__cable">
+          <div class="tension-monitor__weight" id="tensionWeight"></div>
         </div>
-        <div>
-          <h4 class="footer__heading">Navigation</h4>
-          <div class="footer__links">
-            <a href="#services" class="footer__link">Services</a>
-            <a href="#work" class="footer__link">Work</a>
-            <a href="#process" class="footer__link">Process</a>
-            <a href="#pricing" class="footer__link">Pricing</a>
+        <div class="tension-monitor__gauge-group">
+          <div class="tension-monitor__gauge">
+            <span class="tension-monitor__gauge-label">Tension</span>
+            <div class="tension-monitor__gauge-track">
+              <div class="tension-monitor__gauge-fill" id="gaugeTension" style="width: 0%"></div>
+            </div>
+          </div>
+          <div class="tension-monitor__gauge">
+            <span class="tension-monitor__gauge-label">Load</span>
+            <div class="tension-monitor__gauge-track">
+              <div class="tension-monitor__gauge-fill" id="gaugeLoad" style="width: 0%"></div>
+            </div>
+          </div>
+          <div class="tension-monitor__gauge">
+            <span class="tension-monitor__gauge-label">Stress</span>
+            <div class="tension-monitor__gauge-track">
+              <div class="tension-monitor__gauge-fill" id="gaugeStress" style="width: 0%"></div>
+            </div>
           </div>
         </div>
-        <div>
-          <h4 class="footer__heading">Services</h4>
-          <div class="footer__links">
-            <a href="#services" class="footer__link">Web Design</a>
-            <a href="#services" class="footer__link">Web Development</a>
-            <a href="#services" class="footer__link">E-Commerce</a>
-            <a href="#services" class="footer__link">Consulting</a>
-          </div>
-        </div>
-        <div>
-          <h4 class="footer__heading">Connect</h4>
-          <div class="footer__links">
-            <a href="#" class="footer__link">hello@blok.studio</a>
-            <a href="#" class="footer__link">Twitter / X</a>
-            <a href="#" class="footer__link">GitHub</a>
-            <a href="#" class="footer__link">Dribbble</a>
-          </div>
+        <div class="tension-monitor__readout">
+          <span id="tensionReadout">0.0</span>
+          <span class="tension-monitor__readout-unit">kN</span>
         </div>
       </div>
-      <div class="footer__bottom">
-        <span class="footer__copyright">&copy; 2026 BLOK. WebDev Studio. All rights reserved.</span>
-        <div class="footer__social">
-          <a href="#" class="footer__social-link" aria-label="Twitter"><i class="ph ph-twitter-logo"></i></a>
-          <a href="#" class="footer__social-link" aria-label="GitHub"><i class="ph ph-github-logo"></i></a>
-          <a href="#" class="footer__social-link" aria-label="Dribbble"><i class="ph ph-dribbble-logo"></i></a>
-          <a href="#" class="footer__social-link" aria-label="Instagram"><i class="ph ph-instagram-logo"></i></a>
+    </div>
+
+    <div class="footer-content">
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <div class="footer-brand">BLOK<span class="dot">.</span></div>
+            <p class="footer-tagline">WebDev Studio. Building bold websites for people who thought they couldn't afford it.</p>
+          </div>
+          <div>
+            <div class="footer-heading">Navigation</div>
+            <div class="footer-links">
+              <a href="#philosophy">Philosophy</a>
+              <a href="#services">Services</a>
+              <a href="#work">Work</a>
+              <a href="#process">Process</a>
+              <a href="#pricing">Pricing</a>
+            </div>
+          </div>
+          <div>
+            <div class="footer-heading">Services</div>
+            <div class="footer-links">
+              <a href="#services">Web Design</a>
+              <a href="#services">Web Development</a>
+              <a href="#services">E-Commerce</a>
+              <a href="#services">Consulting</a>
+            </div>
+          </div>
+          <div>
+            <div class="footer-heading">Connect</div>
+            <div class="footer-links">
+              <a href="mailto:hello@blok.studio">hello@blok.studio</a>
+              <a href="#">Twitter / X</a>
+              <a href="#">GitHub</a>
+              <a href="#">Dribbble</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span class="footer-bottom__text">© 2026 BLOK. WebDev Studio. All rights reserved.</span>
+          <div class="footer-social">
+            <a href="#" aria-label="Twitter"><i class="ph ph-twitter-logo"></i></a>
+            <a href="#" aria-label="GitHub"><i class="ph ph-github-logo"></i></a>
+            <a href="#" aria-label="Dribbble"><i class="ph ph-dribbble-logo"></i></a>
+            <a href="#" aria-label="Instagram"><i class="ph ph-instagram-logo"></i></a>
+          </div>
         </div>
       </div>
     </div>
   </footer>
 
-  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
-  <script src="js/main.js"></script>
-</body>
-</html>
+  <script src="js/structural.js"></script>
+
+
+</body></html>
