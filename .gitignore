@@ -11,3 +11,10 @@ Thumbs.db
 
 # Build artifacts
 *.artifact.json
+
+# Environment variables — NEVER COMMIT
+.env
+
+# Dependencies
+node_modules/
+.netlify/

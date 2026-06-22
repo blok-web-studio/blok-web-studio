@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" data-viz="structure"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BLOK. — Admin Access</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <script>document.documentElement.classList.replace('no-js', 'js');</script>
+</head>
+<body>
+
+  <!-- Structural grid background -->
+  <div class="admin-grid-bg" aria-hidden="true"></div>
+
+  <!-- Login Page -->
+  <div class="login-page" id="loginApp">
+
+    <div class="login-card frame-corners">
+      <div class="login-card__brand">
+        <div class="login-card__brand-name">BLOK<span class="dot">.</span></div>
+        <div class="login-card__brand-sub">Structural Admin</div>
+      </div>
+
+      <div class="login-card__title">Access Control</div>
+      <div class="login-card__sub">Authorized personnel only</div>
+
+      <div class="login-field">
+        <label for="loginUser">Username</label>
+        <input type="text" id="loginUser" placeholder="Enter username" autocomplete="username" spellcheck="false">
+      </div>
+
+      <div class="login-field">
+        <label for="loginPass">Password</label>
+        <input type="password" id="loginPass" placeholder="Enter password" autocomplete="current-password">
+      </div>
+
+      <button class="admin-btn admin-btn--primary" id="loginBtn" onclick="BLOK_ADMIN.login()">
+        <i class="ph ph-lock-key"></i> Access control
+      </button>
+
+      <div class="login-error" id="loginError"></div>
+    </div>
+
+  </div>
+
+  <script src="js/admin.js"></script>
+
+</body></html>

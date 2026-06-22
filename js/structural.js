@@ -7,159 +7,229 @@
   'use strict';
 
   // =============================================================
-  // 1. Block Assembly — the hero construction animation
+  // 1. Discipline Block Generator — random pool, float, parallax, drag
   // =============================================================
 
-  const blockCanvas = document.getElementById('blockCanvas');
-  let blockCount = 0;
-  let blocksLaid = 0;
+  var oldCanvas = document.getElementById('blockCanvas');
+  if (oldCanvas) oldCanvas.remove();
 
-  if (blockCanvas) {
-    // Generate scattered blocks that fly into structural positions
-    const blocks = [];
-    const numBlocks = 64;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+  var discContainer = document.getElementById('heroDisciplines');
 
-    // Target region: a structural frame around the hero
-    const targetCenterX = vw / 2;
-    const targetCenterY = vh / 2 - 40;
+  if (discContainer) {
 
-    for (let i = 0; i < numBlocks; i++) {
-      const block = document.createElement('div');
-      block.className = 'assembly-block';
+    // --- Pool of 12 disciplines ---
+    var DISCIPLINES = [
+      { label: 'Design',   icon: 'ph-pen-nib' },
+      { label: 'Code',     icon: 'ph-code' },
+      { label: 'Commerce', icon: 'ph-shopping-cart' },
+      { label: 'Content',  icon: 'ph-article' },
+      { label: 'Strategy', icon: 'ph-compass' },
+      { label: 'Brand',    icon: 'ph-trademark' },
+      { label: 'Motion',   icon: 'ph-video' },
+      { label: 'UX',       icon: 'ph-fingerprint' },
+      { label: 'SEO',      icon: 'ph-magnifying-glass' },
+      { label: 'Analytics',icon: 'ph-chart-bar' },
+      { label: 'Systems',  icon: 'ph-server' },
+      { label: 'Support',  icon: 'ph-headphones' },
+    ];
 
-      // Random starting position (scattered across viewport)
-      const startX = Math.random() * vw * 1.4 - vw * 0.2;
-      const startY = Math.random() * vh * 1.4 - vh * 0.2;
-      // Random rotation
-      const startR = (Math.random() - 0.5) * 720;
+    var SIZES = [80, 95, 110, 125, 140, 160];
+    var COLORS = ['accent', 'cyan', 'lime', 'base'];
+    var COLOR_CLASSES = {
+      accent: 'disc-block--accent',
+      cyan: 'disc-block--cyan',
+      lime: 'disc-block--lime',
+      base: 'disc-block--base',
+    };
 
-      // Target: arranged in a structural grid around center
-      const gridCol = (i % 12) - 6;
-      const gridRow = Math.floor(i / 12) - 2;
-      const spacing = 52;
-      const scatter = 10;
-      const targetX = targetCenterX + gridCol * spacing + (Math.random() - 0.5) * scatter;
-      const targetY = targetCenterY + gridRow * spacing + (Math.random() - 0.5) * scatter;
+    // --- Pick random subset (5-7) ---
+    var count = 5 + Math.floor(Math.random() * 3);
+    var shuffled = DISCIPLINES.slice().sort(function () { return Math.random() - 0.5; });
+    var picked = shuffled.slice(0, count);
 
-      // Random size variation
-      const size = 24 + Math.floor(Math.random() * 28);
+    // --- Organic cluster position generator (no math curves) ---
+    function generatePositions(num) {
+      var zones = [
+        { cx: 44, cy: 20, rx: 15, ry: 13 },
+        { cx: 32, cy: 44, rx: 17, ry: 15 },
+        { cx: 17, cy: 66, rx: 14, ry: 14 },
+      ];
+      var positions = [];
+      for (var i = 0; i < num; i++) {
+        var z = zones[Math.floor(Math.random() * zones.length)];
+        var x = z.cx + (Math.random() - 0.5) * 2 * z.rx;
+        var y = z.cy + (Math.random() - 0.5) * 2 * z.ry;
+        x = Math.max(2, Math.min(60, x));
+        y = Math.max(2, Math.min(85, y));
+        positions.push({ x: x, y: y });
+      }
+      return positions;
+    }
 
-      block.style.width = size + 'px';
-      block.style.height = size + 'px';
+    var positions = generatePositions(count);
 
-      // Some blocks are accent colored
-      if (Math.random() < 0.08) {
-        block.classList.add('assembly-block--accent');
+    // --- Random entrance delays (shuffled, not sequential) ---
+    var delays = [];
+    for (var d = 0; d < count; d++) {
+      delays.push(Math.random() * 0.7);
+    }
+
+    // --- Create blocks + float state ---
+    var floatStates = [];
+    var blocks = [];
+
+    picked.forEach(function (d, i) {
+      var size = SIZES[Math.floor(Math.random() * SIZES.length)];
+      var colorKey = COLORS[Math.floor(Math.random() * COLORS.length)];
+      var colorClass = COLOR_CLASSES[colorKey];
+      var pos = positions[i];
+
+      var el = document.createElement('div');
+      el.className = 'disc-block ' + colorClass;
+      el.style.width = size + 'px';
+      el.style.height = size + 'px';
+      el.style.left = pos.x + '%';
+      el.style.top = pos.y + '%';
+      el.style.animationDelay = delays[i] + 's';
+      el.setAttribute('data-index', i);
+
+      el.innerHTML =
+        '<div class="disc-block__icon"><i class="ph ' + d.icon + '"></i></div>' +
+        '<span class="disc-block__label">' + d.label + '</span>';
+
+      discContainer.appendChild(el);
+      blocks.push(el);
+
+      floatStates.push({
+        el: el,
+        phaseY: Math.random() * Math.PI * 2,
+        phaseX: Math.random() * Math.PI * 2,
+        phaseR: Math.random() * Math.PI * 2,
+        dur: 5 + Math.random() * 6,          // 5-11s cycle
+        ampY: 3 + Math.random() * 6,         // 3-9px drift
+        ampX: 1.5 + Math.random() * 4,       // 1.5-5.5px sway
+        ampR: 0.3 + Math.random() * 1.2,     // 0.3-1.5° wobble
+        parallaxX: 0,
+        parallaxY: 0,
+        dragOffsetX: 0,
+        dragOffsetY: 0,
+        isDragging: false,
+      });
+    });
+
+    // --- RAF float loop ---
+    var floatStartTime = performance.now();
+    var floatRAF = null;
+
+    function tickFloat(now) {
+      if (!discContainer || !discContainer.isConnected) return;
+      var t = (now - floatStartTime) / 1000;
+
+      for (var f = 0; f < floatStates.length; f++) {
+        var fs = floatStates[f];
+        if (fs.isDragging) continue;
+
+        var floatY = Math.sin(t * (Math.PI * 2 / fs.dur) + fs.phaseY) * fs.ampY;
+        var floatX = Math.sin(t * (Math.PI * 2 / (fs.dur * 0.7)) + fs.phaseX) * fs.ampX;
+        var floatR = Math.sin(t * (Math.PI * 2 / (fs.dur * 1.2)) + fs.phaseR) * fs.ampR;
+
+        fs.el.style.transform =
+          'translate3d(' + (floatX + fs.parallaxX + fs.dragOffsetX).toFixed(1) + 'px, '
+          + (floatY + fs.parallaxY + fs.dragOffsetY).toFixed(1) + 'px, 0) rotate(' + floatR.toFixed(1) + 'deg)';
       }
 
-      // Position at random start
-      block.style.left = startX + 'px';
-      block.style.top = startY + 'px';
-      block.style.transform = 'rotate(' + startR + 'deg)';
-
-      blockCanvas.appendChild(block);
-      blocks.push({
-        el: block,
-        startX: startX,
-        startY: startY,
-        targetX: targetX,
-        targetY: targetY,
-        startR: startR,
-        placed: false
-      });
-      blockCount++;
+      floatRAF = requestAnimationFrame(tickFloat);
     }
 
-    // Animate blocks in waves
-    let blocksPlaced = 0;
+    // --- Mouse parallax ---
+    var containerRect = discContainer.getBoundingClientRect();
 
-    function placeBlock(index) {
-      const b = blocks[index];
-      if (!b || b.placed) return;
-      b.placed = true;
+    function onContainerMouseMove(e) {
+      var cx = containerRect.left + containerRect.width / 2;
+      var cy = containerRect.top + containerRect.height / 2;
+      var dx = (e.clientX - cx) / containerRect.width;
+      var dy = (e.clientY - cy) / containerRect.height;
 
-      b.el.classList.add('assembly-block--active');
-      b.el.style.left = b.targetX + 'px';
-      b.el.style.top = b.targetY + 'px';
-      b.el.style.transform = 'rotate(0deg)';
-      b.el.style.opacity = '0.5';
-
-      blocksLaid = ++blocksPlaced;
-      updateBlockCounter(blocksLaid, blockCount);
-
-      if (blocksPlaced === blockCount) {
-        // All blocks placed — finalize
-        setTimeout(finalizeAssembly, 400);
+      for (var f = 0; f < floatStates.length; f++) {
+        var strength = 6 + (f % 3) * 3;
+        floatStates[f].parallaxX = dx * strength;
+        floatStates[f].parallaxY = dy * strength;
       }
     }
 
-    // Staggered placement
-    let waveIndex = 0;
-    const waveSize = 4;
-    const waveInterval = 60; // ms between waves
-
-    function startAssembly() {
-      const waveTimer = setInterval(function () {
-        for (let i = 0; i < waveSize; i++) {
-          if (waveIndex < blocks.length) {
-            placeBlock(waveIndex);
-            waveIndex++;
-          }
-        }
-        if (waveIndex >= blocks.length) {
-          clearInterval(waveTimer);
-        }
-      }, waveInterval);
+    function onContainerMouseLeave() {
+      for (var f = 0; f < floatStates.length; f++) {
+        floatStates[f].parallaxX = 0;
+        floatStates[f].parallaxY = 0;
+      }
     }
 
-    function finalizeAssembly() {
-      // Mark some blocks as placed (structural framing)
-      blocks.forEach(function (b, i) {
-        if (i % 3 === 0) {
-          b.el.classList.add('assembly-block--placed');
-        }
-      });
+    discContainer.addEventListener('mousemove', onContainerMouseMove, { passive: true });
+    discContainer.addEventListener('mouseleave', onContainerMouseLeave, { passive: true });
+
+    window.addEventListener('resize', function () {
+      containerRect = discContainer.getBoundingClientRect();
+    });
+
+    // --- Pointer-event drag ---
+    var dragState = null;
+
+    function onPointerDown(e) {
+      var block = e.currentTarget;
+      var idx = parseInt(block.getAttribute('data-index'), 10);
+      var fs = floatStates[idx];
+      if (!fs) return;
+
+      fs.isDragging = true;
+      fs.el.style.zIndex = 50;
+      fs.el.style.cursor = 'grabbing';
+
+      dragState = {
+        fs: fs,
+        startX: e.clientX,
+        startY: e.clientY,
+        origOffsetX: fs.dragOffsetX,
+        origOffsetY: fs.dragOffsetY,
+      };
+
+      block.setPointerCapture(e.pointerId);
     }
 
-    // Update the block counter
-    function updateBlockCounter(current, total) {
-      const el = document.getElementById('blocksLaid');
-      const totalEl = document.getElementById('blocksTotal');
-      if (el) el.textContent = current;
-      if (totalEl) totalEl.textContent = total;
+    function onPointerMove(e) {
+      if (!dragState) return;
+      var fs = dragState.fs;
+      fs.dragOffsetX = dragState.origOffsetX + (e.clientX - dragState.startX);
+      fs.dragOffsetY = dragState.origOffsetY + (e.clientY - dragState.startY);
     }
 
-    // Start after a brief delay
-    setTimeout(startAssembly, 600);
-  }
+    function onPointerUp() {
+      if (!dragState) return;
+      var fs = dragState.fs;
+      fs.isDragging = false;
+      fs.el.style.zIndex = 1;
+      fs.el.style.cursor = 'grab';
+      dragState = null;
+    }
+
+    for (var b = 0; b < blocks.length; b++) {
+      blocks[b].addEventListener('pointerdown', onPointerDown);
+    }
+
+    document.addEventListener('pointermove', onPointerMove);
+    document.addEventListener('pointerup', onPointerUp);
+
+    // --- Kick off float after entrance animation completes ---
+    setTimeout(function () {
+      floatRAF = requestAnimationFrame(tickFloat);
+    }, 1500);
+
+  } // end if discContainer
 
   // =============================================================
   // 2. Scroll Reveals — Intersection Observer
   // =============================================================
 
-  const revealEls = document.querySelectorAll('[data-reveal]');
   const staggerEls = document.querySelectorAll('[data-reveal-stagger]');
-
-  const revealObserver = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('reveal-block--visible');
-
-        // Animate the left accent bar on philosophy blocks
-        if (entry.target.classList.contains('philosophy-block')) {
-          entry.target.classList.add('philosophy-block--visible');
-        }
-
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-
-  revealEls.forEach(function (el) {
-    revealObserver.observe(el);
-  });
 
   staggerEls.forEach(function (el) {
     const observer = new IntersectionObserver(function (entries) {
@@ -269,7 +339,7 @@
   const floorLabelEl = document.getElementById('floorLabel');
 
   // Named floor order (canonical)
-  const screenOrder = ['Ground', 'Sub', 'Lobby', 'Mezz', 'Core', 'Upper', 'Roof'];
+  const screenOrder = ['Ground', 'Lobby', 'Mezz', 'Core', 'Upper', 'Roof'];
 
   // Indicator element that smoothly moves between floor links
   const navEl = document.querySelector('.structural-nav');
@@ -330,17 +400,6 @@
       setActiveFloor(activeScreen);
     }
 
-    // Fade block canvas as user scrolls past hero
-    const bcEl = document.getElementById('blockCanvas');
-    if (bcEl) {
-      const hero = document.querySelector('.hero');
-      if (hero) {
-        const heroBottom = hero.getBoundingClientRect().bottom;
-        const fadeProgress = Math.max(0, Math.min(1, (heroBottom - viewportH * 0.3) / (viewportH * 0.5)));
-        bcEl.style.opacity = Math.max(0, Math.min(1, fadeProgress));
-      }
-    }
-
     // Update tension monitor in footer (scroll reactive)
     updateTensionMonitor(scrollY, viewportH);
   }
@@ -375,22 +434,30 @@
     }
   }
 
-  // Mouse-follow for tension monitor (subtle)
-  let mouseY = 0;
+  // Mouse-follow for tension monitor (subtle — modulates scroll baseline)
+  let mouseTensionOffset = 0;
   document.addEventListener('mousemove', function (e) {
-    mouseY = e.clientY;
+    const docHeight = Math.max(
+      document.body.scrollHeight, document.documentElement.scrollHeight,
+      document.body.offsetHeight, document.documentElement.offsetHeight
+    );
+    const vh = window.innerHeight;
+    const maxScroll = docHeight - vh;
+    const scrollProgress = maxScroll > 0 ? Math.min(window.scrollY / maxScroll, 1) : 0;
+    const mouseNorm = Math.min(1, Math.max(0, e.clientY / vh));
+    // Blend: near footer (mouse far down) influence grows; otherwise scroll rules
+    const footerBlend = Math.max(0, (mouseNorm - 0.6) / 0.4); // 0 when above 60%, 1 at bottom
+    mouseTensionOffset = footerBlend * (mouseNorm - scrollProgress) * 0.3;
+
+    const combinedProgress = Math.min(1, Math.max(0, scrollProgress + mouseTensionOffset));
     const gaugeTension = document.getElementById('gaugeTension');
     const gaugeLoad = document.getElementById('gaugeLoad');
     const gaugeStress = document.getElementById('gaugeStress');
     const tensionReadout = document.getElementById('tensionReadout');
-    if (gaugeTension && gaugeLoad && gaugeStress) {
-      const vh = window.innerHeight;
-      const mouseProgress = Math.min(1, Math.max(0, mouseY / vh));
-      gaugeTension.style.width = (Math.sin(mouseProgress * Math.PI) * 60 + 20) + '%';
-      gaugeLoad.style.width = (mouseProgress * 80 + 10) + '%';
-      gaugeStress.style.width = (Math.pow(mouseProgress, 1.5) * 70 + 5) + '%';
-      if (tensionReadout) tensionReadout.textContent = (Math.sin(mouseProgress * Math.PI * 2) * 2 + 3).toFixed(1);
-    }
+    if (gaugeTension) gaugeTension.style.width = (Math.sin(combinedProgress * Math.PI) * 60 + 20) + '%';
+    if (gaugeLoad) gaugeLoad.style.width = (combinedProgress * 80 + 10) + '%';
+    if (gaugeStress) gaugeStress.style.width = (Math.pow(combinedProgress, 1.5) * 70 + 5) + '%';
+    if (tensionReadout) tensionReadout.textContent = (Math.sin(combinedProgress * Math.PI * 2) * 2 + 3).toFixed(1);
   });
 
   // Throttled scroll handler
@@ -470,47 +537,7 @@
   });
 
   // =============================================================
-  // 8. Pricing Tower Skyline Animation
-  // =============================================================
-
-  const towers = document.querySelectorAll('.pricing-tower');
-
-  const towerObserver = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('pricing-tower--visible');
-
-        // Animate skyline bars with their target heights
-        const bars = entry.target.querySelectorAll('.pricing-tower__skyline-bar');
-        const heightsAttr = entry.target.querySelector('.pricing-tower__skyline');
-        if (heightsAttr) {
-          const heights = heightsAttr.getAttribute('data-bars');
-          if (heights) {
-            const hValues = heights.split(',').map(Number);
-            bars.forEach(function (bar, i) {
-              if (i < hValues.length) {
-                // Delay each bar slightly
-                setTimeout(function () {
-                  bar.style.setProperty('--h', hValues[i] + 'px');
-                  // Force reflow then set height via CSS
-                  bar.style.height = hValues[i] + 'px';
-                }, i * 80);
-              }
-            });
-          }
-        }
-
-        towerObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.2 });
-
-  towers.forEach(function (tower) {
-    towerObserver.observe(tower);
-  });
-
-  // =============================================================
-  // 9. Process Timeline — Step activation on scroll
+  // 8. Process Timeline — Step activation on scroll
   // =============================================================
 
   const processSteps = document.querySelectorAll('.process-step');
@@ -539,10 +566,23 @@
       // Collect values
       const name = document.getElementById('name').value.trim();
       const email = document.getElementById('email').value.trim();
+      const budget = document.getElementById('budget').value;
+      const message = document.getElementById('message').value.trim();
+      const submitBtn = contactForm.querySelector('.btn');
 
-      if (!name || !email) {
-        // Simple validation feedback
-        const submitBtn = contactForm.querySelector('.btn');
+      // Highlight empty required fields
+      let hasError = false;
+      [['name', name], ['email', email], ['message', message]].forEach(function (pair) {
+        const field = document.getElementById(pair[0]);
+        if (!pair[1]) {
+          field.style.borderColor = 'var(--accent)';
+          hasError = true;
+        } else {
+          field.style.borderColor = '';
+        }
+      });
+
+      if (hasError) {
         submitBtn.textContent = 'Fill required fields first';
         submitBtn.style.borderColor = 'var(--accent)';
         setTimeout(function () {
@@ -552,14 +592,47 @@
         return;
       }
 
+      // Submit to Netlify Function (server-side storage)
+      (function submitToAPI() {
+        var apiBase = '/api';
+        // In local dev, netlify dev runs on 8888
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          apiBase = 'http://localhost:8888/api';
+        }
+        fetch(apiBase + '/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: name, email: email, budget: budget, message: message })
+        }).catch(function () {
+          // API unavailable — silently fall through to localStorage
+        });
+      })();
+
+      // Save to localStorage for admin panel (backup / local dev fallback)
+      try {
+        var _leads = JSON.parse(localStorage.getItem('blok_admin_leads')) || [];
+        _leads.unshift({
+          id: 'lead_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          name: name,
+          email: email,
+          budget: budget || 'not-sure',
+          message: message,
+          status: 'new',
+          createdAt: new Date().toISOString()
+        });
+        localStorage.setItem('blok_admin_leads', JSON.stringify(_leads));
+      } catch (_e) { /* localStorage unavailable — non-critical */ }
+
       // Visual "sent" feedback
-      const submitBtn = contactForm.querySelector('.btn');
       submitBtn.textContent = 'Brief sent ✓';
       submitBtn.classList.add('btn--accent');
       setTimeout(function () {
         submitBtn.innerHTML = 'Send brief <i class="ph ph-arrow-right"></i>';
         submitBtn.classList.remove('btn--accent');
         contactForm.reset();
+        ['name', 'email', 'message'].forEach(function (id) {
+          document.getElementById(id).style.borderColor = '';
+        });
       }, 2000);
     });
   }
@@ -599,26 +672,98 @@
   });
 
   // =============================================================
-  // 12. Window resize — reposition blocks
+  // 11b. Service Cards — scroll-triggered expand animation
+  //      Cards expand gradually from left to right as the user
+  //      scrolls through the section. Click toggle also available.
+  // =============================================================
+
+  const serviceGrid = document.getElementById('serviceGrid');
+  const serviceCards = document.querySelectorAll('.service-card');
+  if (!serviceGrid || serviceCards.length === 0) return;
+
+  // Prepare each card: collapsed state + click toggle
+  serviceCards.forEach(function (card) {
+    var header = card.querySelector('.service-card__header');
+    var body = card.querySelector('.service-card__body');
+    var toggleIcon = card.querySelector('.service-card__toggle i');
+
+    if (!header || !body) return;
+
+    // Start collapsed
+    body.style.maxHeight = '0px';
+    body.style.overflow = 'hidden';
+    body.style.transition = 'max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+
+    function expandCard() {
+      body.style.maxHeight = body.scrollHeight + 'px';
+      if (toggleIcon) toggleIcon.className = 'ph ph-minus';
+    }
+
+    function collapseCard() {
+      body.style.maxHeight = '0px';
+      if (toggleIcon) toggleIcon.className = 'ph ph-plus';
+    }
+
+    // Click toggle
+    header.addEventListener('click', function () {
+      var isExpanded = body.style.maxHeight !== '0px';
+      if (isExpanded) collapseCard(); else expandCard();
+    });
+
+    // Store helper on card for scroll-tracker
+    card._expand = expandCard;
+    card._expanded = false;
+  });
+
+  // --- Scroll-progress tracker: expand cards one-by-one as user
+  //     scrolls through the section. Card 0 expands first (left),
+  //     then card 1 (middle), then card 2 (right). ---
+  var cardCount = serviceCards.length;
+
+  function updateScrollExpand() {
+    var gridRect = serviceGrid.getBoundingClientRect();
+    var viewH = window.innerHeight;
+
+    // How far the grid has scrolled into / past the viewport (0–1)
+    var totalDist = gridRect.height + viewH;
+    var scrolled = viewH - gridRect.top; // how much has scrolled past top of view
+    var progress = Math.max(0, Math.min(1, scrolled / totalDist));
+
+    // Map progress to how many cards should be expanded (0..cardCount)
+    var targetCards = Math.min(cardCount, Math.floor(progress * (cardCount + 0.5)));
+
+    for (var i = 0; i < cardCount; i++) {
+      var c = serviceCards[i];
+      if (!c._expanded && i < targetCards) {
+        if (c._expand) c._expand();
+        c._expanded = true;
+      }
+    }
+  }
+
+  // Throttled scroll handler for the expand tracker
+  var expandTicking = false;
+  window.addEventListener('scroll', function () {
+    if (!expandTicking) {
+      requestAnimationFrame(function () {
+        updateScrollExpand();
+        expandTicking = false;
+      });
+      expandTicking = true;
+    }
+  }, { passive: true });
+
+  // Initial check
+  updateScrollExpand();
+
+  // =============================================================
+  // 12. Window resize — re-run floor tracking
   // =============================================================
 
   let resizeTimer;
   window.addEventListener('resize', function () {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function () {
-      if (blockCanvas && blocks.length > 0) {
-        // On resize, recollect positions for blocks that haven't been placed yet
-        const newVw = window.innerWidth;
-        const newVh = window.innerHeight;
-        blocks.forEach(function (b) {
-          // Blocks already placed keep their target
-          if (!b.placed) {
-            // Keep them roughly visible
-            b.el.style.left = Math.random() * newVw + 'px';
-            b.el.style.top = Math.random() * newVh + 'px';
-          }
-        });
-      }
       updateFloor();
     }, 200);
   });

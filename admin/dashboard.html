@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en" data-viz="structure"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BLOK. — Admin Control Panel</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <script>document.documentElement.classList.replace('no-js', 'js');</script>
+</head>
+<body>
+
+  <!-- Grid background -->
+  <div class="admin-grid-bg" aria-hidden="true"></div>
+
+  <div class="admin-layout" id="adminApp">
+
+    <!-- ============================================================
+         SIDE NAVIGATION
+         ============================================================ -->
+    <nav class="admin-nav" role="navigation" aria-label="Admin navigation">
+      <a href="../index.html" class="admin-nav__brand" target="_blank">
+        <span>BLOK<span class="dot">.</span></span>
+        <span class="badge">Admin</span>
+      </a>
+
+      <ul class="admin-nav__items">
+        <li class="admin-nav__section-label">Management</li>
+
+        <li class="admin-nav__item admin-nav__item--active" data-page="dashboard" id="dashboardNav">
+          <i class="ph ph-layout"></i>
+          <span>Dashboard</span>
+        </li>
+
+        <li class="admin-nav__item" data-page="leads" id="leadsNav">
+          <i class="ph ph-inbox"></i>
+          <span>Leads</span>
+        </li>
+
+        <li class="admin-nav__item" data-page="portfolio" id="portfolioNav">
+          <i class="ph ph-image"></i>
+          <span>Portfolio</span>
+        </li>
+
+        <li class="admin-nav__section-label">System</li>
+
+        <li class="admin-nav__item" data-page="inspector" id="inspector-nav">
+          <i class="ph ph-gauge"></i>
+          <span>Inspector</span>
+        </li>
+
+        <li class="admin-nav__item" data-page="console" id="console-nav">
+          <i class="ph ph-terminal"></i>
+          <span>Console</span>
+        </li>
+
+        <li class="admin-nav__item" data-page="actions" id="actions-nav">
+          <i class="ph ph-lightning"></i>
+          <span>Quick Actions</span>
+        </li>
+      </ul>
+
+      <div class="admin-nav__footer">
+        <div class="admin-nav__user">
+          <div class="admin-nav__user-avatar">B</div>
+          <span class="admin-nav__user-name">admin</span>
+        </div>
+        <button class="admin-nav__logout" onclick="BLOK_ADMIN.logout()">
+          <i class="ph ph-sign-out"></i> Disconnect
+        </button>
+      </div>
+    </nav>
+
+    <!-- ============================================================
+         MAIN CONTENT
+         ============================================================ -->
+    <main class="admin-main">
+
+      <!-- Header bar -->
+      <header class="admin-header">
+        <div class="admin-header__title">
+          <span id="pageTitle">Dashboard</span>
+          <span class="annotation">v1.0</span>
+        </div>
+        <div class="admin-header__actions">
+          <span class="admin-header__status">
+            <span class="admin-header__status-dot"></span>
+            Live
+          </span>
+          <button class="admin-header__viz-btn admin-header__viz-btn--active" data-viz="structure" onclick="BLOK_ADMIN.toggleViz(this, 'structure')">Struct</button>
+          <button class="admin-header__viz-btn" data-viz="blueprint" onclick="BLOK_ADMIN.toggleViz(this, 'blueprint')">BP</button>
+        </div>
+      </header>
+
+      <div class="admin-content">
+
+        <!-- ==========================================================
+             PAGE: DASHBOARD
+             ========================================================== -->
+        <section class="admin-page admin-page--active" id="dashboardPage">
+
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px;position:relative;z-index:1;">
+            <div>
+              <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">Structural Overview</h2>
+              <p style="font-size:0.85rem;color:var(--muted);margin-top:2px;">
+                Site health, lead activity, and key metrics at a glance.
+              </p>
+            </div>
+            <a href="../index.html" target="_blank" class="admin-btn admin-btn--small" style="display:inline-flex;align-items:center;gap:6px;">
+              <i class="ph ph-arrow-square-out"></i> View site
+            </a>
+          </div>
+
+          <!-- KPI Grid -->
+          <div class="dashboard-grid" id="kpiGrid" style="margin-bottom:var(--gutter);">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Recent Activity / Leads Preview -->
+          <div class="panel">
+            <div class="panel__header">
+              <span class="panel__header-title"><i class="ph ph-inbox"></i> Recent Leads</span>
+              <div class="panel__header-actions">
+                <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.navTo('leads')">View All</button>
+              </div>
+            </div>
+            <div class="panel__body" id="leadsContainer">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+          <!-- Portfolio Preview -->
+          <div class="panel">
+            <div class="panel__header">
+              <span class="panel__header-title"><i class="ph ph-image"></i> Portfolio Overview</span>
+              <div class="panel__header-actions">
+                <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.navTo('portfolio')">Manage</button>
+              </div>
+            </div>
+            <div class="panel__body" id="portfolioPreviewContainer">
+              <!-- Rendered by JS (reuses portfolio render) -->
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==========================================================
+             PAGE: LEADS
+             ========================================================== -->
+        <section class="admin-page" id="leadsPage">
+
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px;position:relative;z-index:1;">
+            <div>
+              <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">Contact Leads</h2>
+              <p style="font-size:0.85rem;color:var(--muted);margin-top:2px;">
+                Form submissions from the contact section. Mark as read, archive, or export.
+              </p>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.exportLeads()">
+                <i class="ph ph-download"></i> Export JSON
+              </button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__header">
+              <span class="panel__header-title"><i class="ph ph-list"></i> All Submissions</span>
+              <span class="tag tag--steel" id="leadCountLabel">0 total</span>
+            </div>
+            <div class="panel__body" id="leadsContainer">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==========================================================
+             PAGE: PORTFOLIO
+             ========================================================== -->
+        <section class="admin-page" id="portfolioPage">
+
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px;position:relative;z-index:1;">
+            <div>
+              <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">Portfolio Manager</h2>
+              <p style="font-size:0.85rem;color:var(--muted);margin-top:2px;">
+                Add, remove, or reorder portfolio items. Data is stored locally.
+              </p>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.exportPortfolio()">
+                <i class="ph ph-download"></i> Export JSON
+              </button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__header">
+              <span class="panel__header-title"><i class="ph ph-plus"></i> Add Item</span>
+            </div>
+            <div class="panel__body" id="portfolioForm">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__header">
+              <span class="panel__header-title"><i class="ph ph-squares-four"></i> All Items</span>
+            </div>
+            <div class="panel__body" id="portfolioContainer">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==========================================================
+             PAGE: INSPECTOR
+             ========================================================== -->
+        <section class="admin-page" id="inspectorPage">
+
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px;position:relative;z-index:1;">
+            <div>
+              <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">Site Inspector</h2>
+              <p style="font-size:0.85rem;color:var(--muted);margin-top:2px;">
+                Runtime diagnostics, environment info, and structural health.
+              </p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__header">
+              <span class="panel__header-title"><i class="ph ph-gauge"></i> System Diagnostics</span>
+            </div>
+            <div class="panel__body" id="inspectorContainer">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==========================================================
+             PAGE: CONSOLE
+             ========================================================== -->
+        <section class="admin-page" id="consolePage">
+
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px;position:relative;z-index:1;">
+            <div>
+              <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">System Console</h2>
+              <p style="font-size:0.85rem;color:var(--muted);margin-top:2px;">
+                Event log for admin actions and system events.
+              </p>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="admin-btn admin-btn--small admin-btn--danger" onclick="BLOK_ADMIN.clearLog()">
+                <i class="ph ph-trash"></i> Clear
+              </button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__header">
+              <span class="panel__header-title"><i class="ph ph-terminal"></i> Event Log</span>
+              <span class="tag tag--steel">Last 30 events</span>
+            </div>
+            <div class="panel__body" id="logContainer">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==========================================================
+             PAGE: QUICK ACTIONS
+             ========================================================== -->
+        <section class="admin-page" id="actionsPage">
+
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px;position:relative;z-index:1;">
+            <div>
+              <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">Quick Actions</h2>
+              <p style="font-size:0.85rem;color:var(--muted);margin-top:2px;">
+                Common tasks and shortcuts.
+              </p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__header">
+              <span class="panel__header-title"><i class="ph ph-lightning"></i> Shortcuts</span>
+            </div>
+            <div class="panel__body" id="quickActionsContainer">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__header">
+              <span class="panel__header-title"><i class="ph ph-info"></i> About This Admin</span>
+            </div>
+            <div class="panel__body" style="font-size:0.85rem;color:var(--muted);line-height:1.8;">
+              <p><strong>BLOK. Admin Panel v1.0</strong> — Client-side admin interface for the BLOK. WebDev Studio site.</p>
+              <p style="margin-top:8px;">
+                • <strong>Data Storage:</strong> All data is stored in your browser's localStorage. Nothing is sent to any server.<br>
+                • <strong>Authentication:</strong> Credentials are stored in a gitignored <code>credentials.json</code> file — never in the repo.<br>
+                • <strong>Leads:</strong> Contact form submissions from the live site are captured here. To capture real submissions, the site's contact form must post to <code>admin/leads/import</code> or use the localStorage API.<br>
+                • <strong>Portfolio:</strong> Items managed here are independent from the hardcoded items in <code>index.html</code>. Update the HTML to reflect changes.
+              </p>
+              <p style="margin-top:12px;font-family:var(--font-mono);font-size:0.7rem;color:var(--steel-light);">
+                STRUCTURAL INTEGRITY: 98.7% · BUILT WITH BLOK.
+              </p>
+            </div>
+          </div>
+
+        </section>
+
+      </div><!-- /admin-content -->
+    </main>
+
+  </div><!-- /admin-layout -->
+
+  <script src="js/admin.js"></script>
+
+</body></html>

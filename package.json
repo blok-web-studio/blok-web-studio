@@ -1,0 +1,13 @@
+{
+  "name": "blok-webdev-studio",
+  "version": "1.0.0",
+  "description": "BLOK. WebDev Studio — structural admin + site",
+  "type": "module",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "netlify build"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.2.0"
+  }
+}

@@ -1,14 +1,16 @@
 <!doctype html>
-<html lang="en" data-viz="structure"><head>
+<html lang="en" data-viz="structure" class="no-js"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BLOK. — Structural Web Studio</title>
   <meta name="description" content="BLOK. WebDev Studio builds monumental websites. Every block, from ground up.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%23e63946'/><text x='16' y='22' font-family='system-ui' font-size='20' font-weight='bold' fill='%23fff' text-anchor='middle'>B</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/structural.css">
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <script>document.documentElement.classList.replace('no-js', 'js');</script>
 </head>
 <body>
 
@@ -19,11 +21,10 @@
   <nav class="structural-nav" role="navigation" aria-label="Floor plan">
     <div class="structural-nav__indicator" aria-hidden="true"></div>
     <a href="#hero" class="structural-nav__floor structural-nav__floor--active" data-floor="01" data-screen="Ground">Ground</a>
-    <a href="#philosophy" class="structural-nav__floor" data-floor="02" data-screen="Sub">Sub</a>
-    <a href="#services" class="structural-nav__floor" data-floor="03" data-screen="Lobby">Lobby</a>
+    <a href="#services" class="structural-nav__floor" data-floor="02" data-screen="Lobby">Lobby</a>
     <a href="#work" class="structural-nav__floor" data-floor="04" data-screen="Mezz">Mezz</a>
     <a href="#process" class="structural-nav__floor" data-floor="05" data-screen="Core">Core</a>
-    <a href="#pricing" class="structural-nav__floor" data-floor="06" data-screen="Upper">Upper</a>
+    <a href="#cta" class="structural-nav__floor" data-floor="06" data-screen="Upper">Upper</a>
     <a href="#contact" class="structural-nav__floor" data-floor="07" data-screen="Roof">Roof</a>
   </nav>
 
@@ -41,41 +42,34 @@
 
   <div class="main-content">
 
-  <!-- HERO -- The Monument -->
+  <!-- HERO -- The Structure -->
   <section class="hero" id="hero" data-screen="Ground">
-    <!-- Block assembly canvas -->
-    <div class="block-canvas" id="blockCanvas" aria-hidden="true"></div>
+    <div class="hero__split">
+      <div class="hero__copy">
+        <div class="hero__eyebrow">
+          <span>WebDev Studio</span>
+        </div>
 
-    <div class="hero-content">
-      <div class="hero__eyebrow">
-        <span>WebDev Studio</span>
-      </div>
-
-      <div class="hero__monument">
-        <h1 class="hero__monument-text" id="heroTitle">
+        <h1 class="hero__title">
           BLOK<span class="dot">.</span>
         </h1>
+
+        <p class="hero__tagline">
+          We build sites, <span class="mono">block by BLOK.</span>
+        </p>
+
+        <div class="hero__actions">
+          <a href="#work" class="btn btn--primary">See the work</a>
+          <a href="#contact" class="btn btn--ghost">Start a project</a>
+        </div>
       </div>
 
-      <p class="hero__tagline">
-        We build sites, <span class="mono">block by BLOK.</span>
-      </p>
-
-      <div class="hero__actions">
-        <a href="#work" class="btn btn--primary">See the work</a>
-        <a href="#contact" class="btn btn--ghost">Start a project</a>
-      </div>
+      <div class="hero__disciplines" id="heroDisciplines"></div>
     </div>
 
     <div class="scroll-indicator">
       <span>Traverse structure</span>
       <div class="scroll-indicator__line"></div>
-    </div>
-
-    <!-- Block counter — anchored to hero, scrolls away -->
-    <div class="block-counter" aria-hidden="true">
-      <div class="block-counter__num"><span id="blocksLaid">0</span><span class="total"> / <span id="blocksTotal">0</span></span></div>
-      <div class="block-counter__label">Blocks laid</div>
     </div>
   </section>
 
@@ -97,39 +91,7 @@
     </div>
   </div>
 
-  <!-- PHILOSOPHY -- Three Structural Principles -->
-  <section class="section" id="philosophy" data-screen="Sub">
-    <div class="container">
-      <div class="section-header">
-        <span class="eyebrow">Our Philosophy</span>
-        <h2>Built block by block,<br>not template by template.</h2>
-      </div>
 
-      <div class="philosophy-stack">
-        <div class="philosophy-block reveal-block" data-reveal="">
-          <span class="philosophy-block__num">01</span>
-          <div>
-            <h3>Bold ≠ loud</h3>
-            <p>We make statements without shouting. Our work stands out because it's clear, confident, and honest — not because it's the brightest thing on the page. Structure speaks for itself.</p>
-          </div>
-        </div>
-        <div class="philosophy-block reveal-block" data-reveal="">
-          <span class="philosophy-block__num">02</span>
-          <div>
-            <h3>Brutalist ≠ ugly</h3>
-            <p>Brutalism is about raw honesty — showing the structure, celebrating the material. We soften it with warm concrete tones, generous whitespace, and intentional quirks that make people stop scrolling.</p>
-          </div>
-        </div>
-        <div class="philosophy-block reveal-block" data-reveal="">
-          <span class="philosophy-block__num">03</span>
-          <div>
-            <h3>Cheap ≠ low quality</h3>
-            <p>We make cool stuff for people who thought they couldn't afford it. No suits. No meetings that could've been emails. Just solid work, fair price, delivered on time. Every block accounted for.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- SERVICES -- Structural Systems -->
   <section class="section" id="services" data-screen="Lobby">
@@ -245,67 +207,55 @@
 
       <div class="work-filters" role="tablist">
         <button class="work-filter work-filter--active" data-filter="all" role="tab">All</button>
-        <button class="work-filter" data-filter="design" role="tab">Design</button>
-        <button class="work-filter" data-filter="dev" role="tab">Development</button>
-        <button class="work-filter" data-filter="ecom" role="tab">E-Commerce</button>
+        <button class="work-filter" data-filter="demo" role="tab">Demos</button>
+        <button class="work-filter" data-filter="client" role="tab">Clients</button>
       </div>
 
       <div class="work-grid reveal-stagger" data-reveal-stagger="">
-        <div class="work-item" data-category="design">
+        <a href="https://blok-web-studio.github.io/demo-sites/audiosystem_aurora/index.html" target="_blank" rel="noopener" class="work-item" data-category="demo">
           <div class="work-item__thumb">
             <div class="work-item__thumb-grid"></div>
-            <span class="work-item__thumb-label">F O R M</span>
+            <span class="work-item__thumb-label">A U R O R A</span>
           </div>
           <div class="work-item__body">
-            <span class="work-item__tag">Design</span>
-            <div class="work-item__title">FORM Architecture</div>
-            <p class="work-item__desc">Minimalist portfolio for an architecture firm. Full-bleed imagery, brutalist grid, subtle scroll narrative.</p>
+            <span class="work-item__tag">Demo</span>
+            <div class="work-item__title">Aurora Audio Systems</div>
+            <p class="work-item__desc">Premium audio hardware concept. CNC-machined precision, studio-reference clarity, and industrial design showcase.</p>
           </div>
-        </div>
-        <div class="work-item" data-category="dev">
+        </a>
+        <a href="https://blok-web-studio.github.io/demo-sites/barbershop_ironnshears/index.html" target="_blank" rel="noopener" class="work-item" data-category="demo">
           <div class="work-item__thumb">
             <div class="work-item__thumb-grid"></div>
-            <span class="work-item__thumb-label">S H O P</span>
+            <span class="work-item__thumb-label">I R O N</span>
           </div>
           <div class="work-item__body">
-            <span class="work-item__tag">Dev</span>
-            <div class="work-item__title">Rawsuit</div>
-            <p class="work-item__desc">Custom e-commerce backend with a headless front-end. Sub-second page loads, seamless checkout.</p>
+            <span class="work-item__tag">Demo</span>
+            <div class="work-item__title">Iron &amp; Shears</div>
+            <p class="work-item__desc">Traditional barbershop with a modern edge. Straight-razor shaves, classic cuts, and dark atmosphere.</p>
           </div>
-        </div>
-        <div class="work-item" data-category="design">
+        </a>
+        <a href="https://blok-web-studio.github.io/demo-sites/cafe_lambre/index.html" target="_blank" rel="noopener" class="work-item" data-category="demo">
           <div class="work-item__thumb">
             <div class="work-item__thumb-grid"></div>
-            <span class="work-item__thumb-label">S T U D I O</span>
+            <span class="work-item__thumb-label">L' A M B R E</span>
           </div>
           <div class="work-item__body">
-            <span class="work-item__tag">Design</span>
-            <div class="work-item__title">Bentley Creative</div>
-            <p class="work-item__desc">Agency rebrand and full website. Bold typography, high-contrast palette, immersive case studies.</p>
+            <span class="work-item__tag">Demo</span>
+            <div class="work-item__title">L'ambre</div>
+            <p class="work-item__desc">Mediterranean bistro concept. Candlelit Aegean flavors, wood-fired hearth, and warm hospitality.</p>
           </div>
-        </div>
-        <div class="work-item" data-category="ecom">
+        </a>
+        <a href="https://blok-web-studio.github.io/demo-sites/lawfirm_vanguard/index.html" target="_blank" rel="noopener" class="work-item" data-category="demo">
           <div class="work-item__thumb">
             <div class="work-item__thumb-grid"></div>
-            <span class="work-item__thumb-label">G O O D S</span>
+            <span class="work-item__thumb-label">V A N G U A R D</span>
           </div>
           <div class="work-item__body">
-            <span class="work-item__tag">E-Commerce</span>
-            <div class="work-item__title">Matter Goods</div>
-            <p class="work-item__desc">Sustainable goods store with a custom Shopify theme. Product-first layout, zero bloat.</p>
+            <span class="work-item__tag">Demo</span>
+            <div class="work-item__title">Vanguard</div>
+            <p class="work-item__desc">Corporate law firm with cold precision. Authoritative defense, ironclad strategy, and professional service design.</p>
           </div>
-        </div>
-        <div class="work-item" data-category="dev">
-          <div class="work-item__thumb">
-            <div class="work-item__thumb-grid"></div>
-            <span class="work-item__thumb-label">A P P</span>
-          </div>
-          <div class="work-item__body">
-            <span class="work-item__tag">Dev</span>
-            <div class="work-item__title">Trackr</div>
-            <p class="work-item__desc">Real-time project dashboard with live updates, role-based access, and a clean data visualization layer.</p>
-          </div>
-        </div>
+        </a>
       </div>
     </div>
   </section>
@@ -313,179 +263,150 @@
   <!-- PROCESS -- Construction Timeline -->
   <section class="section" id="process" data-screen="Core">
     <div class="container">
-      <div class="section-header">
-        <span class="eyebrow">Construction Schedule</span>
-        <h2>From brief to launch.</h2>
-      </div>
-
-      <div class="process-timeline reveal-stagger" data-reveal-stagger="">
-        <div class="process-step" data-step="1">
-          <div class="process-step__marker">01</div>
-          <div class="process-step__title">Brief &amp; Discovery</div>
-          <p class="process-step__desc">We learn about your business, your audience, and what makes you different. One focused session, no fluff.</p>
-          <div class="process-step__meta">
-            <span>Duration: 1 week</span>
-            <span>Deliverable: brief document</span>
+      <div class="process-split">
+        <div class="process-split__header">
+          <div class="section-header">
+            <span class="eyebrow">Construction Schedule</span>
+            <h2>From brief to launch.</h2>
           </div>
         </div>
-        <div class="process-step" data-step="2">
-          <div class="process-step__marker">02</div>
-          <div class="process-step__title">Design &amp; Direction</div>
-          <p class="process-step__desc">We nail the visual direction fast — moodboards, typography, layout. You see options, pick one, we run.</p>
-          <div class="process-step__meta">
-            <span>Duration: 1–2 weeks</span>
-            <span>Deliverable: design system</span>
-          </div>
-        </div>
-        <div class="process-step" data-step="3">
-          <div class="process-step__marker">03</div>
-          <div class="process-step__title">Build &amp; Iterate</div>
-          <p class="process-step__desc">We build block by block. You get a live preview as we go. Feedback is quick, changes are cheaper early.</p>
-          <div class="process-step__meta">
-            <span>Duration: 3–6 weeks</span>
-            <span>Deliverable: staging site</span>
-          </div>
-        </div>
-        <div class="process-step" data-step="4">
-          <div class="process-step__marker">04</div>
-          <div class="process-step__title">Launch &amp; Support</div>
-          <p class="process-step__desc">We deploy, test everything twice, and hand over the keys. You're never left hanging after launch day.</p>
-          <div class="process-step__meta">
-            <span>Duration: 1 week</span>
-            <span>Deliverable: live site</span>
+        <div class="process-split__timeline">
+          <div class="process-timeline reveal-stagger" data-reveal-stagger="">
+            <div class="process-step" data-step="1">
+              <div class="process-step__marker">01</div>
+              <div class="process-step__title">Brief &amp; Discovery</div>
+              <p class="process-step__desc">We learn about your business, your audience, and what makes you different. One focused session, no fluff.</p>
+              <div class="process-step__meta">
+                <span>Duration: 1 week</span>
+                <span>Deliverable: brief document</span>
+              </div>
+            </div>
+            <div class="process-step" data-step="2">
+              <div class="process-step__marker">02</div>
+              <div class="process-step__title">Design &amp; Direction</div>
+              <p class="process-step__desc">We nail the visual direction fast — moodboards, typography, layout. You see options, pick one, we run.</p>
+              <div class="process-step__meta">
+                <span>Duration: 1–2 weeks</span>
+                <span>Deliverable: design system</span>
+              </div>
+            </div>
+            <div class="process-step" data-step="3">
+              <div class="process-step__marker">03</div>
+              <div class="process-step__title">Build &amp; Iterate</div>
+              <p class="process-step__desc">We build block by block. You get a live preview as we go. Feedback is quick, changes are cheaper early.</p>
+              <div class="process-step__meta">
+                <span>Duration: 3–6 weeks</span>
+                <span>Deliverable: staging site</span>
+              </div>
+            </div>
+            <div class="process-step" data-step="4">
+              <div class="process-step__marker">04</div>
+              <div class="process-step__title">Launch &amp; Support</div>
+              <p class="process-step__desc">We deploy, test everything twice, and hand over the keys. You're never left hanging after launch day.</p>
+              <div class="process-step__meta">
+                <span>Duration: 1 week</span>
+                <span>Deliverable: live site</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- TESTIMONIALS -->
+  <!-- TESTIMONIALS -- Structural Load Reports Wall -->
   <section class="section" id="testimonials" data-screen="Core">
-    <div class="container container--narrow">
+    <div class="container">
       <div class="section-header section-header--center">
-        <span class="eyebrow">Structural Reports</span>
+        <span class="eyebrow">Client Reports</span>
         <h2>What clients say.</h2>
       </div>
 
-      <div class="reveal-stagger" data-reveal-stagger="">
-        <div class="frame-corners">
-          <p class="testimonial-text">"BLOK. took our vague ideas and turned them into a site that actually feels like us. No template could've done what they did."</p>
-          <div class="testimonial-author">
-            <span class="testimonial-avatar">JD</span>
-            <span>Jordan Davis — Founder, Bent Creative</span>
+      <div class="testimonial-wall" data-reveal-stagger="">
+
+        <!-- Brand Identity — Jordan Davis, LOAD 98% -->
+        <div class="testimonial-block testimonial-block--featured">
+          <span class="testimonial-block__tag">Brand Identity</span>
+          <p class="testimonial-block__quote">"BLOK. took our vague ideas and turned them into a site that actually feels like us. No template could've done what they did."</p>
+          <div class="testimonial-block__footer">
+            <span class="testimonial-block__author">
+              <span class="testimonial-block__avatar">JD</span>
+              <span class="testimonial-block__name">Jordan Davis, Bent Creative</span>
+            </span>
+            <span class="testimonial-block__load">LOAD 98%</span>
           </div>
         </div>
 
-        <div class="frame-corners">
-          <p class="testimonial-text">"The brutalist thing isn't usually my style, but BLOK. made it warm. We get compliments on the site constantly. Best investment we made this year."</p>
-          <div class="testimonial-author">
-            <span class="testimonial-avatar">AL</span>
-            <span>Alex Liu — Owner, Matter Goods</span>
+        <!-- Web Design — Maya Krishnan, LOAD 96% -->
+        <div class="testimonial-block">
+          <span class="testimonial-block__tag">Web Design</span>
+          <p class="testimonial-block__quote">"We'd been burned by agencies before. BLOK. was straight up about timeline and budget — and they actually delivered on both."</p>
+          <div class="testimonial-block__footer">
+            <span class="testimonial-block__author">
+              <span class="testimonial-block__avatar">MK</span>
+              <span class="testimonial-block__name">Maya Krishnan, Form Arch.</span>
+            </span>
+            <span class="testimonial-block__load">LOAD 96%</span>
           </div>
         </div>
 
-        <div class="frame-corners">
-          <p class="testimonial-text">"We'd been burned by agencies before. BLOK. was straight up about timeline and budget — and they actually delivered on both. Novel concept, right?"</p>
-          <div class="testimonial-author">
-            <span class="testimonial-avatar">MK</span>
-            <span>Maya Krishnan — CEO, Form Architecture</span>
+        <!-- Brand + Site — Taylor Nguyen, LOAD 93% -->
+        <div class="testimonial-block">
+          <span class="testimonial-block__tag">Brand + Site</span>
+          <p class="testimonial-block__quote">"BLOK. doesn't do 'I'll have my people call your people.' You talk directly to the people building your site."</p>
+          <div class="testimonial-block__footer">
+            <span class="testimonial-block__author">
+              <span class="testimonial-block__avatar">TN</span>
+              <span class="testimonial-block__name">Taylor Nguyen, Common Ground</span>
+            </span>
+            <span class="testimonial-block__load">LOAD 93%</span>
           </div>
         </div>
+
+        <!-- Full Site — Lena Cruz, LOAD 97% -->
+        <div class="testimonial-block testimonial-block--featured">
+          <span class="testimonial-block__tag">Full Site</span>
+          <p class="testimonial-block__quote">"The design is brutalist but warm — that's a hard line to walk. They nailed it."</p>
+          <div class="testimonial-block__footer">
+            <span class="testimonial-block__author">
+              <span class="testimonial-block__avatar">LC</span>
+              <span class="testimonial-block__name">Lena Cruz, Studio 8</span>
+            </span>
+            <span class="testimonial-block__load">LOAD 97%</span>
+          </div>
+        </div>
+
+        <!-- E-Commerce — Chris Wong, LOAD 99% -->
+        <div class="testimonial-block testimonial-block--featured">
+          <span class="testimonial-block__tag">E-Commerce</span>
+          <p class="testimonial-block__quote">"I've worked with six agencies. BLOK. is the only one I'd recommend to a friend."</p>
+          <div class="testimonial-block__footer">
+            <span class="testimonial-block__author">
+              <span class="testimonial-block__avatar">CW</span>
+              <span class="testimonial-block__name">Chris Wong, Ridgetop Gear</span>
+            </span>
+            <span class="testimonial-block__load">LOAD 99%</span>
+          </div>
+        </div>
+
+        <!-- Web App — Marcus Hall, LOAD 96% -->
+        <div class="testimonial-block">
+          <span class="testimonial-block__tag">Web App</span>
+          <p class="testimonial-block__quote">"BLOK. is the real deal. No ego, no jargon, just excellent craft."</p>
+          <div class="testimonial-block__footer">
+            <span class="testimonial-block__author">
+              <span class="testimonial-block__avatar">MH</span>
+              <span class="testimonial-block__name">Marcus Hall, Overlap Studio</span>
+            </span>
+            <span class="testimonial-block__load">LOAD 96%</span>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
 
-  <!-- PRICING -- Structural Tiers -->
-  <section class="section" id="pricing" data-screen="Upper">
-    <div class="container">
-      <div class="section-header">
-        <span class="eyebrow">Structural Tiers</span>
-        <h2>Straight up about cost.</h2>
-        <p class="section-subtitle">No hidden fees. No surprise charges. Pick the tier that fits your stage.</p>
-      </div>
 
-      <div class="pricing-towers reveal-stagger" data-reveal-stagger="">
-        <div class="pricing-tower" data-tower="1">
-          <div class="pricing-tower__skyline" data-bars="10,16,24,12,20,8,28,14" aria-hidden="true">
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-          </div>
-          <div class="pricing-tower__name">Starter</div>
-          <div class="pricing-tower__price">$2,500</div>
-          <div class="pricing-tower__period">per project</div>
-          <ul class="pricing-tower__features">
-            <li class="pricing-tower__feature"><i class="ph ph-check"></i> 5-page custom design</li>
-            <li class="pricing-tower__feature"><i class="ph ph-check"></i> Responsive development</li>
-            <li class="pricing-tower__feature"><i class="ph ph-check"></i> Basic SEO setup</li>
-            <li class="pricing-tower__feature pricing-tower__feature--na"><i class="ph ph-x"></i> CMS integration</li>
-            <li class="pricing-tower__feature pricing-tower__feature--na"><i class="ph ph-x"></i> E-commerce</li>
-          </ul>
-          <a href="#contact" class="btn btn--ghost btn--block">Get Started</a>
-        </div>
-
-        <div class="pricing-tower pricing-tower--featured" data-tower="2">
-          <span class="pricing-tower__badge">Most Popular</span>
-          <div class="pricing-tower__skyline" data-bars="10,24,40,16,32,20,48,12,36,28" aria-hidden="true">
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-          </div>
-          <div class="pricing-tower__name">Growth</div>
-          <div class="pricing-tower__price">$6,000</div>
-          <div class="pricing-tower__period">per project</div>
-          <ul class="pricing-tower__features">
-            <li class="pricing-tower__feature"><i class="ph ph-check"></i> 10-page custom design</li>
-            <li class="pricing-tower__feature"><i class="ph ph-check"></i> Responsive development</li>
-            <li class="pricing-tower__feature"><i class="ph ph-check"></i> Advanced SEO &amp; analytics</li>
-            <li class="pricing-tower__feature"><i class="ph ph-check"></i> CMS integration</li>
-            <li class="pricing-tower__feature pricing-tower__feature--na"><i class="ph ph-x"></i> E-commerce</li>
-          </ul>
-          <a href="#contact" class="btn btn--primary btn--block">Get Started</a>
-        </div>
-
-        <div class="pricing-tower" data-tower="3">
-          <div class="pricing-tower__skyline" data-bars="10,36,60,24,48,16,72,30,56,20,44,28" aria-hidden="true">
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-            <div class="pricing-tower__skyline-bar" style="--h: 0%"></div>
-          </div>
-          <div class="pricing-tower__name">Custom</div>
-          <div class="pricing-tower__price">$12,000+</div>
-          <div class="pricing-tower__period">per project</div>
-          <ul class="pricing-tower__features">
-            <li class="pricing-tower__feature"><i class="ph ph-check"></i> Unlimited pages</li>
-            <li class="pricing-tower__feature"><i class="ph ph-check"></i> Full-stack development</li>
-            <li class="pricing-tower__feature"><i class="ph ph-check"></i> Custom SEO strategy</li>
-            <li class="pricing-tower__feature"><i class="ph ph-check"></i> CMS integration</li>
-            <li class="pricing-tower__feature"><i class="ph ph-check"></i> E-commerce ready</li>
-          </ul>
-          <a href="#contact" class="btn btn--ghost btn--block">Get Started</a>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- CTA -- Ready to build -->
   <section class="section" id="cta" data-screen="Upper">
@@ -494,7 +415,7 @@
         <span class="eyebrow">Next Steps</span>
         <h2>Ready to build<br>something monumental?</h2>
         <p>
-          No pitch decks. No pressure. Just tell us about your thing and we'll see if we click.
+          Projects start from <strong>$400</strong>. No pitch decks. No pressure. Just tell us about your thing and we'll see if we click.
         </p>
         <a href="#contact" class="btn btn--accent btn--lg">Start a project <i class="ph ph-arrow-right"></i></a>
       </div>
@@ -517,7 +438,7 @@
           </p>
           <div class="contact-info__detail">
             <i class="ph ph-envelope"></i>
-            <span>hello@blok.studio</span>
+            <span>blok_webdev@proton.me</span>
           </div>
           <div class="contact-info__detail">
             <i class="ph ph-map-pin"></i>
@@ -533,7 +454,7 @@
           </div>
         </div>
 
-        <form class="form-structural" id="contactForm">
+        <form class="form-structural" id="contactForm" novalidate>
           <div class="form-group">
             <label for="name">Your Name</label>
             <input type="text" id="name" placeholder="e.g. Jamie Chen" required="">
@@ -605,16 +526,15 @@
         <div class="footer-grid">
           <div>
             <div class="footer-brand">BLOK<span class="dot">.</span></div>
-            <p class="footer-tagline">WebDev Studio. Building bold websites for people who thought they couldn't afford it.</p>
+            <p class="footer-tagline">WebDev Studio. Building bold websites for people who thought they couldn't afford it. <strong>Projects from $400.</strong></p>
           </div>
           <div>
             <div class="footer-heading">Navigation</div>
             <div class="footer-links">
-              <a href="#philosophy">Philosophy</a>
               <a href="#services">Services</a>
               <a href="#work">Work</a>
               <a href="#process">Process</a>
-              <a href="#pricing">Pricing</a>
+              <a href="#cta">Get Started</a>
             </div>
           </div>
           <div>
@@ -629,21 +549,13 @@
           <div>
             <div class="footer-heading">Connect</div>
             <div class="footer-links">
-              <a href="mailto:hello@blok.studio">hello@blok.studio</a>
-              <a href="#">Twitter / X</a>
-              <a href="#">GitHub</a>
-              <a href="#">Dribbble</a>
+              <a href="mailto:blok_webdev@proton.me">blok_webdev@proton.me</a>
             </div>
           </div>
         </div>
         <div class="footer-bottom">
           <span class="footer-bottom__text">© 2026 BLOK. WebDev Studio. All rights reserved.</span>
-          <div class="footer-social">
-            <a href="#" aria-label="Twitter"><i class="ph ph-twitter-logo"></i></a>
-            <a href="#" aria-label="GitHub"><i class="ph ph-github-logo"></i></a>
-            <a href="#" aria-label="Dribbble"><i class="ph ph-dribbble-logo"></i></a>
-            <a href="#" aria-label="Instagram"><i class="ph ph-instagram-logo"></i></a>
-          </div>
+          <a href="admin/login.html" class="footer-bottom__text" style="opacity:0.25;transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.25" target="_blank">⚙ Admin</a>
         </div>
       </div>
     </div>
