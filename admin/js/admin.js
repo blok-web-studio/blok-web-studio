@@ -627,7 +627,10 @@
         headerTitle.textContent = activeItem.textContent.trim();
       }
 
-      window.location.hash = pageId;
+      // Only set hash if different (avoids redundant navigation/reload)
+      if (window.location.hash !== '#' + pageId) {
+        window.location.hash = pageId;
+      }
 
       // Refresh data when navigating to data-heavy pages
       if (['dashboard', 'leads', 'portfolio', 'inspector'].includes(pageId)) {
