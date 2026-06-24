@@ -1711,8 +1711,14 @@ a.work-item {
   }
 }
 
+.brand-lot {
+  font-family: 'LOT Free', var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
 .footer-brand {
-  font-family: var(--font-display);
+  font-family: 'LOT Free', var(--font-display);
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.03em;

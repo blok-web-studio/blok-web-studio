@@ -110,7 +110,7 @@ a:hover { text-decoration: underline; }
   gap: 10px;
   padding: 16px var(--gutter);
   border-bottom: var(--border-w) solid var(--border);
-  font-family: var(--font-display);
+  font-family: 'LOT Free', var(--font-display);
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -120,6 +120,13 @@ a:hover { text-decoration: underline; }
 }
 
 .admin-nav__brand .dot { color: var(--accent); }
+
+.brand-lot {
+  font-family: 'LOT Free', var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
 .admin-nav__brand .badge {
   font-family: var(--font-mono);
   font-size: 0.5rem;
