@@ -68,18 +68,18 @@ export const handler = async (event, context) => {
     }
   }
 
-  // ── PATCH: Update lead status ──────────────────────────────
+  // ── PATCH: Update lead status or notes ─────────────────────
   if (method === 'PATCH') {
     try {
       const body = JSON.parse(event.body || '{}');
-      const { id, status } = body;
+      const { id, status, notes } = body;
 
-      if (!id || !status) {
-        return fail('id and status are required.');
+      if (!id) {
+        return fail('id is required.');
       }
 
-      if (!['new', 'read', 'archived'].includes(status)) {
-        return fail('Invalid status. Must be: new, read, or archived.');
+      if (status && !['new', 'read', 'contacted', 'qualified', 'won', 'lost', 'archived'].includes(status)) {
+        return fail('Invalid status. Must be: new, read, contacted, qualified, won, lost, or archived.');
       }
 
       const leads = await safeBlobGet(store, 'leads');
@@ -88,7 +88,15 @@ export const handler = async (event, context) => {
         return fail('Lead not found.', 404);
       }
 
-      lead.status = status;
+      if (status) {
+        lead.status = status;
+        lead.statusUpdatedAt = new Date().toISOString();
+      }
+      if (notes !== undefined) {
+        lead.notes = notes;
+        lead.notesUpdatedAt = new Date().toISOString();
+      }
+
       await safeBlobSet(store, 'leads', leads);
 
       return ok({ lead });

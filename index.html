@@ -271,39 +271,28 @@
           <div class="process-timeline reveal-stagger" data-reveal-stagger="">
             <div class="process-step" data-step="1">
               <div class="process-step__marker">01</div>
-              <div class="process-step__title">Brief &amp; Discovery</div>
-              <p class="process-step__desc">We learn about your business, your audience, and what makes you different. One focused session, no fluff.</p>
-              <div class="process-step__meta">
-                <span>Duration: 1 week</span>
-                <span>Deliverable: brief document</span>
-              </div>
+              <div class="process-step__title">Brief &amp; Brand</div>
+              <p class="process-step__desc">Message me your business details and any branding you have. One focused share, no fluff.</p>
             </div>
             <div class="process-step" data-step="2">
               <div class="process-step__marker">02</div>
-              <div class="process-step__title">Design &amp; Direction</div>
-              <p class="process-step__desc">We nail the visual direction fast — moodboards, typography, layout. You see options, pick one, we run.</p>
-              <div class="process-step__meta">
-                <span>Duration: 1–2 weeks</span>
-                <span>Deliverable: design system</span>
-              </div>
+              <div class="process-step__title">Free Demo Build</div>
+              <p class="process-step__desc">I build a working demo on the house — no payment needed. You see the vision before committing a cent.</p>
             </div>
             <div class="process-step" data-step="3">
               <div class="process-step__marker">03</div>
-              <div class="process-step__title">Build &amp; Iterate</div>
-              <p class="process-step__desc">We build block by block. You get a live preview as we go. Feedback is quick, changes are cheaper early.</p>
-              <div class="process-step__meta">
-                <span>Duration: 3–6 weeks</span>
-                <span>Deliverable: staging site</span>
-              </div>
+              <div class="process-step__title">You Decide</div>
+              <p class="process-step__desc">Love it? We proceed to refine and build the full site. Not the right fit? No pressure, no hard feelings.</p>
             </div>
             <div class="process-step" data-step="4">
               <div class="process-step__marker">04</div>
-              <div class="process-step__title">Launch &amp; Support</div>
-              <p class="process-step__desc">We deploy, test everything twice, and hand over the keys. You're never left hanging after launch day.</p>
-              <div class="process-step__meta">
-                <span>Duration: 1 week</span>
-                <span>Deliverable: live site</span>
-              </div>
+              <div class="process-step__title">Build &amp; Refine</div>
+              <p class="process-step__desc">Full site build-out block by block. You get a live preview as we go — feedback is quick, changes are cheap early.</p>
+            </div>
+            <div class="process-step" data-step="5">
+              <div class="process-step__marker">05</div>
+              <div class="process-step__title">Launch &amp; Host</div>
+              <p class="process-step__desc">Final site delivered and live out of the box — free hosting included. You're never left hanging after launch day.</p>
             </div>
           </div>
         </div>
@@ -414,7 +403,10 @@
         <p>
           Projects start from <strong>$400</strong>. No pitch decks. No pressure. Just tell us about your thing and we'll see if we click.
         </p>
-        <a href="#contact" class="btn btn--accent btn--lg">Start a project <i class="ph ph-arrow-right"></i></a>
+        <div class="cta-actions">
+          <a href="https://www.fiverr.com/musa_murad/design-and-build-a-custom-website-for-your-startup" target="_blank" rel="noopener" class="btn btn--accent btn--lg">Order on Fiverr <i class="ph ph-arrow-up-right"></i></a>
+          <a href="#contact" class="btn btn--outline btn--lg">Start a project <i class="ph ph-arrow-down"></i></a>
+        </div>
       </div>
     </div>
   </section>
@@ -435,47 +427,162 @@
           </p>
           <div class="contact-info__detail">
             <i class="ph ph-envelope"></i>
-            <span>blok_webdev@proton.me</span>
-          </div>
-          <div class="contact-info__detail">
-            <i class="ph ph-map-pin"></i>
-            <span>Portland, OR — working remote worldwide</span>
+            <a href="mailto:blok_webdev@proton.me">blok_webdev@proton.me</a>
           </div>
           <div class="contact-info__detail">
             <i class="ph ph-clock"></i>
-            <span>Reply within 24 hours. Usually faster.</span>
+            <span>Reply within <strong>1–4 hours</strong>. Usually faster.</span>
           </div>
           <div class="contact-info__detail">
-            <i class="ph ph-hard-hat"></i>
-            <span>Structural integrity: <strong>98.7%</strong></span>
+            <i class="ph ph-briefcase"></i>
+            <a href="https://fiverr.com" target="_blank" rel="noopener">Fiverr</a>
+          </div>
+          <div class="contact-info__detail">
+            <i class="ph ph-instagram-logo"></i>
+            <a href="https://instagram.com/blok.webdev" target="_blank" rel="noopener">@blok.webdev</a>
+          </div>
+          <div class="contact-info__detail">
+            <i class="ph ph-whatsapp-logo"></i>
+            <a href="https://wa.me/905067814686" target="_blank" rel="noopener">+90 506 781 46 86</a>
           </div>
         </div>
 
         <form class="form-structural" id="contactForm" novalidate>
-          <div class="form-group">
-            <label for="name">Your Name</label>
-            <input type="text" id="name" placeholder="e.g. Jamie Chen" required="">
+          <div class="form-structural__header">
+            <span class="form-structural__title">Project Brief</span>
+            <span class="form-structural__step" id="formStep">1 / 2</span>
           </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" placeholder="jamie@example.com" required="">
+
+          <!-- Step 1: Contact Info -->
+          <div class="form-step" id="formStep1">
+            <div class="form-group">
+              <label for="name">Your Name <span class="required">*</span></label>
+              <input type="text" id="name" placeholder="e.g. Jamie Chen" required="" autocomplete="name">
+              <span class="form-field__error" id="nameError"></span>
+            </div>
+            <div class="form-group">
+              <label for="email">Email <span class="required">*</span></label>
+              <input type="email" id="email" placeholder="jamie@example.com" required="" autocomplete="email">
+              <span class="form-field__error" id="emailError"></span>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="company">Company</label>
+                <input type="text" id="company" placeholder="Your studio or brand" autocomplete="organization">
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" placeholder="+1 555 000 0000" autocomplete="tel">
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="budget">Budget Range</label>
-            <select id="budget">
-              <option value="" disabled="" selected="">Select range</option>
-              <option value="400-1k">$400 — $1,000</option>
-              <option value="1k-2k">$1,000 — $2,000</option>
-              <option value="3k-5k">$3,000 — $5,000</option>
-              <option value="5k+">$5,000+</option>
-            </select>
+
+          <!-- Step 2: Project Details -->
+          <div class="form-step" id="formStep2" style="display:none;">
+            <div class="form-group">
+              <label for="budget">Budget Range <span class="required">*</span></label>
+              <select id="budget" required="">
+                <option value="" disabled="" selected="">Select your range</option>
+                <option value="under-1k">Under $1,000</option>
+                <option value="1k-3k">$1,000 — $3,000</option>
+                <option value="3k-5k">$3,000 — $5,000</option>
+                <option value="5k-10k">$5,000 — $10,000</option>
+                <option value="10k-25k">$10,000 — $25,000</option>
+                <option value="25k+">$25,000+</option>
+                <option value="not-sure">Not sure yet / Need guidance</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Services needed</label>
+              <div class="form-checkboxes">
+                <label class="form-checkbox">
+                  <input type="checkbox" name="services" value="web-design">
+                  <span>Web Design</span>
+                </label>
+                <label class="form-checkbox">
+                  <input type="checkbox" name="services" value="web-dev">
+                  <span>Web Development</span>
+                </label>
+                <label class="form-checkbox">
+                  <input type="checkbox" name="services" value="ecommerce">
+                  <span>E-Commerce</span>
+                </label>
+                <label class="form-checkbox">
+                  <input type="checkbox" name="services" value="branding">
+                  <span>Brand Identity</span>
+                </label>
+                <label class="form-checkbox">
+                  <input type="checkbox" name="services" value="redesign">
+                  <span>Redesign / Refresh</span>
+                </label>
+                <label class="form-checkbox">
+                  <input type="checkbox" name="services" value="consulting">
+                  <span>Consulting / Audit</span>
+                </label>
+                <label class="form-checkbox">
+                  <input type="checkbox" name="services" value="other">
+                  <span>Other</span>
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="timeline">Timeline</label>
+              <select id="timeline">
+                <option value="" disabled="" selected="">Select timeline</option>
+                <option value="asap">ASAP — Within 2 weeks</option>
+                <option value="1-month">1 month</option>
+                <option value="2-3-months">2 — 3 months</option>
+                <option value="3plus">3+ months</option>
+                <option value="flexible">Flexible / Not urgent</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="message">Tell us about your project <span class="required">*</span></label>
+              <textarea id="message" placeholder="What are you building? What's the goal? Got any references or examples?" required="" maxlength="2000"></textarea>
+              <div class="form-field__footer">
+                <span class="form-field__error" id="messageError"></span>
+                <span class="form-field__count" id="charCount">0 / 2000</span>
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="message">Tell us about your project</label>
-            <textarea id="message" placeholder="What are you building? What's the timeline? Got a reference?" required=""></textarea>
+
+          <div class="form-buttons">
+            <button type="button" class="btn btn--ghost" id="formBackBtn" style="display:none;">
+              <i class="ph ph-arrow-left"></i> Back
+            </button>
+            <button type="button" class="btn btn--primary" id="formNextBtn">
+              Next <i class="ph ph-arrow-right"></i>
+            </button>
+            <button type="submit" class="btn btn--primary" id="formSubmitBtn" style="display:none;">
+              <span class="btn__text">Send brief</span>
+              <span class="btn__spinner" style="display:none;"><i class="ph ph-spinner ph-spin"></i></span>
+              <i class="ph ph-arrow-right btn__icon"></i>
+            </button>
           </div>
-          <button type="submit" class="btn btn--primary">Send brief <i class="ph ph-arrow-right"></i></button>
         </form>
+
+        <!-- Success state (hidden initially) -->
+        <div class="form-success" id="formSuccess" style="display:none;">
+          <div class="form-success__icon"><i class="ph ph-check-circle"></i></div>
+          <h3 class="form-success__title">Brief sent successfully.</h3>
+          <p class="form-success__text">
+            Thanks <span id="successName">friend</span>. We'll review your project brief and
+            get back to you within <strong>1–4 hours</strong>.
+          </p>
+          <div class="form-success__details">
+            <div class="form-success__detail">
+              <i class="ph ph-envelope"></i>
+              <span>Confirmation sent to <strong id="successEmail">your email</strong></span>
+            </div>
+            <div class="form-success__detail">
+              <i class="ph ph-clock"></i>
+              <span>Typical response time: <strong>1–4 hours</strong></span>
+            </div>
+          </div>
+          <button class="btn btn--primary" onclick="BLOK.resetForm()">
+            <i class="ph ph-plus"></i> Send another
+          </button>
+        </div>
       </div>
     </div>
   </section>
@@ -546,6 +653,14 @@
             <div class="footer-heading">Connect</div>
             <div class="footer-links">
               <a href="mailto:blok_webdev@proton.me">blok_webdev@proton.me</a>
+              <div class="footer-social" style="margin-top:8px">
+                <a href="https://instagram.com/blok.webdev" target="_blank" rel="noopener" aria-label="Instagram">
+                  <i class="ph ph-instagram-logo"></i>
+                </a>
+                <a href="https://wa.me/905067814686" target="_blank" rel="noopener" aria-label="WhatsApp">
+                  <i class="ph ph-whatsapp-logo"></i>
+                </a>
+              </div>
             </div>
           </div>
         </div>

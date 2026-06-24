@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/admin.css?v=5">
+  <link rel="stylesheet" href="css/admin.css?v=6">
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
   <script>document.documentElement.classList.replace('no-js', 'js');</script>
 </head>
@@ -156,12 +156,15 @@
             <div>
               <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">Contact Leads</h2>
               <p style="font-size:0.85rem;color:var(--muted);margin-top:2px;">
-                Form submissions from the contact section. Mark as read, archive, or export.
+                All incoming project briefs. Filter, search, update status workflow, and add internal notes.
               </p>
             </div>
             <div style="display:flex;gap:8px;">
               <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.exportLeads()">
-                <i class="ph ph-download"></i> Export JSON
+                <i class="ph ph-download"></i> JSON
+              </button>
+              <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.exportLeadsCSV()">
+                <i class="ph ph-file-csv"></i> CSV
               </button>
             </div>
           </div>
@@ -321,6 +324,6 @@
 
   </div><!-- /admin-layout -->
 
-  <script src="js/admin.js?v=5"></script>
+  <script src="js/admin.js?v=6"></script>
 
 </body></html>

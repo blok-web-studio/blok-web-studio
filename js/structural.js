@@ -878,86 +878,246 @@
   });
 
   // =============================================================
-  // 10. Contact Form — Submission handler
+  // 10. Contact Form — Enhanced Brief Sender
   // =============================================================
 
-  const contactForm = document.getElementById('contactForm');
+  var BLOK = window.BLOK || {};
+
+  var contactForm = document.getElementById('contactForm');
   if (contactForm) {
+    var formStep1 = document.getElementById('formStep1');
+    var formStep2 = document.getElementById('formStep2');
+    var formSuccess = document.getElementById('formSuccess');
+    var formNextBtn = document.getElementById('formNextBtn');
+    var formBackBtn = document.getElementById('formBackBtn');
+    var formSubmitBtn = document.getElementById('formSubmitBtn');
+    var formStepIndicator = document.getElementById('formStep');
+    var currentStep = 1;
+
+    // ── Char counter ────────────────────────────────────────────
+    var messageField = document.getElementById('message');
+    var charCount = document.getElementById('charCount');
+    if (messageField && charCount) {
+      messageField.addEventListener('input', function () {
+        var len = messageField.value.length;
+        charCount.textContent = len + ' / 2000';
+        charCount.style.color = len > 1800 ? 'var(--accent)' : '';
+      });
+    }
+
+    // ── Inline validation helper ────────────────────────────────
+    function validateField(id, condition, errorMsg) {
+      var field = document.getElementById(id);
+      var errorEl = document.getElementById(id + 'Error');
+      if (!field) return true;
+      var valid = condition(field);
+      field.style.borderColor = valid ? '' : 'var(--accent)';
+      if (errorEl) {
+        errorEl.textContent = valid ? '' : errorMsg;
+        errorEl.style.display = valid ? 'none' : 'block';
+      }
+      return valid;
+    }
+
+    function clearFieldError(id) {
+      var field = document.getElementById(id);
+      var errorEl = document.getElementById(id + 'Error');
+      if (field) field.style.borderColor = '';
+      if (errorEl) { errorEl.textContent = ''; errorEl.style.display = 'none'; }
+    }
+
+    // ── Live validation on blur ──────────────────────────────────
+    var nameField = document.getElementById('name');
+    var emailField = document.getElementById('email');
+    if (nameField) {
+      nameField.addEventListener('blur', function () {
+        if (nameField.value.trim()) clearFieldError('name');
+      });
+    }
+    if (emailField) {
+      emailField.addEventListener('blur', function () {
+        if (emailField.value.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailField.value.trim())) {
+          clearFieldError('email');
+        }
+      });
+    }
+
+    // ── Step navigation ──────────────────────────────────────────
+    function goToStep(step) {
+      currentStep = step;
+      formStep1.style.display = step === 1 ? 'block' : 'none';
+      formStep2.style.display = step === 2 ? 'block' : 'none';
+      formNextBtn.style.display = step === 1 ? 'inline-flex' : 'none';
+      formBackBtn.style.display = step === 2 ? 'inline-flex' : 'none';
+      formSubmitBtn.style.display = step === 2 ? 'inline-flex' : 'none';
+      if (formStepIndicator) formStepIndicator.textContent = step + ' / 2';
+    }
+
+    // ── Next button ──────────────────────────────────────────────
+    if (formNextBtn) {
+      formNextBtn.addEventListener('click', function () {
+        var valid = true;
+
+        // Validate step 1 fields
+        valid = validateField('name', function (f) { return f.value.trim().length >= 2; }, 'Please enter your name (at least 2 characters)') && valid;
+        valid = validateField('email', function (f) {
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.value.trim());
+        }, 'Please enter a valid email address') && valid;
+
+        if (valid) {
+          goToStep(2);
+          // Focus message field after transition
+          setTimeout(function () { if (messageField) messageField.focus(); }, 100);
+        }
+      });
+    }
+
+    // ── Back button ──────────────────────────────────────────────
+    if (formBackBtn) {
+      formBackBtn.addEventListener('click', function () {
+        goToStep(1);
+      });
+    }
+
+    // ── Form submit ──────────────────────────────────────────────
     contactForm.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      // Collect values
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const budget = document.getElementById('budget').value;
-      const message = document.getElementById('message').value.trim();
-      const submitBtn = contactForm.querySelector('.btn');
+      var name = (document.getElementById('name') || {}).value;
+      var email = (document.getElementById('email') || {}).value;
+      var company = (document.getElementById('company') || {}).value;
+      var phone = (document.getElementById('phone') || {}).value;
+      var budget = (document.getElementById('budget') || {}).value;
+      var timeline = (document.getElementById('timeline') || {}).value;
+      var message = (document.getElementById('message') || {}).value;
 
-      // Highlight empty required fields
-      let hasError = false;
-      [['name', name], ['email', email], ['message', message]].forEach(function (pair) {
-        const field = document.getElementById(pair[0]);
-        if (!pair[1]) {
-          field.style.borderColor = 'var(--accent)';
-          hasError = true;
-        } else {
-          field.style.borderColor = '';
-        }
-      });
+      name = (name || '').trim();
+      email = (email || '').trim();
+      company = (company || '').trim();
+      phone = (phone || '').trim();
+      message = (message || '').trim();
 
-      if (hasError) {
-        submitBtn.textContent = 'Fill required fields first';
-        submitBtn.style.borderColor = 'var(--accent)';
-        setTimeout(function () {
-          submitBtn.innerHTML = 'Send brief <i class="ph ph-arrow-right"></i>';
-          submitBtn.style.borderColor = '';
-        }, 2000);
-        return;
-      }
+      // Collect selected services
+      var serviceCheckboxes = document.querySelectorAll('input[name="services"]:checked');
+      var services = Array.from(serviceCheckboxes).map(function (cb) { return cb.value; });
 
-      // Submit to Netlify Function (server-side storage)
-      (function submitToAPI() {
+      // Validate final step
+      var valid = true;
+      valid = validateField('budget', function (f) { return f.value !== ''; }, 'Please select a budget range') && valid;
+      valid = validateField('message', function (f) { return f.value.trim().length >= 10; }, 'Please tell us a bit more about your project (at least 10 characters)') && valid;
+
+      if (!valid) return;
+
+      // ── Show loading state ──────────────────────────────────────
+      var submitBtn = formSubmitBtn;
+      var btnText = submitBtn.querySelector('.btn__text');
+      var btnSpinner = submitBtn.querySelector('.btn__spinner');
+      var btnIcon = submitBtn.querySelector('.btn__icon');
+      submitBtn.disabled = true;
+      if (btnText) btnText.textContent = 'Sending…';
+      if (btnSpinner) btnSpinner.style.display = 'inline';
+      if (btnIcon) btnIcon.style.display = 'none';
+
+      var payload = {
+        name: name,
+        email: email,
+        company: company,
+        phone: phone,
+        budget: budget || 'not-selected',
+        timeline: timeline || '',
+        services: services,
+        message: message
+      };
+
+      // ── Send to Netlify Function ─────────────────────────────
+      function submitToAPI() {
         var apiBase = '/api';
-        // In local dev, netlify dev runs on 8888
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
           apiBase = 'http://localhost:8888/api';
         }
-        fetch(apiBase + '/contact', {
+        return fetch(apiBase + '/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: name, email: email, budget: budget, message: message })
-        }).catch(function () {
-          // API unavailable — silently fall through to localStorage
-        });
-      })();
+          body: JSON.stringify(payload)
+        }).then(function (r) { return r.json(); });
+      }
 
-      // Save to localStorage for admin panel (backup / local dev fallback)
-      try {
-        var _leads = JSON.parse(localStorage.getItem('blok_admin_leads')) || [];
-        _leads.unshift({
-          id: 'lead_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-          name: name,
-          email: email,
-          budget: budget || 'not-sure',
-          message: message,
-          status: 'new',
-          createdAt: new Date().toISOString()
-        });
-        localStorage.setItem('blok_admin_leads', JSON.stringify(_leads));
-      } catch (_e) { /* localStorage unavailable — non-critical */ }
+      // ── Save to localStorage (fallback) ──────────────────────
+      function saveLocal() {
+        try {
+          var _leads = JSON.parse(localStorage.getItem('blok_admin_leads')) || [];
+          _leads.unshift({
+            id: 'lead_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+            name: name,
+            email: email,
+            company: company,
+            phone: phone,
+            budget: budget || 'not-selected',
+            timeline: timeline || '',
+            services: services,
+            message: message,
+            status: 'new',
+            createdAt: new Date().toISOString()
+          });
+          localStorage.setItem('blok_admin_leads', JSON.stringify(_leads));
+        } catch (_e) { /* localStorage unavailable — non-critical */ }
+      }
 
-      // Visual "sent" feedback
-      submitBtn.textContent = 'Brief sent ✓';
-      submitBtn.classList.add('btn--accent');
-      setTimeout(function () {
-        submitBtn.innerHTML = 'Send brief <i class="ph ph-arrow-right"></i>';
-        submitBtn.classList.remove('btn--accent');
-        contactForm.reset();
-        ['name', 'email', 'message'].forEach(function (id) {
-          document.getElementById(id).style.borderColor = '';
-        });
-      }, 2000);
+      // ── Execute ──────────────────────────────────────────────
+      submitToAPI().then(function (res) {
+        if (res && res.lead) {
+          // API succeeded — data is stored server-side
+        }
+        // Also save locally as backup
+        saveLocal();
+        showSuccess(name, email);
+      }).catch(function () {
+        // API unavailable — fall back to local
+        saveLocal();
+        showSuccess(name, email);
+      });
     });
+
+    // ── Success state ──────────────────────────────────────────
+    function showSuccess(name, email) {
+      contactForm.style.display = 'none';
+      formSuccess.style.display = 'block';
+      var successName = document.getElementById('successName');
+      var successEmail = document.getElementById('successEmail');
+      if (successName) successName.textContent = name;
+      if (successEmail) successEmail.textContent = email;
+    }
+
+    // ── Reset form (exposed global) ────────────────────────────
+    BLOK.resetForm = function () {
+      contactForm.reset();
+      contactForm.style.display = 'block';
+      formSuccess.style.display = 'none';
+      goToStep(1);
+      // Clear all error states
+      ['name', 'email', 'company', 'phone', 'budget', 'message'].forEach(function (id) {
+        clearFieldError(id);
+        var field = document.getElementById(id);
+        if (field) field.style.borderColor = '';
+      });
+      // Reset char count
+      if (charCount) {
+        charCount.textContent = '0 / 2000';
+        charCount.style.color = '';
+      }
+      // Reset submit button
+      if (formSubmitBtn) {
+        formSubmitBtn.disabled = false;
+        var btnText = formSubmitBtn.querySelector('.btn__text');
+        var btnSpinner = formSubmitBtn.querySelector('.btn__spinner');
+        var btnIcon = formSubmitBtn.querySelector('.btn__icon');
+        if (btnText) btnText.textContent = 'Send brief';
+        if (btnSpinner) btnSpinner.style.display = 'none';
+        if (btnIcon) btnIcon.style.display = 'inline';
+      }
+    };
+
+    window.BLOK = BLOK;
   }
 
   // =============================================================

@@ -906,6 +906,267 @@ a:hover { text-decoration: underline; }
   padding: 10px 14px;
 }
 
+/* ----- Lead Toolbar (search + filter) ----- */
+.lead-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.lead-toolbar__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.lead-toolbar__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.lead-toolbar__count {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--steel-light);
+  margin-right: 4px;
+}
+
+/* Search */
+.lead-search {
+  position: relative;
+  min-width: 200px;
+}
+
+.lead-search i {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--steel-light);
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+
+.lead-search__input {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  padding: 8px 12px 8px 32px;
+  border: var(--border-w) solid var(--border);
+  background: var(--surface);
+  color: var(--fg);
+  width: 100%;
+  transition: border-color 0.15s;
+  border-radius: 0;
+}
+
+.lead-search__input:focus {
+  outline: none;
+  border-color: var(--fg);
+}
+
+.lead-search__input::placeholder {
+  color: var(--steel-light);
+}
+
+/* Filter buttons */
+.lead-filter-group {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.lead-filter-btn {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lead-filter-btn:hover {
+  border-color: var(--fg);
+  color: var(--fg);
+}
+
+.lead-filter-btn--active {
+  background: var(--fg);
+  color: var(--surface);
+  border-color: var(--fg);
+}
+
+.lead-filter-count {
+  font-size: 0.45rem;
+  opacity: 0.6;
+}
+
+/* Bulk actions bar */
+.lead-bulk-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--fg);
+  color: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+}
+
+.lead-bulk-bar__count {
+  margin-right: auto;
+  font-weight: 600;
+}
+
+.lead-bulk-bar .admin-btn {
+  border-color: var(--surface);
+  color: var(--surface);
+  font-size: 0.5rem;
+}
+
+.lead-bulk-bar .admin-btn:hover {
+  background: var(--surface);
+  color: var(--fg);
+}
+
+.lead-bulk-bar .btn--danger {
+  border-color: var(--red);
+  color: var(--red-bg);
+}
+
+.lead-bulk-bar .btn--danger:hover {
+  background: var(--red);
+  color: #fff;
+}
+
+/* Lead checkboxes */
+.lead-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--fg);
+  cursor: pointer;
+}
+
+.lead-row--selected td {
+  background: var(--surface-raised);
+}
+
+/* Sortable header */
+.lead-table__sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.lead-table__sortable:hover {
+  color: var(--fg);
+}
+
+/* Pagination */
+.lead-pagination {
+  display: flex;
+  justify-content: center;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.lead-pagination__inner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lead-pagination__info {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--muted);
+  padding: 0 12px;
+}
+
+.lead-pagination .admin-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Status workflow in lead detail */
+.lead-detail__status-flow {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.lead-status-flow__step {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.lead-status-flow__step:hover {
+  border-color: var(--fg);
+  color: var(--fg);
+}
+
+.lead-status-flow__step--active {
+  background: var(--fg);
+  color: var(--surface);
+  border-color: var(--fg);
+}
+
+/* Internal notes in lead detail */
+.lead-detail__notes {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.lead-notes__textarea {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  padding: 10px 14px;
+  border: var(--border-w) solid var(--border);
+  background: var(--surface);
+  color: var(--fg);
+  resize: vertical;
+  min-height: 60px;
+  margin-top: 8px;
+  transition: border-color 0.15s;
+}
+
+.lead-notes__textarea:focus {
+  outline: none;
+  border-color: var(--fg);
+}
+
+/* Status badges for new workflow */
+.admin-table .status-badge--contacted { background: var(--marker); color: #fff; }
+.admin-table .status-badge--qualified { background: var(--accent-dim); color: var(--fg); }
+.admin-table .status-badge--won { background: var(--green); color: #fff; }
+.admin-table .status-badge--lost { background: var(--red-bg); color: var(--red); }
+
 /* ----- Lead Expandable Detail ----- */
 .lead-row {
   cursor: pointer;

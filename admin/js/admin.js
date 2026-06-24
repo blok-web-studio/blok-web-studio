@@ -158,6 +158,10 @@
       return await API.patch('/leads', { id, status });
     },
 
+    async updateLeadNotes(id, notes) {
+      return await API.patch('/leads', { id, notes });
+    },
+
     async deleteLead(id) {
       return await API.del('/leads?id=' + encodeURIComponent(id));
     },
@@ -285,7 +289,7 @@
               : `<div class="card__trend card__trend--up"><i class="ph ph-check"></i> All clear</div>`}
           </div>
           <div class="card__meter"><div class="card__meter-fill card__meter-fill--green" style="width: ${newLeads === 0 ? 100 : 30}%"></div></div>
-          <div class="card__footer">Response SLA: 24h</div>
+          <div class="card__footer">Response SLA: 1–4h</div>
         </div>
 
         <div class="card card--kpi">
@@ -302,6 +306,12 @@
 
     // ── Leads table ────────────────────────────────────────────
     _expandedLeadId: null,
+    _leadSearch: '',
+    _leadFilter: 'all',
+    _leadSort: { field: 'createdAt', dir: 'desc' },
+    _selectedLeads: new Set(),
+    _currentLeadPage: 1,
+    _leadsPerPage: 15,
 
     renderLeads() {
       const fullContainer = document.getElementById('leadsContainer');
@@ -310,8 +320,6 @@
       if (!fullContainer && !previewContainer) return;
 
       const leads = this._leads;
-
-      // Update lead count label if it exists
       const countLabel = document.getElementById('leadCountLabel');
       if (countLabel) countLabel.textContent = leads.length + ' total';
 
@@ -327,139 +335,300 @@
         return;
       }
 
-      // ── Full leads table (leads page) ────────────────────────
-      let html = `
-        <div class="admin-table-wrap">
-        <table class="admin-table lead-table">
-          <thead>
-            <tr>
-              <th>Status</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Budget</th>
-              <th>Message</th>
-              <th>Received</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      leads.forEach(function (lead) {
-        const isExpanded = this._expandedLeadId === lead.id;
-        const statusClass = 'status-badge--' + lead.status;
-        const statusLabel = lead.status.charAt(0).toUpperCase() + lead.status.slice(1);
-        const date = new Date(lead.createdAt);
-        const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const messagePreview = lead.message && lead.message.length > 60 ? lead.message.slice(0, 60) + '…' : (lead.message || '');
-
-        html += `
-          <tr class="lead-row ${isExpanded ? 'lead-row--expanded' : ''}" onclick="BLOK_ADMIN.toggleLeadExpand('${lead.id}')" tabindex="0">
-            <td><span class="status-badge ${statusClass}" onclick="event.stopPropagation()">${statusLabel}</span></td>
-            <td><strong>${esc(lead.name)}</strong></td>
-            <td onclick="event.stopPropagation()"><a href="mailto:${esc(lead.email)}">${esc(lead.email)}</a></td>
-            <td><span class="tag tag--steel">${esc(lead.budget)}</span></td>
-            <td class="text-muted text-sm">${esc(messagePreview)}</td>
-            <td class="text-muted text-sm">${dateStr}</td>
-            <td onclick="event.stopPropagation()">
-              <div class="lead-actions">
-                <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.toggleLeadRead('${lead.id}')" title="Mark as ${lead.status === 'new' ? 'read' : 'unread'}"><i class="ph ph-${lead.status === 'new' ? 'envelope-open' : 'envelope'}"></i></button>
-                <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.archiveLead('${lead.id}')" title="Archive"><i class="ph ph-archive"></i></button>
-                <button class="admin-btn admin-btn--small btn--danger" onclick="BLOK_ADMIN.deleteLead('${lead.id}')" title="Delete"><i class="ph ph-trash"></i></button>
-              </div>
-            </td>
-          </tr>
-          ${isExpanded ? `
-          <tr class="lead-detail-row">
-            <td colspan="7">
-              <div class="lead-detail">
-                <div class="lead-detail__grid">
-                  <div class="lead-detail__field">
-                    <span class="lead-detail__label"><i class="ph ph-user"></i> Name</span>
-                    <span class="lead-detail__value">${esc(lead.name)}</span>
-                  </div>
-                  <div class="lead-detail__field">
-                    <span class="lead-detail__label"><i class="ph ph-envelope"></i> Email</span>
-                    <span class="lead-detail__value"><a href="mailto:${esc(lead.email)}">${esc(lead.email)}</a></span>
-                  </div>
-                  <div class="lead-detail__field">
-                    <span class="lead-detail__label"><i class="ph ph-currency-dollar"></i> Budget</span>
-                    <span class="lead-detail__value"><span class="tag tag--steel">${esc(lead.budget)}</span></span>
-                  </div>
-                  <div class="lead-detail__field">
-                    <span class="lead-detail__label"><i class="ph ph-calendar"></i> Received</span>
-                    <span class="lead-detail__value">${dateStr}</span>
-                  </div>
-                  <div class="lead-detail__field">
-                    <span class="lead-detail__label"><i class="ph ph-folder"></i> Status</span>
-                    <span class="lead-detail__value"><span class="status-badge ${statusClass}">${statusLabel}</span></span>
-                  </div>
-                  <div class="lead-detail__field">
-                    <span class="lead-detail__label"><i class="ph ph-tag"></i> ID</span>
-                    <span class="lead-detail__value text-muted text-sm">${esc(lead.id)}</span>
-                  </div>
-                </div>
-                <div class="lead-detail__message">
-                  <span class="lead-detail__label"><i class="ph ph-chat-text"></i> Full Message</span>
-                  <div class="lead-detail__message-body">${esc(lead.message || '(no message)')}</div>
-                </div>
-              </div>
-            </td>
-          </tr>
-          ` : ''}
+      // ── Preview table (dashboard) — minimal ─────────────────
+      if (previewContainer) {
+        let previewHtml = `
+          <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Name</th>
+                <th>Company</th>
+                <th>Budget</th>
+                <th>Received</th>
+              </tr>
+            </thead>
+            <tbody>
         `;
+        leads.slice(0, 5).forEach(function (lead) {
+          const statusClass = 'status-badge--' + lead.status;
+          const statusLabel = lead.status.charAt(0).toUpperCase() + lead.status.slice(1);
+          const date = new Date(lead.createdAt);
+          const dateStr = date.toLocaleDateString();
+          const comp = lead.company || '-';
+          previewHtml += `
+            <tr>
+              <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+              <td><strong>${esc(lead.name)}</strong></td>
+              <td class="text-muted text-sm">${esc(comp)}</td>
+              <td><span class="tag tag--steel">${esc(lead.budget)}</span></td>
+              <td class="text-muted text-sm">${dateStr}</td>
+            </tr>
+          `;
+        }.bind(this));
+        previewHtml += '</tbody></table></div>';
+        previewContainer.innerHTML = previewHtml;
+      }
+
+      if (!fullContainer) return;
+
+      // ── Filter + Search + Sort ─────────────────────────────
+      var filtered = leads.filter(function (lead) {
+        if (this._leadFilter !== 'all' && lead.status !== this._leadFilter) return false;
+        if (this._leadSearch) {
+          var q = this._leadSearch.toLowerCase();
+          var matchable = (lead.name + ' ' + lead.email + ' ' + (lead.company || '') + ' ' + (lead.message || '') + ' ' + (lead.phone || '')).toLowerCase();
+          if (matchable.indexOf(q) === -1) return false;
+        }
+        return true;
       }.bind(this));
 
-      html += `
-          </tbody>
-        </table>
-        </div>
-        <div class="card__footer" style="display:flex;justify-content:space-between;align-items:center;">
-          <span>${leads.length} total lead${leads.length !== 1 ? 's' : ''} · Netlify Blob storage</span>
-          <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.exportLeads()"><i class="ph ph-download-simple"></i> Export JSON</button>
+      // Sort
+      var sortField = this._leadSort.field;
+      var sortDir = this._leadSort.dir;
+      filtered.sort(function (a, b) {
+        var aVal, bVal;
+        if (sortField === 'createdAt') {
+          aVal = new Date(a.createdAt).getTime();
+          bVal = new Date(b.createdAt).getTime();
+        } else if (sortField === 'budget') {
+          aVal = a.budget || '';
+          bVal = b.budget || '';
+        } else if (sortField === 'name') {
+          aVal = (a.name || '').toLowerCase();
+          bVal = (b.name || '').toLowerCase();
+        } else {
+          aVal = (a[sortField] || '').toLowerCase();
+          bVal = (b[sortField] || '').toLowerCase();
+        }
+        if (aVal < bVal) return sortDir === 'asc' ? -1 : 1;
+        if (aVal > bVal) return sortDir === 'asc' ? 1 : -1;
+        return 0;
+      });
+
+      // Paginate
+      var totalPages = Math.ceil(filtered.length / this._leadsPerPage) || 1;
+      if (this._currentLeadPage > totalPages) this._currentLeadPage = totalPages;
+      var pageLeads = filtered.slice((this._currentLeadPage - 1) * this._leadsPerPage, this._currentLeadPage * this._leadsPerPage);
+
+      // ── Build filter bar ───────────────────────────────────
+      var sortArrow = function (field) {
+        if (this._leadSort.field !== field) return '';
+        return this._leadSort.dir === 'asc' ? ' ↑' : ' ↓';
+      }.bind(this);
+
+      var statusCounts = { all: leads.length };
+      leads.forEach(function (l) {
+        statusCounts[l.status] = (statusCounts[l.status] || 0) + 1;
+      });
+
+      var filterHtml = `
+        <div class="lead-toolbar">
+          <div class="lead-toolbar__left">
+            <div class="lead-search">
+              <i class="ph ph-magnifying-glass"></i>
+              <input type="text" class="lead-search__input" id="leadSearchInput" placeholder="Search name, email, company…" value="${esc(this._leadSearch)}">
+            </div>
+            <div class="lead-filter-group">
+              <button class="lead-filter-btn ${this._leadFilter === 'all' ? 'lead-filter-btn--active' : ''}" data-filter="all">All <span class="lead-filter-count">${statusCounts.all || 0}</span></button>
+              <button class="lead-filter-btn ${this._leadFilter === 'new' ? 'lead-filter-btn--active' : ''}" data-filter="new">New <span class="lead-filter-count">${statusCounts.new || 0}</span></button>
+              <button class="lead-filter-btn ${this._leadFilter === 'read' ? 'lead-filter-btn--active' : ''}" data-filter="read">Read <span class="lead-filter-count">${statusCounts.read || 0}</span></button>
+              <button class="lead-filter-btn ${this._leadFilter === 'contacted' ? 'lead-filter-btn--active' : ''}" data-filter="contacted">Contacted <span class="lead-filter-count">${statusCounts.contacted || 0}</span></button>
+              <button class="lead-filter-btn ${this._leadFilter === 'won' ? 'lead-filter-btn--active' : ''}" data-filter="won">Won <span class="lead-filter-count">${statusCounts.won || 0}</span></button>
+              <button class="lead-filter-btn ${this._leadFilter === 'lost' ? 'lead-filter-btn--active' : ''}" data-filter="lost">Lost <span class="lead-filter-count">${statusCounts.lost || 0}</span></button>
+              <button class="lead-filter-btn ${this._leadFilter === 'archived' ? 'lead-filter-btn--active' : ''}" data-filter="archived">Archived <span class="lead-filter-count">${statusCounts.archived || 0}</span></button>
+            </div>
+          </div>
+          <div class="lead-toolbar__right">
+            <span class="lead-toolbar__count">${filtered.length} of ${leads.length}</span>
+            <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.exportLeads()" title="Export JSON"><i class="ph ph-download-simple"></i></button>
+            <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.exportLeadsCSV()" title="Export CSV"><i class="ph ph-file-csv"></i></button>
+          </div>
         </div>
       `;
 
-      if (fullContainer) fullContainer.innerHTML = html;
-
-      // ── Preview table (dashboard) — minimal, no expand ───────
-      let previewHtml = `
-        <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Status</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Budget</th>
-              <th>Message</th>
-              <th>Received</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      leads.slice(0, 5).forEach(function (lead) {
-        const statusClass = 'status-badge--' + lead.status;
-        const statusLabel = lead.status.charAt(0).toUpperCase() + lead.status.slice(1);
-        const date = new Date(lead.createdAt);
-        const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const messagePreview = lead.message && lead.message.length > 60 ? lead.message.slice(0, 60) + '…' : (lead.message || '');
-
-        previewHtml += `
-          <tr>
-            <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
-            <td><strong>${esc(lead.name)}</strong></td>
-            <td><a href="mailto:${esc(lead.email)}">${esc(lead.email)}</a></td>
-            <td><span class="tag tag--steel">${esc(lead.budget)}</span></td>
-            <td class="text-muted text-sm" title="${esc(lead.message)}">${esc(messagePreview)}</td>
-            <td class="text-muted text-sm">${dateStr}</td>
-          </tr>
+      // ── Bulk actions bar ────────────────────────────────────
+      var bulkBarHtml = '';
+      if (this._selectedLeads.size > 0) {
+        bulkBarHtml = `
+          <div class="lead-bulk-bar">
+            <span class="lead-bulk-bar__count">${this._selectedLeads.size} selected</span>
+            <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.bulkUpdateStatus('read')"><i class="ph ph-envelope-open"></i> Mark Read</button>
+            <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.bulkUpdateStatus('archived')"><i class="ph ph-archive"></i> Archive</button>
+            <button class="admin-btn admin-btn--small btn--danger" onclick="BLOK_ADMIN.bulkDelete()"><i class="ph ph-trash"></i> Delete</button>
+            <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.clearSelection()"><i class="ph ph-x"></i> Clear</button>
+          </div>
         `;
+      }
+
+      // ── Full leads table ────────────────────────────────────
+      var html = filterHtml + bulkBarHtml + '<div class="admin-table-wrap"><table class="admin-table lead-table"><thead><tr>';
+
+      // Header with sortable columns
+      var cols = [
+        { key: 'sel', label: '' },
+        { key: 'status', label: 'Status' },
+        { key: 'name', label: 'Name', sortable: true },
+        { key: 'company', label: 'Company' },
+        { key: 'email', label: 'Email' },
+        { key: 'budget', label: 'Budget', sortable: true },
+        { key: 'services', label: 'Services' },
+        { key: 'message', label: 'Message' },
+        { key: 'createdAt', label: 'Received', sortable: true },
+        { key: 'actions', label: 'Actions' },
+      ];
+
+      cols.forEach(function (col) {
+        if (col.sortable) {
+          html += '<th class="lead-table__sortable" onclick="BLOK_ADMIN.toggleSort(\'' + col.key + '\')">' + col.label + sortArrow(col.key) + '</th>';
+        } else {
+          html += '<th>' + col.label + '</th>';
+        }
+      });
+
+      html += '</tr></thead><tbody>';
+
+      if (pageLeads.length === 0) {
+        html += '<tr><td colspan="10"><div class="admin-table__empty"><i class="ph ph-funnel"></i><p>No leads match your filter.</p></div></td></tr>';
+      }
+
+      pageLeads.forEach(function (lead) {
+        var isExpanded = this._expandedLeadId === lead.id;
+        var isSelected = this._selectedLeads.has(lead.id);
+        var statusClass = 'status-badge--' + lead.status;
+        var statusLabel = lead.status.charAt(0).toUpperCase() + lead.status.slice(1);
+        var date = new Date(lead.createdAt);
+        var dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        var messagePreview = lead.message && lead.message.length > 60 ? lead.message.slice(0, 60) + '…' : (lead.message || '');
+
+        // Format budget for display
+        var budgetDisplay = (lead.budget || '').replace(/-/g, ' — ').replace(/^under\s/i, 'Under ');
+
+        // Format services
+        var servicesList = Array.isArray(lead.services) ? lead.services.join(', ') : lead.services || '';
+        servicesList = servicesList.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+
+        html += '<tr class="lead-row ' + (isExpanded ? 'lead-row--expanded' : '') + (isSelected ? ' lead-row--selected' : '') + '" tabindex="0">';
+
+        // Checkbox
+        html += '<td onclick="event.stopPropagation()"><input type="checkbox" class="lead-checkbox" ' + (isSelected ? 'checked' : '') + ' onchange="BLOK_ADMIN.toggleSelectLead(\'' + lead.id + '\')"></td>';
+
+        // Status
+        html += '<td><span class="status-badge ' + statusClass + '">' + statusLabel + '</span></td>';
+
+        // Name (clickable to expand)
+        html += '<td onclick="BLOK_ADMIN.toggleLeadExpand(\'' + lead.id + '\')"><strong>' + esc(lead.name) + '</strong></td>';
+
+        // Company
+        html += '<td class="text-muted text-sm">' + esc(lead.company || '-') + '</td>';
+
+        // Email
+        html += '<td onclick="event.stopPropagation()"><a href="mailto:' + esc(lead.email) + '">' + esc(lead.email) + '</a></td>';
+
+        // Budget
+        html += '<td><span class="tag tag--steel">' + esc(budgetDisplay) + '</span></td>';
+
+        // Services
+        html += '<td class="text-muted text-sm">' + esc(servicesList || '-') + '</td>';
+
+        // Message preview
+        html += '<td class="text-muted text-sm" title="' + esc(lead.message || '') + '" onclick="BLOK_ADMIN.toggleLeadExpand(\'' + lead.id + '\')">' + esc(messagePreview) + '</td>';
+
+        // Date
+        html += '<td class="text-muted text-sm">' + dateStr + '</td>';
+
+        // Actions
+        html += '<td onclick="event.stopPropagation()"><div class="lead-actions">';
+        html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.toggleLeadExpand(\'' + lead.id + '\')" title="View details"><i class="ph ph-eye"></i></button>';
+        html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.updateLeadStatus(\'' + lead.id + '\', \'read\')" title="Mark read"><i class="ph ph-envelope-open"></i></button>';
+        html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.archiveLead(\'' + lead.id + '\')" title="Archive"><i class="ph ph-archive"></i></button>';
+        html += '<button class="admin-btn admin-btn--small btn--danger" onclick="BLOK_ADMIN.deleteLead(\'' + lead.id + '\')" title="Delete"><i class="ph ph-trash"></i></button>';
+        html += '</div></td>';
+
+        html += '</tr>';
+
+        // ── Expanded detail row ──────────────────────────────
+        if (isExpanded) {
+          html += '<tr class="lead-detail-row"><td colspan="10"><div class="lead-detail">';
+
+          // Info grid
+          html += '<div class="lead-detail__grid">';
+          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-user"></i> Name</span><span class="lead-detail__value">' + esc(lead.name) + '</span></div>';
+          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-building"></i> Company</span><span class="lead-detail__value">' + esc(lead.company || '-') + '</span></div>';
+          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-envelope"></i> Email</span><span class="lead-detail__value"><a href="mailto:' + esc(lead.email) + '">' + esc(lead.email) + '</a></span></div>';
+          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-phone"></i> Phone</span><span class="lead-detail__value">' + esc(lead.phone || '-') + '</span></div>';
+          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-currency-dollar"></i> Budget</span><span class="lead-detail__value"><span class="tag tag--steel">' + esc(budgetDisplay) + '</span></span></div>';
+          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-clock"></i> Timeline</span><span class="lead-detail__value">' + esc((lead.timeline || '').replace(/-/g, ' ') || 'Not specified') + '</span></div>';
+          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-wrench"></i> Services</span><span class="lead-detail__value">' + esc(servicesList || 'Not specified') + '</span></div>';
+          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-calendar"></i> Received</span><span class="lead-detail__value">' + dateStr + '</span></div>';
+          html += '</div>';
+
+          // Status workflow
+          var statuses = ['new', 'read', 'contacted', 'qualified', 'won', 'lost', 'archived'];
+          html += '<div class="lead-detail__status-flow">';
+          statuses.forEach(function (s) {
+            var active = lead.status === s ? 'lead-status-flow__step--active' : '';
+            var label = s.charAt(0).toUpperCase() + s.slice(1);
+            html += '<button class="lead-status-flow__step ' + active + '" onclick="BLOK_ADMIN.updateLeadStatus(\'' + lead.id + '\', \'' + s + '\')">' + label + '</button>';
+          });
+          html += '</div>';
+
+          // Message
+          html += '<div class="lead-detail__message"><span class="lead-detail__label"><i class="ph ph-chat-text"></i> Full Message</span><div class="lead-detail__message-body">' + esc(lead.message || '(no message)') + '</div></div>';
+
+          // Internal notes
+          var notesId = 'leadNotes_' + lead.id;
+          html += '<div class="lead-detail__notes">';
+          html += '<span class="lead-detail__label"><i class="ph ph-notepad"></i> Internal Notes</span>';
+          html += '<textarea class="lead-notes__textarea" id="' + notesId + '" placeholder="Add private notes about this lead…" rows="3">' + esc(lead.notes || '') + '</textarea>';
+          html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.saveLeadNotes(\'' + lead.id + '\')" style="margin-top:8px"><i class="ph ph-floppy-disk"></i> Save Notes</button>';
+          html += '</div>';
+
+          html += '</div></td></tr>';
+        }
       }.bind(this));
 
-      previewHtml += `</tbody></table></div>`;
-      if (previewContainer) previewContainer.innerHTML = previewHtml;
+      html += '</tbody></table></div>';
+
+      // ── Pagination ──────────────────────────────────────────
+      if (totalPages > 1) {
+        html += '<div class="lead-pagination"><div class="lead-pagination__inner">';
+        html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.goToLeadPage(1)" ' + (this._currentLeadPage <= 1 ? 'disabled' : '') + '><i class="ph ph-caret-double-left"></i></button>';
+        html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.goToLeadPage(' + (this._currentLeadPage - 1) + ')" ' + (this._currentLeadPage <= 1 ? 'disabled' : '') + '><i class="ph ph-caret-left"></i></button>';
+        html += '<span class="lead-pagination__info">Page ' + this._currentLeadPage + ' of ' + totalPages + '</span>';
+        html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.goToLeadPage(' + (this._currentLeadPage + 1) + ')" ' + (this._currentLeadPage >= totalPages ? 'disabled' : '') + '><i class="ph ph-caret-right"></i></button>';
+        html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.goToLeadPage(' + totalPages + ')" ' + (this._currentLeadPage >= totalPages ? 'disabled' : '') + '><i class="ph ph-caret-double-right"></i></button>';
+        html += '</div></div>';
+      }
+
+      // ── Footer ─────────────────────────────────────────────
+      html += '<div class="card__footer" style="display:flex;justify-content:space-between;align-items:center;"><span>' + filtered.length + ' of ' + leads.length + ' lead' + (leads.length !== 1 ? 's' : '') + ' · Netlify Blob storage</span></div>';
+
+      fullContainer.innerHTML = html;
+
+      // ── Bind search handler ─────────────────────────────────
+      var searchInput = document.getElementById('leadSearchInput');
+      if (searchInput && !searchInput._bound) {
+        searchInput._bound = true;
+        searchInput.addEventListener('input', function () {
+          DASHBOARD._leadSearch = searchInput.value;
+          DASHBOARD._currentLeadPage = 1;
+          DASHBOARD.renderLeads();
+        });
+      }
+
+      // ── Bind filter buttons ─────────────────────────────────
+      document.querySelectorAll('.lead-filter-btn').forEach(function (btn) {
+        if (!btn._bound) {
+          btn._bound = true;
+          btn.addEventListener('click', function () {
+            DASHBOARD._leadFilter = btn.getAttribute('data-filter');
+            DASHBOARD._currentLeadPage = 1;
+            DASHBOARD.renderLeads();
+          });
+        }
+      });
     },
 
     // ── Portfolio ──────────────────────────────────────────────
@@ -783,20 +952,28 @@
       if (!lead) return;
       const newStatus = lead.status === 'new' ? 'read' : 'new';
       await DB.updateLeadStatus(id, newStatus);
-      DB.addLog('info', `Lead ${id} marked as ${newStatus}`);
+      DB.addLog('info', 'Lead ' + lead.name + ' marked as ' + newStatus);
+      await DASHBOARD.refresh();
+    },
+
+    async updateLeadStatus(id, status) {
+      const lead = DASHBOARD._leads.find(l => l.id === id);
+      if (!lead) return;
+      await DB.updateLeadStatus(id, status);
+      DB.addLog('info', 'Lead ' + lead.name + ' → ' + status);
       await DASHBOARD.refresh();
     },
 
     async archiveLead(id) {
       await DB.updateLeadStatus(id, 'archived');
-      DB.addLog('info', `Lead ${id} archived`);
+      DB.addLog('info', 'Lead archived');
       await DASHBOARD.refresh();
     },
 
     async deleteLead(id) {
       if (!confirm('Delete this lead permanently?')) return;
       await DB.deleteLead(id);
-      DB.addLog('info', `Lead ${id} deleted`);
+      DB.addLog('info', 'Lead deleted');
       await DASHBOARD.refresh();
     },
 
@@ -809,6 +986,97 @@
       const data = DASHBOARD._leads;
       downloadJSON(data, 'blok-leads-' + new Date().toISOString().slice(0, 10));
       DB.addLog('info', 'Leads exported');
+    },
+
+    async exportLeadsCSV() {
+      const data = DASHBOARD._leads;
+      if (!data.length) return;
+      var headers = ['Name', 'Email', 'Company', 'Phone', 'Budget', 'Timeline', 'Services', 'Message', 'Status', 'Date', 'Notes'];
+      var rows = data.map(function (l) {
+        var services = Array.isArray(l.services) ? l.services.join('; ') : (l.services || '');
+        return [
+          l.name || '', l.email || '', l.company || '', l.phone || '',
+          l.budget || '', l.timeline || '', services, l.message || '',
+          l.status || '', l.createdAt || '', l.notes || ''
+        ].map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(',');
+      });
+      var csv = headers.join(',') + '\n' + rows.join('\n');
+      var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'blok-leads-' + new Date().toISOString().slice(0, 10) + '.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+      DB.addLog('info', 'Leads exported as CSV');
+    },
+
+    async saveLeadNotes(id) {
+      var notesEl = document.getElementById('leadNotes_' + id);
+      if (!notesEl) return;
+      var notes = notesEl.value;
+      await DB.updateLeadNotes(id, notes);
+      DB.addLog('info', 'Notes saved for lead ' + id);
+      // Flash feedback
+      notesEl.style.borderColor = 'var(--green)';
+      setTimeout(function () { notesEl.style.borderColor = ''; }, 1500);
+    },
+
+    // ── Search / Filter / Sort ──────────────────────────────────
+    toggleSort(field) {
+      if (DASHBOARD._leadSort.field === field) {
+        DASHBOARD._leadSort.dir = DASHBOARD._leadSort.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        DASHBOARD._leadSort.field = field;
+        DASHBOARD._leadSort.dir = 'desc';
+      }
+      DASHBOARD._currentLeadPage = 1;
+      DASHBOARD.renderLeads();
+    },
+
+    // ── Bulk Actions ────────────────────────────────────────────
+    toggleSelectLead(id) {
+      if (DASHBOARD._selectedLeads.has(id)) {
+        DASHBOARD._selectedLeads.delete(id);
+      } else {
+        DASHBOARD._selectedLeads.add(id);
+      }
+      DASHBOARD.renderLeads();
+    },
+
+    clearSelection() {
+      DASHBOARD._selectedLeads.clear();
+      DASHBOARD.renderLeads();
+    },
+
+    async bulkUpdateStatus(status) {
+      var ids = Array.from(DASHBOARD._selectedLeads);
+      if (!ids.length) return;
+      var count = ids.length;
+      for (var i = 0; i < ids.length; i++) {
+        await DB.updateLeadStatus(ids[i], status);
+      }
+      DB.addLog('info', count + ' leads marked as ' + status);
+      DASHBOARD._selectedLeads.clear();
+      await DASHBOARD.refresh();
+    },
+
+    async bulkDelete() {
+      var ids = Array.from(DASHBOARD._selectedLeads);
+      if (!ids.length) return;
+      if (!confirm('Delete ' + ids.length + ' leads permanently?')) return;
+      for (var i = 0; i < ids.length; i++) {
+        await DB.deleteLead(ids[i]);
+      }
+      DB.addLog('info', ids.length + ' leads deleted');
+      DASHBOARD._selectedLeads.clear();
+      await DASHBOARD.refresh();
+    },
+
+    // ── Pagination ──────────────────────────────────────────────
+    goToLeadPage(page) {
+      DASHBOARD._currentLeadPage = page;
+      DASHBOARD.renderLeads();
     },
 
     async exportPortfolio() {
