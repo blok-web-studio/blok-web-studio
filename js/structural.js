@@ -725,70 +725,6 @@
 
   }
 
-  // ── Build crane — footer pendulum swing + mouse follow ──
-  const FLOORS = ['Ground', 'Lobby', 'Mezz', 'Core', 'Upper', 'Roof'];
-  let craneAnimId = null;
-  let craneUserActive = false;
-
-  function getCranePx(idx) {
-    return (idx / (FLOORS.length - 1)) * 68 + 8;
-  }
-
-  function setCrane(idx) {
-    var cable = document.getElementById('craneCable');
-    var hook = document.getElementById('craneHook');
-    var floorEl = document.getElementById('craneFloor');
-    var countEl = document.getElementById('craneCount');
-    var buildingEl = document.getElementById('craneBuilding');
-    var groundEl = document.getElementById('craneGround');
-    if (!cable) return;
-
-    var px = getCranePx(idx);
-    cable.style.left = px + 'px';
-    hook.style.left = px + 'px';
-
-    // Render blocks — active one in the building, rest on the ground
-    if (buildingEl && groundEl) {
-      var bHTML = '', gHTML = '';
-      for (var i = 0; i < FLOORS.length; i++) {
-        var cls = 'crane-block' + (i === idx ? ' crane-block--current' : ' crane-block--ground');
-        var blk = '<div class="' + cls + '"></div>';
-        if (i === idx) bHTML = blk + bHTML; else gHTML += blk;
-      }
-      buildingEl.innerHTML = bHTML;
-      groundEl.innerHTML = gHTML;
-    }
-
-    if (floorEl) floorEl.textContent = FLOORS[idx];
-    if (countEl) countEl.textContent = (idx + 1) + ' / ' + FLOORS.length;
-  }
-
-  // Idle pendulum: hook swings left↔right on a slow sine loop (7s cycle)
-  function startCraneSwing() {
-    if (craneAnimId) cancelAnimationFrame(craneAnimId);
-    var start = Date.now();
-    function tick() {
-      if (craneUserActive) { craneAnimId = requestAnimationFrame(tick); return; }
-      var t = (Date.now() - start) / 7000;
-      var swing = (Math.sin(t * Math.PI * 2) + 1) / 2;
-      setCrane(Math.round(swing * (FLOORS.length - 1)));
-      craneAnimId = requestAnimationFrame(tick);
-    }
-    tick();
-  }
-
-  // Mouse follow: when you hover the footer crane, the hook tracks your cursor
-  var craneEl = document.querySelector('.crane-monitor');
-  if (craneEl) {
-    craneEl.addEventListener('mouseenter', function () { craneUserActive = true; });
-    craneEl.addEventListener('mousemove', function (e) {
-      var rect = craneEl.getBoundingClientRect();
-      var relX = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-      setCrane(Math.round(relX * (FLOORS.length - 1)));
-    });
-    craneEl.addEventListener('mouseleave', function () { craneUserActive = false; });
-  }
-
   // Throttled scroll handler
   let scrollTicking = false;
   window.addEventListener('scroll', function () {
@@ -806,7 +742,6 @@
   window.addEventListener('load', function () {
     setTimeout(updateFloor, 100);
     setTimeout(highlightAssemblyFloor, 100);
-    startCraneSwing();
     // Enable indicator transitions after the initial floor position is locked
     // (prevents a flash-animation from (0,0) to the first item)
     setTimeout(function () {

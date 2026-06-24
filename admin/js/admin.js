@@ -267,17 +267,14 @@
             ${newLeads > 0 ? `<div class="card__trend card__trend--up"><i class="ph ph-circle"></i> ${newLeads} unread</div>` : '<div class="card__trend card__trend--neutral">All caught up</div>'}
           </div>
           <div class="card__meter"><div class="card__meter-fill card__meter-fill--accent" style="width: ${Math.min(100, totalLeads * 8)}%"></div></div>
-          <div class="card__footer">Stored in Netlify Blobs</div>
         </div>
 
         <div class="card card--kpi">
           <div class="card__body">
             <div class="card__value">${portfolio.length}</div>
             <div class="card__label">Portfolio Items</div>
-            <div class="card__trend card__trend--neutral">Managed via API</div>
           </div>
           <div class="card__meter"><div class="card__meter-fill card__meter-fill--steel" style="width: ${Math.min(100, portfolio.length * 20)}%"></div></div>
-          <div class="card__footer">Persistent across sessions</div>
         </div>
 
         <div class="card card--kpi">
@@ -289,10 +286,7 @@
               : `<div class="card__trend card__trend--up"><i class="ph ph-check"></i> All clear</div>`}
           </div>
           <div class="card__meter"><div class="card__meter-fill card__meter-fill--green" style="width: ${newLeads === 0 ? 100 : 30}%"></div></div>
-          <div class="card__footer">Response SLA: 1–4h</div>
         </div>
-
-
       `;
     },
 
@@ -312,8 +306,10 @@
       if (!fullContainer && !previewContainer) return;
 
       const leads = this._leads;
+      const activeLeads = leads.filter(function (l) { return l.status !== 'archived'; });
+      const archivedLeads = leads.filter(function (l) { return l.status === 'archived'; });
       const countLabel = document.getElementById('leadCountLabel');
-      if (countLabel) countLabel.textContent = leads.length + ' total';
+      if (countLabel) countLabel.textContent = activeLeads.length + ' active · ' + archivedLeads.length + ' archived';
 
       if (leads.length === 0) {
         const emptyHtml = `
@@ -364,10 +360,6 @@
       }
 
       if (!fullContainer) return;
-
-      // ── Split archived from active leads ───────────────────
-      var activeLeads = leads.filter(function (l) { return l.status !== 'archived'; });
-      var archivedLeads = leads.filter(function (l) { return l.status === 'archived'; });
 
       // ── Filter + Search + Sort (on active leads only) ─────
       var filtered = activeLeads.filter(function (lead) {
