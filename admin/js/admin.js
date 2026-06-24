@@ -52,6 +52,7 @@
           if (res.status === 401) {
             sessionStorage.removeItem('blok_admin_session');
             if (window.location.pathname.includes('dashboard')) {
+              sessionStorage.setItem('blok_admin_redirect', window.location.href);
               window.location.href = 'login.html?expired=1';
             }
           }
@@ -75,6 +76,7 @@
 
   const AUTH = {
     SESSION_KEY: 'blok_admin_session',
+    REDIRECT_KEY: 'blok_admin_redirect',
 
     async login(username, password) {
       const res = await API.post('/auth', { username, password }, true);
@@ -117,12 +119,14 @@
     async requireAuth() {
       const session = this.getSession();
       if (!session) {
+        sessionStorage.setItem(this.REDIRECT_KEY, window.location.href);
         window.location.href = 'login.html';
         return false;
       }
 
       const valid = await this.verify();
       if (!valid) {
+        sessionStorage.setItem(this.REDIRECT_KEY, window.location.href);
         window.location.href = 'login.html?expired=1';
         return false;
       }
@@ -664,7 +668,10 @@
       const result = await AUTH.login(username, password);
 
       if (result.ok) {
-        window.location.href = 'dashboard.html';
+        // Restore the original URL (with hash) if redirected from requireAuth
+        const redirect = sessionStorage.getItem(AUTH.REDIRECT_KEY);
+        sessionStorage.removeItem(AUTH.REDIRECT_KEY);
+        window.location.href = redirect || 'dashboard.html';
       } else {
         errorEl.textContent = result.error;
         errorEl.classList.add('login-error--visible');
