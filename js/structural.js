@@ -723,102 +723,70 @@
       setActiveFloor(activeScreen);
     }
 
-    // Update build crane in footer (scroll reactive)
-    updateCraneMonitor(scrollY, viewportH);
   }
 
-  // ── Build crane — footer interactive construction scene ──
+  // ── Build crane — footer pendulum swing + mouse follow ──
   const FLOORS = ['Ground', 'Lobby', 'Mezz', 'Core', 'Upper', 'Roof'];
+  let craneAnimId = null;
+  let craneUserActive = false;
 
-  function updateCraneMonitor(scrollY, viewportH) {
-    const docHeight = Math.max(
-      document.body.scrollHeight, document.documentElement.scrollHeight,
-      document.body.offsetHeight, document.documentElement.offsetHeight
-    );
-    const maxScroll = docHeight - viewportH;
-    const progress = maxScroll > 0 ? Math.min(scrollY / maxScroll, 1) : 0;
+  function getCranePx(idx) {
+    return (idx / (FLOORS.length - 1)) * 68 + 8;
+  }
 
-    // Determine current floor from data-screen elements
-    const screens = document.querySelectorAll('[data-screen]');
-    let activeIdx = 0;
-    screens.forEach(function (el) {
-      var rect = el.getBoundingClientRect();
-      if (rect.top <= viewportH * 0.5) {
-        var name = el.getAttribute('data-screen');
-        var idx = FLOORS.indexOf(name);
-        if (idx >= 0) activeIdx = Math.max(activeIdx, idx);
-      }
-    });
-
-    // Clamp: if past last section, show all blocks placed
-    if (activeIdx >= FLOORS.length) activeIdx = FLOORS.length - 1;
-
-    // Crane hook position — moves along the boom toward the current block
-    var hookPos = (activeIdx / (FLOORS.length - 1)) * 68 + 8; // px from left of crane
+  function setCrane(idx) {
     var cable = document.getElementById('craneCable');
     var hook = document.getElementById('craneHook');
-    if (cable) cable.style.left = hookPos + 'px';
-    if (hook) hook.style.left = hookPos + 'px';
-
-    // Render blocks: ground (waiting) + building (placed) + current (lifting)
-    renderCraneBlocks(activeIdx, progress);
-
-    // Update readout
     var floorEl = document.getElementById('craneFloor');
     var countEl = document.getElementById('craneCount');
-    if (floorEl) floorEl.textContent = FLOORS[activeIdx];
-    if (countEl) countEl.textContent = (activeIdx + 1) + ' / ' + FLOORS.length;
-  }
-
-  function renderCraneBlocks(activeIdx, progress) {
     var buildingEl = document.getElementById('craneBuilding');
     var groundEl = document.getElementById('craneGround');
-    if (!buildingEl || !groundEl) return;
+    if (!cable) return;
 
-    // Count how many blocks should be "placed" (visited sections)
-    // A section is "placed" if we've scrolled past more than half of it
-    var placed = activeIdx; // all sections before current are placed
+    var px = getCranePx(idx);
+    cable.style.left = px + 'px';
+    hook.style.left = px + 'px';
 
-    // Build blocks list
-    var buildingHTML = '';
-    var groundHTML = '';
-
-    for (var i = 0; i < FLOORS.length; i++) {
-      var cls = 'crane-block';
-
-      if (i < placed) {
-        cls += ' crane-block--placed';
-      } else if (i === activeIdx) {
-        cls += ' crane-block--current';
-      } else {
-        cls += ' crane-block--ground';
+    // Render blocks — active one in the building, rest on the ground
+    if (buildingEl && groundEl) {
+      var bHTML = '', gHTML = '';
+      for (var i = 0; i < FLOORS.length; i++) {
+        var cls = 'crane-block' + (i === idx ? ' crane-block--current' : ' crane-block--ground');
+        var blk = '<div class="' + cls + '"></div>';
+        if (i === idx) bHTML = blk + bHTML; else gHTML += blk;
       }
-
-      // The first time a block appears, add transition
-      if (i > placed) {
-        cls += ' crane-block--new';
-      }
-
-      var block = '<div class="' + cls + '"></div>';
-
-      if (i < placed || i === activeIdx) {
-        // In the building stack (placed + current being lifted)
-        buildingHTML = block + buildingHTML; // prepend so it stacks upward
-      } else {
-        // On the ground (remaining)
-        groundHTML += block;
-      }
+      buildingEl.innerHTML = bHTML;
+      groundEl.innerHTML = gHTML;
     }
 
-    buildingEl.innerHTML = buildingHTML;
-    groundEl.innerHTML = groundHTML;
+    if (floorEl) floorEl.textContent = FLOORS[idx];
+    if (countEl) countEl.textContent = (idx + 1) + ' / ' + FLOORS.length;
+  }
 
-    // After paint, animate new blocks
-    requestAnimationFrame(function () {
-      buildingEl.querySelectorAll('.crane-block--new').forEach(function (b) {
-        b.classList.remove('crane-block--new');
-      });
+  // Idle pendulum: hook swings left↔right on a slow sine loop (7s cycle)
+  function startCraneSwing() {
+    if (craneAnimId) cancelAnimationFrame(craneAnimId);
+    var start = Date.now();
+    function tick() {
+      if (craneUserActive) { craneAnimId = requestAnimationFrame(tick); return; }
+      var t = (Date.now() - start) / 7000;
+      var swing = (Math.sin(t * Math.PI * 2) + 1) / 2;
+      setCrane(Math.round(swing * (FLOORS.length - 1)));
+      craneAnimId = requestAnimationFrame(tick);
+    }
+    tick();
+  }
+
+  // Mouse follow: when you hover the footer crane, the hook tracks your cursor
+  var craneEl = document.querySelector('.crane-monitor');
+  if (craneEl) {
+    craneEl.addEventListener('mouseenter', function () { craneUserActive = true; });
+    craneEl.addEventListener('mousemove', function (e) {
+      var rect = craneEl.getBoundingClientRect();
+      var relX = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      setCrane(Math.round(relX * (FLOORS.length - 1)));
     });
+    craneEl.addEventListener('mouseleave', function () { craneUserActive = false; });
   }
 
   // Throttled scroll handler
@@ -826,11 +794,8 @@
   window.addEventListener('scroll', function () {
     if (!scrollTicking) {
       requestAnimationFrame(function () {
-        var sy = window.scrollY || window.pageYOffset;
-        var vh = window.innerHeight;
         updateFloor();
         highlightAssemblyFloor();
-        updateCraneMonitor(sy, vh);
         scrollTicking = false;
       });
       scrollTicking = true;
@@ -841,9 +806,7 @@
   window.addEventListener('load', function () {
     setTimeout(updateFloor, 100);
     setTimeout(highlightAssemblyFloor, 100);
-    setTimeout(function () {
-      updateCraneMonitor(window.scrollY || window.pageYOffset, window.innerHeight);
-    }, 150);
+    startCraneSwing();
     // Enable indicator transitions after the initial floor position is locked
     // (prevents a flash-animation from (0,0) to the first item)
     setTimeout(function () {

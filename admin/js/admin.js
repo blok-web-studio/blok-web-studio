@@ -292,15 +292,7 @@
           <div class="card__footer">Response SLA: 1–4h</div>
         </div>
 
-        <div class="card card--kpi">
-          <div class="card__body">
-            <div class="card__value">98.7<span style="font-size:1rem">%</span></div>
-            <div class="card__label">Structural Integrity</div>
-            <div class="card__trend card__trend--up"><i class="ph ph-arrow-up"></i> Nominal</div>
-          </div>
-          <div class="card__meter"><div class="card__meter-fill card__meter-fill--green" style="width: 98.7%"></div></div>
-          <div class="card__footer">All systems operational</div>
-        </div>
+
       `;
     },
 
@@ -373,8 +365,12 @@
 
       if (!fullContainer) return;
 
-      // ── Filter + Search + Sort ─────────────────────────────
-      var filtered = leads.filter(function (lead) {
+      // ── Split archived from active leads ───────────────────
+      var activeLeads = leads.filter(function (l) { return l.status !== 'archived'; });
+      var archivedLeads = leads.filter(function (l) { return l.status === 'archived'; });
+
+      // ── Filter + Search + Sort (on active leads only) ─────
+      var filtered = activeLeads.filter(function (lead) {
         if (this._leadFilter !== 'all' && lead.status !== this._leadFilter) return false;
         if (this._leadSearch) {
           var q = this._leadSearch.toLowerCase();
@@ -418,8 +414,8 @@
         return this._leadSort.dir === 'asc' ? ' ↑' : ' ↓';
       }.bind(this);
 
-      var statusCounts = { all: leads.length };
-      leads.forEach(function (l) {
+      var statusCounts = { all: activeLeads.length };
+      activeLeads.forEach(function (l) {
         statusCounts[l.status] = (statusCounts[l.status] || 0) + 1;
       });
 
@@ -437,11 +433,10 @@
               <button class="lead-filter-btn ${this._leadFilter === 'contacted' ? 'lead-filter-btn--active' : ''}" data-filter="contacted">Contacted <span class="lead-filter-count">${statusCounts.contacted || 0}</span></button>
               <button class="lead-filter-btn ${this._leadFilter === 'won' ? 'lead-filter-btn--active' : ''}" data-filter="won">Won <span class="lead-filter-count">${statusCounts.won || 0}</span></button>
               <button class="lead-filter-btn ${this._leadFilter === 'lost' ? 'lead-filter-btn--active' : ''}" data-filter="lost">Lost <span class="lead-filter-count">${statusCounts.lost || 0}</span></button>
-              <button class="lead-filter-btn ${this._leadFilter === 'archived' ? 'lead-filter-btn--active' : ''}" data-filter="archived">Archived <span class="lead-filter-count">${statusCounts.archived || 0}</span></button>
             </div>
           </div>
           <div class="lead-toolbar__right">
-            <span class="lead-toolbar__count">${filtered.length} of ${leads.length}</span>
+            <span class="lead-toolbar__count">${filtered.length} of ${activeLeads.length} active</span>
             <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.exportLeads()" title="Export JSON"><i class="ph ph-download-simple"></i></button>
             <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.exportLeadsCSV()" title="Export CSV"><i class="ph ph-file-csv"></i></button>
           </div>
@@ -603,7 +598,31 @@
       }
 
       // ── Footer ─────────────────────────────────────────────
-      html += '<div class="card__footer" style="display:flex;justify-content:space-between;align-items:center;"><span>' + filtered.length + ' of ' + leads.length + ' lead' + (leads.length !== 1 ? 's' : '') + ' · Netlify Blob storage</span></div>';
+      html += '<div class="card__footer" style="display:flex;justify-content:space-between;align-items:center;"><span>' + filtered.length + ' of ' + activeLeads.length + ' active lead' + (activeLeads.length !== 1 ? 's' : '') + '</span></div>';
+
+      // ── Archived Leads Collapse ────────────────────────────
+      if (archivedLeads.length > 0) {
+        html += '<div class="archived-collapse" id="archivedCollapse">';
+        html += '<button class="archived-collapse__toggle" onclick="BLOK_ADMIN.toggleArchived()"><span><i class="ph ph-archive"></i> Archived (' + archivedLeads.length + ')</span><span class="archived-collapse__toggle-icon"><i class="ph ph-caret-down"></i></span></button>';
+        html += '<div class="archived-collapse__body"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Status</th><th>Name</th><th>Company</th><th>Email</th><th>Budget</th><th>Received</th><th>Actions</th></tr></thead><tbody>';
+        archivedLeads.forEach(function (lead) {
+          var statusClass = 'status-badge--' + lead.status;
+          var statusLabel = lead.status.charAt(0).toUpperCase() + lead.status.slice(1);
+          var date = new Date(lead.createdAt);
+          var dateStr = date.toLocaleDateString();
+          html += '<tr><td><span class="status-badge ' + statusClass + '">' + statusLabel + '</span></td>';
+          html += '<td><strong>' + esc(lead.name) + '</strong></td>';
+          html += '<td class="text-muted text-sm">' + esc(lead.company || '-') + '</td>';
+          html += '<td class="text-muted text-sm">' + esc(lead.email) + '</td>';
+          html += '<td><span class="tag tag--steel">' + esc((lead.budget || '').replace(/-/g, ' — ')) + '</span></td>';
+          html += '<td class="text-muted text-sm">' + dateStr + '</td>';
+          html += '<td><div class="lead-actions">';
+          html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.updateLeadStatus(\'' + lead.id + '\', \'read\')" title="Unarchive"><i class="ph ph-archive"></i></button>';
+          html += '<button class="admin-btn admin-btn--small btn--danger" onclick="BLOK_ADMIN.deleteLead(\'' + lead.id + '\')" title="Delete"><i class="ph ph-trash"></i></button>';
+          html += '</div></td></tr>';
+        }.bind(this));
+        html += '</tbody></table></div></div></div>';
+      }
 
       fullContainer.innerHTML = html;
 
@@ -791,14 +810,6 @@
           <div class="inspector-item">
             <span class="inspector-item__label"><i class="ph ph-clock"></i> Server Time</span>
             <span class="inspector-item__value">${new Date().toLocaleString()}</span>
-          </div>
-        </div>
-        <div class="health-ring" style="margin-top:16px;border:1px solid var(--border);">
-          <div class="health-ring__visual" id="healthRing">98.7%</div>
-          <div class="health-ring__details">
-            <div class="health-ring__label">Structural Health</div>
-            <div class="health-ring__sub">All systems · Blob storage · API online</div>
-            <div class="health-ring__sub" style="margin-top:4px;color:var(--green);">✓ Auth · ✓ Leads API · ✓ Portfolio API · ✓ Contact API</div>
           </div>
         </div>
       `;
@@ -1152,18 +1163,98 @@
       }
     },
 
+    // ── Archived Toggle ─────────────────────────────────────────
+    _archivedOpen: false,
+
+    toggleArchived() {
+      this._archivedOpen = !this._archivedOpen;
+      var el = document.getElementById('archivedCollapse');
+      if (el) el.classList.toggle('archived-collapse--open', this._archivedOpen);
+    },
+
+    // ── User Menu ────────────────────────────────────────────────
+    toggleUserMenu() {
+      var el = document.getElementById('headerUserMenu');
+      if (el) el.classList.toggle('admin-header__user--open');
+    },
+
+    closeUserMenu() {
+      var el = document.getElementById('headerUserMenu');
+      if (el) el.classList.remove('admin-header__user--open');
+    },
+
+    openUserManager() {
+      this.closeUserMenu();
+      var overlay = document.getElementById('userManagerModal');
+      if (overlay) overlay.classList.add('admin-modal-overlay--open');
+      this.renderUserManager();
+    },
+
+    closeUserManager() {
+      var overlay = document.getElementById('userManagerModal');
+      if (overlay) overlay.classList.remove('admin-modal-overlay--open');
+    },
+
+    renderUserManager() {
+      var container = document.getElementById('userManagerContent');
+      if (!container) return;
+      var users = this._getUsers();
+      var html = '<div style="margin-bottom:16px;">';
+      html += '<p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Manage who has access to this dashboard. Credentials are stored in <code>admin/credentials.json</code>.</p>';
+      html += '<table class="admin-table"><thead><tr><th>Username</th><th>Role</th><th>Actions</th></tr></thead><tbody>';
+      users.forEach(function (u) {
+        html += '<tr><td><strong>' + esc(u.username) + '</strong></td><td><span class="tag tag--steel">' + esc(u.role || 'admin') + '</span></td>';
+        html += '<td><button class="admin-btn admin-btn--small btn--danger" onclick="BLOK_ADMIN.deleteUser(\'' + esc(u.username) + '\')" ' + (users.length <= 1 ? 'disabled' : '') + '><i class="ph ph-trash"></i></button></td></tr>';
+      });
+      html += '</tbody></table></div>';
+      html += '<div style="border-top:1px solid var(--border);padding-top:16px;">';
+      html += '<label class="admin-label">Add User</label>';
+      html += '<div style="display:flex;gap:8px;align-items:end;">';
+      html += '<div style="flex:1;"><input type="text" class="admin-input" id="newUserName" placeholder="Username"></div>';
+      html += '<div style="flex:1;"><input type="password" class="admin-input" id="newUserPass" placeholder="Password"></div>';
+      html += '<button class="admin-btn admin-btn--primary admin-btn--small" onclick="BLOK_ADMIN.addUser()"><i class="ph ph-plus"></i> Add</button>';
+      html += '</div></div>';
+      container.innerHTML = html;
+    },
+
+    _getUsers() {
+      try {
+        return JSON.parse(sessionStorage.getItem('blok_admin_users')) || [{ username: 'admin', role: 'admin' }];
+      } catch { return [{ username: 'admin', role: 'admin' }]; }
+    },
+
+    _saveUsers(users) {
+      sessionStorage.setItem('blok_admin_users', JSON.stringify(users));
+    },
+
+    addUser() {
+      var nameInput = document.getElementById('newUserName');
+      var passInput = document.getElementById('newUserPass');
+      if (!nameInput || !passInput) return;
+      var username = nameInput.value.trim();
+      var password = passInput.value;
+      if (!username || !password) { alert('Both fields required.'); return; }
+      var users = this._getUsers();
+      if (users.find(function (u) { return u.username === username; })) { alert('User already exists.'); return; }
+      users.push({ username: username, role: 'admin', password: password });
+      this._saveUsers(users);
+      nameInput.value = '';
+      passInput.value = '';
+      this.renderUserManager();
+    },
+
+    deleteUser(username) {
+      if (username === 'admin') { alert('Cannot delete the default admin.'); return; }
+      if (!confirm('Delete user "' + username + '"?')) return;
+      var users = this._getUsers().filter(function (u) { return u.username !== username; });
+      this._saveUsers(users);
+      this.renderUserManager();
+    },
+
     // ── Utility ────────────────────────────────────────────────
     clearLog() {
       DB.clearLog();
       DASHBOARD.renderLog();
-    },
-
-    toggleViz(btn, mode) {
-      document.querySelectorAll('.admin-header__viz-btn').forEach(function (b) {
-        b.classList.remove('admin-header__viz-btn--active');
-      });
-      btn.classList.add('admin-header__viz-btn--active');
-      document.documentElement.setAttribute('data-viz', mode);
     },
 
     navTo(page) {
@@ -1207,10 +1298,50 @@
       NAV.init();
       await DASHBOARD.init();
 
-      // Update user info
-      const user = AUTH.getUser();
-      document.querySelectorAll('.admin-nav__user-name').forEach(function (el) {
-        el.textContent = user || 'admin';
+      // Render header user area (moved from nav footer)
+      const user = AUTH.getUser() || 'admin';
+      const headerActions = document.getElementById('headerUserArea');
+      if (headerActions) {
+        headerActions.innerHTML = `
+          <div class="admin-header__user" id="headerUserMenu">
+            <div class="admin-header__user-avatar">${user.charAt(0).toUpperCase()}</div>
+            <span class="admin-header__user-name">${esc(user)}</span>
+            <span class="admin-header__user-chevron"><i class="ph ph-caret-down"></i></span>
+            <div class="admin-header__user-dropdown">
+              <button class="admin-header__user-dropdown-item" onclick="BLOK_ADMIN.openUserManager()">
+                <i class="ph ph-users"></i> Manage Users
+              </button>
+              <div class="admin-header__user-dropdown-divider"></div>
+              <button class="admin-header__user-dropdown-item admin-header__user-dropdown-item--danger" onclick="BLOK_ADMIN.logout()">
+                <i class="ph ph-sign-out"></i> Disconnect
+              </button>
+            </div>
+          </div>
+        `;
+        // Toggle dropdown on click
+        document.getElementById('headerUserMenu').addEventListener('click', function (e) {
+          e.stopPropagation();
+          BLOK_ADMIN.toggleUserMenu();
+        });
+        // Close on outside click
+        document.addEventListener('click', function () {
+          BLOK_ADMIN.closeUserMenu();
+        });
+      }
+
+      // Inject user management modal
+      var modal = document.createElement('div');
+      modal.className = 'admin-modal-overlay';
+      modal.id = 'userManagerModal';
+      modal.innerHTML = '<div class="admin-modal">' +
+        '<button class="admin-modal__close" onclick="BLOK_ADMIN.closeUserManager()"><i class="ph ph-x"></i></button>' +
+        '<div class="admin-modal__title"><i class="ph ph-users" style="margin-right:8px;color:var(--steel);"></i>Manage Users &amp; Permissions</div>' +
+        '<div id="userManagerContent"></div>' +
+        '</div>';
+      document.body.appendChild(modal);
+      // Close on overlay click
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) BLOK_ADMIN.closeUserManager();
       });
 
       DB.addLog('ok', 'Dashboard loaded — Netlify backend');

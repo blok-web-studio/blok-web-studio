@@ -1719,16 +1719,6 @@ a.work-item {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-.crane-block--new {
-  opacity: 0;
-  transform: translateY(8px);
-}
-
-.crane-block--placed {
-  background: var(--steel);
-  border-color: var(--steel);
-}
-
 .crane-block--current {
   border-color: var(--accent);
   background: var(--accent);
@@ -1773,10 +1763,6 @@ a.work-item {
 }
 :root[data-viz="blueprint"] .crane-crane__boom::after {
   border-bottom-color: var(--steel-light);
-}
-:root[data-viz="blueprint"] .crane-block--placed {
-  background: var(--steel-light);
-  border-color: var(--steel-light);
 }
 :root[data-viz="blueprint"] .crane-block--current {
   background: var(--fg);

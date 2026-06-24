@@ -194,48 +194,161 @@ a:hover { text-decoration: underline; }
   opacity: 0.6;
 }
 
-.admin-nav__footer {
-  border-top: var(--border-w) solid var(--border);
-  padding: 12px var(--gutter);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.admin-nav__user {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: var(--muted);
+/* ----- Header User Area ----- */
+.admin-header__user {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  position: relative;
+  cursor: pointer;
+  padding: 4px 10px;
+  border: var(--border-w) solid var(--border);
+  transition: border-color 0.15s;
+  user-select: none;
 }
 
-.admin-nav__user-avatar {
-  width: 24px;
-  height: 24px;
+.admin-header__user:hover {
+  border-color: var(--fg);
+}
+
+.admin-header__user-avatar {
+  width: 22px;
+  height: 22px;
   border: 1px solid var(--border);
   display: grid;
   place-items: center;
+  font-family: var(--font-mono);
   font-size: 0.5rem;
   font-weight: 600;
   color: var(--steel);
+  background: var(--surface);
 }
 
-.admin-nav__logout {
+.admin-header__user-name {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--fg);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.admin-header__user-chevron {
+  font-size: 0.7rem;
+  color: var(--steel-light);
+  transition: transform 0.2s;
+}
+
+.admin-header__user--open .admin-header__user-chevron {
+  transform: rotate(180deg);
+}
+
+/* User dropdown */
+.admin-header__user-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 180px;
+  background: var(--surface);
+  border: var(--border-w) solid var(--border);
+  z-index: 200;
+  display: none;
+  flex-direction: column;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.admin-header__user--open .admin-header__user-dropdown {
+  display: flex;
+}
+
+.admin-header__user-dropdown-item {
   font-family: var(--font-mono);
   font-size: 0.6rem;
-  letter-spacing: 0.1em;
-  color: var(--accent);
+  letter-spacing: 0.06em;
+  padding: 10px 14px;
+  color: var(--fg);
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px 0;
   text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.12s;
   text-transform: uppercase;
+  width: 100%;
 }
 
-.admin-nav__logout:hover { text-decoration: underline; }
+.admin-header__user-dropdown-item:hover {
+  background: var(--surface-raised);
+  text-decoration: none;
+}
+
+.admin-header__user-dropdown-item i {
+  color: var(--steel);
+  font-size: 0.9rem;
+  width: 16px;
+}
+
+.admin-header__user-dropdown-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+.admin-header__user-dropdown-item--danger {
+  color: var(--red);
+}
+
+/* ── User Management Modal ── */
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 500;
+  display: none;
+  place-items: center;
+}
+
+.admin-modal-overlay--open {
+  display: grid;
+}
+
+.admin-modal {
+  background: var(--surface);
+  border: var(--border-w) solid var(--border);
+  width: 100%;
+  max-width: 480px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: var(--gutter);
+  position: relative;
+}
+
+.admin-modal__title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 16px;
+}
+
+.admin-modal__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+.admin-modal__close:hover { color: var(--fg); }
+
+.admin-modal .admin-label { margin-top: 12px; margin-bottom: 4px; }
+.admin-modal .admin-input { margin-bottom: 8px; }
 
 /* ----- Main Content Area ----- */
 .admin-main {
@@ -288,52 +401,6 @@ a:hover { text-decoration: underline; }
   gap: 12px;
 }
 
-.admin-header__viz-btn {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 6px 12px;
-  border: var(--border-w) solid var(--border);
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.admin-header__viz-btn:hover {
-  border-color: var(--fg);
-  color: var(--fg);
-}
-
-.admin-header__viz-btn--active {
-  background: var(--fg);
-  color: var(--surface);
-  border-color: var(--fg);
-}
-
-.admin-header__status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  color: var(--green);
-}
-
-.admin-header__status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--green);
-  animation: pulse-dot 2s infinite;
-}
-
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-
 /* ----- Page Content ----- */
 .admin-content {
   padding: var(--gutter);
@@ -344,6 +411,51 @@ a:hover { text-decoration: underline; }
 }
 
 .admin-page--active {
+  display: block;
+}
+
+/* ----- Archived Leads Collapse ----- */
+.archived-collapse {
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+}
+
+.archived-collapse__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--steel-light);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.archived-collapse__toggle:hover {
+  color: var(--fg);
+}
+
+.archived-collapse__toggle-icon {
+  transition: transform 0.2s;
+  font-size: 0.8rem;
+}
+
+.archived-collapse--open .archived-collapse__toggle-icon {
+  transform: rotate(180deg);
+}
+
+.archived-collapse__body {
+  display: none;
+  overflow: hidden;
+}
+
+.archived-collapse--open .archived-collapse__body {
   display: block;
 }
 
@@ -1508,22 +1620,9 @@ a:hover { text-decoration: underline; }
 .text-sm { font-size: 0.75rem; }
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* ----- Blueprint mode tweaks for admin ----- */
-:root[data-viz="blueprint"] .card,
-:root[data-viz="blueprint"] .panel,
-:root[data-viz="blueprint"] .portfolio-card,
-:root[data-viz="blueprint"] .quick-action {
-  border-style: dashed;
-}
-
-:root[data-viz="blueprint"] .admin-nav {
-  border-style: dashed;
-}
-
 /* ----- Reduced motion ----- */
 @media (prefers-reduced-motion: reduce) {
   .card__meter-fill { transition: none !important; }
-  .admin-header__status-dot { animation: none; }
 }
 
 /* ----- Loading state ----- */

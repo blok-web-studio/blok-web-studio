@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-viz="structure"><head>
+<html lang="en"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BLOK. — Admin Control Panel</title>
@@ -63,15 +63,6 @@
         </li>
       </ul>
 
-      <div class="admin-nav__footer">
-        <div class="admin-nav__user">
-          <div class="admin-nav__user-avatar">B</div>
-          <span class="admin-nav__user-name">admin</span>
-        </div>
-        <button class="admin-nav__logout" onclick="BLOK_ADMIN.logout()">
-          <i class="ph ph-sign-out"></i> Disconnect
-        </button>
-      </div>
     </nav>
 
     <!-- ============================================================
@@ -83,15 +74,9 @@
       <header class="admin-header">
         <div class="admin-header__title">
           <span id="pageTitle">Dashboard</span>
-          <span class="annotation">v1.0</span>
         </div>
-        <div class="admin-header__actions">
-          <span class="admin-header__status">
-            <span class="admin-header__status-dot"></span>
-            Live
-          </span>
-          <button class="admin-header__viz-btn admin-header__viz-btn--active" data-viz="structure" onclick="BLOK_ADMIN.toggleViz(this, 'structure')">Struct</button>
-          <button class="admin-header__viz-btn" data-viz="blueprint" onclick="BLOK_ADMIN.toggleViz(this, 'blueprint')">BP</button>
+        <div class="admin-header__actions" id="headerUserArea">
+          <!-- User info moved here by JS -->
         </div>
       </header>
 
@@ -104,9 +89,9 @@
 
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px;position:relative;z-index:1;">
             <div>
-              <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">Structural Overview</h2>
+              <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">Dashboard</h2>
               <p style="font-size:0.85rem;color:var(--muted);margin-top:2px;">
-                Site health, lead activity, and key metrics at a glance.
+                Key metrics, recent leads, and portfolio at a glance.
               </p>
             </div>
             <a href="../index.html" target="_blank" class="admin-btn admin-btn--small" style="display:inline-flex;align-items:center;gap:6px;">
@@ -229,7 +214,7 @@
             <div>
               <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">Site Inspector</h2>
               <p style="font-size:0.85rem;color:var(--muted);margin-top:2px;">
-                Runtime diagnostics, environment info, and structural health.
+                Runtime diagnostics and environment info.
               </p>
             </div>
           </div>
@@ -306,13 +291,10 @@
             <div class="panel__body" style="font-size:0.85rem;color:var(--muted);line-height:1.8;">
               <p><strong><span class="brand-lot">BLOK.</span> Admin Panel v1.0</strong> — Client-side admin interface for the <span class="brand-lot">BLOK.</span> WebDev Studio site.</p>
               <p style="margin-top:8px;">
-                • <strong>Data Storage:</strong> All data is stored in your browser's localStorage. Nothing is sent to any server.<br>
+                • <strong>Data Storage:</strong> All data is persisted via Netlify Blobs.<br>
                 • <strong>Authentication:</strong> Credentials are stored in a gitignored <code>credentials.json</code> file — never in the repo.<br>
-                • <strong>Leads:</strong> Contact form submissions from the live site are captured here. To capture real submissions, the site's contact form must post to <code>admin/leads/import</code> or use the localStorage API.<br>
-                • <strong>Portfolio:</strong> Items managed here are independent from the hardcoded items in <code>index.html</code>. Update the HTML to reflect changes.
-              </p>
-              <p style="margin-top:12px;font-family:var(--font-mono);font-size:0.7rem;color:var(--steel-light);">
-                STRUCTURAL INTEGRITY: 98.7% · BUILT WITH <span class="brand-lot">BLOK.</span>
+                • <strong>Leads:</strong> Contact form submissions from the live site are captured here.<br>
+                • <strong>Portfolio:</strong> Items managed here are independent from the hardcoded items in <code>index.html</code>.
               </p>
             </div>
           </div>
