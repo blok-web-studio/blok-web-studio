@@ -119,12 +119,27 @@ export function fail(message, statusCode = 400) {
 /**
  * Try to get a Netlify Blob store. Returns null (rather than throwing)
  * if blobs aren't configured so callers can fall back gracefully.
+ *
+ * Tries in order:
+ * 1. Automatic via Lambda context (works when deployed on Netlify)
+ * 2. Manual via NETLIFY_BLOBS_SITE_ID / NETLIFY_BLOBS_TOKEN env vars
  */
 export function tryGetStore(storeName, context) {
+  // Attempt 1: automatic via context
   try {
     return getStore(storeName, { context });
-  } catch (err) {
-    console.warn(`[blob] ${storeName} not available:`, err.message);
+  } catch (err1) {
+    // Attempt 2: manual via env vars
+    try {
+      const siteID = process.env.NETLIFY_BLOBS_SITE_ID || process.env.NETLIFY_SITE_ID;
+      const token = process.env.NETLIFY_BLOBS_TOKEN || process.env.NETLIFY_ACCESS_TOKEN;
+      if (siteID && token) {
+        return getStore({ name: storeName, siteID, token });
+      }
+    } catch (err2) {
+      console.warn(`[blob] ${storeName} manual fallback failed:`, err2.message);
+    }
+    console.warn(`[blob] ${storeName} not available:`, err1.message);
     return null;
   }
 }

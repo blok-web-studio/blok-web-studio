@@ -48,8 +48,8 @@ export const handler = async (event, context) => {
   if (method === 'GET') {
     let items = await safeBlobGet(store, 'items');
 
-    // Seed defaults if empty (only when blob storage works)
-    if (items.length === 0 && store) {
+    // Seed defaults if empty (persist to blob if available)
+    if (items.length === 0) {
       items = withIds(DEFAULT_PORTFOLIO);
       await safeBlobSet(store, 'items', items);
     }
