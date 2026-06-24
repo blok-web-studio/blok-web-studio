@@ -215,14 +215,16 @@
     _portfolio: [],
 
     async init() {
-      this._leads = await DB.getLeads();
-      this._portfolio = await DB.getPortfolio();
+      const [leads, portfolio] = await Promise.all([DB.getLeads(), DB.getPortfolio()]);
+      this._leads = leads;
+      this._portfolio = portfolio;
       this.renderAll();
     },
 
     async refresh() {
-      this._leads = await DB.getLeads();
-      this._portfolio = await DB.getPortfolio();
+      const [leads, portfolio] = await Promise.all([DB.getLeads(), DB.getPortfolio()]);
+      this._leads = leads;
+      this._portfolio = portfolio;
       this.renderAll();
     },
 
@@ -292,8 +294,10 @@
 
     // ── Leads table ────────────────────────────────────────────
     renderLeads() {
-      const container = document.getElementById('leadsContainer');
-      if (!container) return;
+      const fullContainer = document.getElementById('leadsContainer');
+      const previewContainer = document.getElementById('leadsPreviewContainer');
+
+      if (!fullContainer && !previewContainer) return;
 
       const leads = this._leads;
 
@@ -302,15 +306,18 @@
       if (countLabel) countLabel.textContent = leads.length + ' total';
 
       if (leads.length === 0) {
-        container.innerHTML = `
+        const emptyHtml = `
           <div class="admin-table__empty">
             <i class="ph ph-inbox"></i>
             <p>No leads yet. Contact form submissions will appear here.</p>
           </div>
         `;
+        if (fullContainer) fullContainer.innerHTML = emptyHtml;
+        if (previewContainer) previewContainer.innerHTML = emptyHtml;
         return;
       }
 
+      // ── Full leads table (leads page) ────────────────────────
       let html = `
         <div class="admin-table-wrap">
         <table class="admin-table">
@@ -364,7 +371,46 @@
         </div>
       `;
 
-      container.innerHTML = html;
+      if (fullContainer) fullContainer.innerHTML = html;
+
+      // ── Preview table (dashboard) — actions only show status ─
+      let previewHtml = `
+        <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Budget</th>
+              <th>Message</th>
+              <th>Received</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      leads.slice(0, 5).forEach(function (lead) {
+        const statusClass = 'status-badge--' + lead.status;
+        const statusLabel = lead.status.charAt(0).toUpperCase() + lead.status.slice(1);
+        const date = new Date(lead.createdAt);
+        const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const messagePreview = lead.message && lead.message.length > 60 ? lead.message.slice(0, 60) + '…' : (lead.message || '');
+
+        previewHtml += `
+          <tr>
+            <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+            <td><strong>${esc(lead.name)}</strong></td>
+            <td><a href="mailto:${esc(lead.email)}">${esc(lead.email)}</a></td>
+            <td><span class="tag tag--steel">${esc(lead.budget)}</span></td>
+            <td class="text-muted text-sm" title="${esc(lead.message)}">${esc(messagePreview)}</td>
+            <td class="text-muted text-sm">${dateStr}</td>
+          </tr>
+        `;
+      }.bind(this));
+
+      previewHtml += `</tbody></table></div>`;
+      if (previewContainer) previewContainer.innerHTML = previewHtml;
     },
 
     // ── Portfolio ──────────────────────────────────────────────
