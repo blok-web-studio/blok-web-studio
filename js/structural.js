@@ -723,73 +723,114 @@
       setActiveFloor(activeScreen);
     }
 
-    // Update tension monitor in footer (scroll reactive)
-    updateTensionMonitor(scrollY, viewportH);
+    // Update build crane in footer (scroll reactive)
+    updateCraneMonitor(scrollY, viewportH);
   }
 
-  // Tension monitor — decorative footer gauges reacting to scroll + mouse
-  function updateTensionMonitor(scrollY, viewportH) {
-    const docHeight = Math.max(
-      document.body.scrollHeight,
-      document.documentElement.scrollHeight,
-      document.body.offsetHeight,
-      document.documentElement.offsetHeight,
-      document.body.clientHeight,
-      document.documentElement.clientHeight
-    );
-    const maxScroll = docHeight - viewportH;
-    const progress = maxScroll > 0 ? Math.min(scrollY / maxScroll, 1) : 0;
+  // ── Build crane — footer interactive construction scene ──
+  const FLOORS = ['Ground', 'Lobby', 'Mezz', 'Core', 'Upper', 'Roof'];
 
-    const gaugeTension = document.getElementById('gaugeTension');
-    const gaugeLoad = document.getElementById('gaugeLoad');
-    const gaugeStress = document.getElementById('gaugeStress');
-    const tensionReadout = document.getElementById('tensionReadout');
-    const tensionWeight = document.getElementById('tensionWeight');
-
-    // Gauges animate based on scroll with different curves
-    if (gaugeTension) gaugeTension.style.width = (Math.sin(progress * Math.PI) * 60 + 20) + '%';
-    if (gaugeLoad) gaugeLoad.style.width = (progress * 80 + 10) + '%';
-    if (gaugeStress) gaugeStress.style.width = (Math.pow(progress, 1.5) * 70 + 5) + '%';
-    if (tensionReadout) tensionReadout.textContent = (Math.sin(progress * Math.PI * 2) * 2 + 3).toFixed(1);
-    if (tensionWeight) {
-      const weightPos = Math.sin(progress * Math.PI) * 8;
-      tensionWeight.style.bottom = (12 + weightPos) + 'px';
-    }
-  }
-
-  // Mouse-follow for tension monitor (subtle — modulates scroll baseline)
-  let mouseTensionOffset = 0;
-  document.addEventListener('mousemove', function (e) {
+  function updateCraneMonitor(scrollY, viewportH) {
     const docHeight = Math.max(
       document.body.scrollHeight, document.documentElement.scrollHeight,
       document.body.offsetHeight, document.documentElement.offsetHeight
     );
-    const vh = window.innerHeight;
-    const maxScroll = docHeight - vh;
-    const scrollProgress = maxScroll > 0 ? Math.min(window.scrollY / maxScroll, 1) : 0;
-    const mouseNorm = Math.min(1, Math.max(0, e.clientY / vh));
-    // Blend: near footer (mouse far down) influence grows; otherwise scroll rules
-    const footerBlend = Math.max(0, (mouseNorm - 0.6) / 0.4); // 0 when above 60%, 1 at bottom
-    mouseTensionOffset = footerBlend * (mouseNorm - scrollProgress) * 0.3;
+    const maxScroll = docHeight - viewportH;
+    const progress = maxScroll > 0 ? Math.min(scrollY / maxScroll, 1) : 0;
 
-    const combinedProgress = Math.min(1, Math.max(0, scrollProgress + mouseTensionOffset));
-    const gaugeTension = document.getElementById('gaugeTension');
-    const gaugeLoad = document.getElementById('gaugeLoad');
-    const gaugeStress = document.getElementById('gaugeStress');
-    const tensionReadout = document.getElementById('tensionReadout');
-    if (gaugeTension) gaugeTension.style.width = (Math.sin(combinedProgress * Math.PI) * 60 + 20) + '%';
-    if (gaugeLoad) gaugeLoad.style.width = (combinedProgress * 80 + 10) + '%';
-    if (gaugeStress) gaugeStress.style.width = (Math.pow(combinedProgress, 1.5) * 70 + 5) + '%';
-    if (tensionReadout) tensionReadout.textContent = (Math.sin(combinedProgress * Math.PI * 2) * 2 + 3).toFixed(1);
-  });
+    // Determine current floor from data-screen elements
+    const screens = document.querySelectorAll('[data-screen]');
+    let activeIdx = 0;
+    screens.forEach(function (el) {
+      var rect = el.getBoundingClientRect();
+      if (rect.top <= viewportH * 0.5) {
+        var name = el.getAttribute('data-screen');
+        var idx = FLOORS.indexOf(name);
+        if (idx >= 0) activeIdx = Math.max(activeIdx, idx);
+      }
+    });
+
+    // Clamp: if past last section, show all blocks placed
+    if (activeIdx >= FLOORS.length) activeIdx = FLOORS.length - 1;
+
+    // Crane hook position — moves along the boom toward the current block
+    var hookPos = (activeIdx / (FLOORS.length - 1)) * 68 + 8; // px from left of crane
+    var cable = document.getElementById('craneCable');
+    var hook = document.getElementById('craneHook');
+    if (cable) cable.style.left = hookPos + 'px';
+    if (hook) hook.style.left = hookPos + 'px';
+
+    // Render blocks: ground (waiting) + building (placed) + current (lifting)
+    renderCraneBlocks(activeIdx, progress);
+
+    // Update readout
+    var floorEl = document.getElementById('craneFloor');
+    var countEl = document.getElementById('craneCount');
+    if (floorEl) floorEl.textContent = FLOORS[activeIdx];
+    if (countEl) countEl.textContent = (activeIdx + 1) + ' / ' + FLOORS.length;
+  }
+
+  function renderCraneBlocks(activeIdx, progress) {
+    var buildingEl = document.getElementById('craneBuilding');
+    var groundEl = document.getElementById('craneGround');
+    if (!buildingEl || !groundEl) return;
+
+    // Count how many blocks should be "placed" (visited sections)
+    // A section is "placed" if we've scrolled past more than half of it
+    var placed = activeIdx; // all sections before current are placed
+
+    // Build blocks list
+    var buildingHTML = '';
+    var groundHTML = '';
+
+    for (var i = 0; i < FLOORS.length; i++) {
+      var cls = 'crane-block';
+
+      if (i < placed) {
+        cls += ' crane-block--placed';
+      } else if (i === activeIdx) {
+        cls += ' crane-block--current';
+      } else {
+        cls += ' crane-block--ground';
+      }
+
+      // The first time a block appears, add transition
+      if (i > placed) {
+        cls += ' crane-block--new';
+      }
+
+      var block = '<div class="' + cls + '"></div>';
+
+      if (i < placed || i === activeIdx) {
+        // In the building stack (placed + current being lifted)
+        buildingHTML = block + buildingHTML; // prepend so it stacks upward
+      } else {
+        // On the ground (remaining)
+        groundHTML += block;
+      }
+    }
+
+    buildingEl.innerHTML = buildingHTML;
+    groundEl.innerHTML = groundHTML;
+
+    // After paint, animate new blocks
+    requestAnimationFrame(function () {
+      buildingEl.querySelectorAll('.crane-block--new').forEach(function (b) {
+        b.classList.remove('crane-block--new');
+      });
+    });
+  }
 
   // Throttled scroll handler
   let scrollTicking = false;
   window.addEventListener('scroll', function () {
     if (!scrollTicking) {
       requestAnimationFrame(function () {
+        var sy = window.scrollY || window.pageYOffset;
+        var vh = window.innerHeight;
         updateFloor();
         highlightAssemblyFloor();
+        updateCraneMonitor(sy, vh);
         scrollTicking = false;
       });
       scrollTicking = true;
@@ -800,6 +841,9 @@
   window.addEventListener('load', function () {
     setTimeout(updateFloor, 100);
     setTimeout(highlightAssemblyFloor, 100);
+    setTimeout(function () {
+      updateCraneMonitor(window.scrollY || window.pageYOffset, window.innerHeight);
+    }, 150);
     // Enable indicator transitions after the initial floor position is locked
     // (prevents a flash-animation from (0,0) to the first item)
     setTimeout(function () {

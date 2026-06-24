@@ -591,35 +591,22 @@
 
   <!-- FOOTER -- The Foundation -->
   <footer class="footer-foundation" id="footer">
-    <!-- Interactive tension monitor -->
-    <div class="tension-monitor" aria-hidden="true">
-      <div class="tension-monitor__inner">
-        <div class="tension-monitor__cable">
-          <div class="tension-monitor__weight" id="tensionWeight"></div>
+    <!-- Interactive build crane -->
+    <div class="crane-monitor" aria-hidden="true">
+      <div class="crane-monitor__inner">
+        <div class="crane-crane">
+          <div class="crane-crane__tower"></div>
+          <div class="crane-crane__boom"></div>
+          <div class="crane-crane__cable" id="craneCable"></div>
+          <div class="crane-crane__hook" id="craneHook">◈</div>
         </div>
-        <div class="tension-monitor__gauge-group">
-          <div class="tension-monitor__gauge">
-            <span class="tension-monitor__gauge-label">Tension</span>
-            <div class="tension-monitor__gauge-track">
-              <div class="tension-monitor__gauge-fill" id="gaugeTension" style="width: 0%"></div>
-            </div>
-          </div>
-          <div class="tension-monitor__gauge">
-            <span class="tension-monitor__gauge-label">Load</span>
-            <div class="tension-monitor__gauge-track">
-              <div class="tension-monitor__gauge-fill" id="gaugeLoad" style="width: 0%"></div>
-            </div>
-          </div>
-          <div class="tension-monitor__gauge">
-            <span class="tension-monitor__gauge-label">Stress</span>
-            <div class="tension-monitor__gauge-track">
-              <div class="tension-monitor__gauge-fill" id="gaugeStress" style="width: 0%"></div>
-            </div>
-          </div>
+        <div class="crane-site">
+          <div class="crane-site__building" id="craneBuilding"></div>
+          <div class="crane-site__ground" id="craneGround"></div>
         </div>
-        <div class="tension-monitor__readout">
-          <span id="tensionReadout">0.0</span>
-          <span class="tension-monitor__readout-unit">kN</span>
+        <div class="crane-readout">
+          <span class="crane-readout__floor" id="craneFloor">Ground</span>
+          <span class="crane-readout__count" id="craneCount">0 / 6</span>
         </div>
       </div>
     </div>
@@ -668,7 +655,7 @@
           </div>
         </div>
         <div class="footer-bottom">
-          <span class="footer-bottom__text">© 2026 <span class="brand-lot">BLOK.</span> WebDev Studio. All rights reserved.</span>
+          <span class="footer-bottom__text">© 2026 BLOK. WebDev Studio. All rights reserved.</span>
           <a href="admin/login.html" class="footer-bottom__text" style="opacity:0.25;transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.25" target="_blank">⚙ Admin</a>
         </div>
       </div>
