@@ -3,19 +3,16 @@
 // Public endpoint — no auth required.
 // Stores submissions in the same blob store as leads.
 
-import { getStore } from '@netlify/blobs';
-import { handleOptions, ok, fail } from './_shared.mjs';
+import {
+  handleOptions,
+  ok,
+  fail,
+  tryGetStore,
+  safeBlobGet,
+  safeBlobSet,
+} from './_shared.mjs';
 
 const STORE_NAME = 'blok-leads';
-
-async function getLeadsBlob(store) {
-  try {
-    const blob = await store.get('leads');
-    return blob ? JSON.parse(blob) : [];
-  } catch {
-    return [];
-  }
-}
 
 export const handler = async (event, context) => {
   const preflight = handleOptions(event);
@@ -33,8 +30,8 @@ export const handler = async (event, context) => {
       return fail('Name, email, and message are required.');
     }
 
-    const store = getStore(STORE_NAME, { context });
-    const leads = await getLeadsBlob(store);
+    const store = tryGetStore(STORE_NAME, { context });
+    const leads = await safeBlobGet(store, 'leads');
 
     const lead = {
       id: 'lead_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
@@ -47,7 +44,7 @@ export const handler = async (event, context) => {
     };
 
     leads.unshift(lead);
-    await store.setJSON('leads', leads);
+    await safeBlobSet(store, 'leads', leads);
 
     return ok({ lead, message: 'Your brief has been received. We\'ll be in touch within 24 hours.' }, 201);
   } catch (err) {

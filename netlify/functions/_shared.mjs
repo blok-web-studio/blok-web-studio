@@ -1,5 +1,6 @@
 // Shared utilities for BLOK. Netlify Functions
 import crypto from 'node:crypto';
+import { getStore } from '@netlify/blobs';
 
 // ── Auth ────────────────────────────────────────────────────────
 
@@ -111,4 +112,45 @@ export function ok(data) {
 
 export function fail(message, statusCode = 400) {
   return corsResponse({ ok: false, error: message }, statusCode);
+}
+
+// ── Blob store helpers ──────────────────────────────────────────
+
+/**
+ * Try to get a Netlify Blob store. Returns null (rather than throwing)
+ * if blobs aren't configured so callers can fall back gracefully.
+ */
+export function tryGetStore(storeName, context) {
+  try {
+    return getStore(storeName, { context });
+  } catch (err) {
+    console.warn(`[blob] ${storeName} not available:`, err.message);
+    return null;
+  }
+}
+
+/**
+ * Safe blob read — returns [] on any error.
+ */
+export async function safeBlobGet(store, key) {
+  if (!store) return [];
+  try {
+    const raw = await store.get(key);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Safe blob write — returns false on any error.
+ */
+export async function safeBlobSet(store, key, data) {
+  if (!store) return false;
+  try {
+    await store.setJSON(key, data);
+    return true;
+  } catch {
+    return false;
+  }
 }

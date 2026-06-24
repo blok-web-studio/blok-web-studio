@@ -5,24 +5,17 @@
 //
 // Data stored in Netlify Blob store: "blok-portfolio"
 
-import { getStore } from '@netlify/blobs';
 import {
   authenticateRequest,
   handleOptions,
   ok,
   fail,
+  tryGetStore,
+  safeBlobGet,
+  safeBlobSet,
 } from './_shared.mjs';
 
 const STORE_NAME = 'blok-portfolio';
-
-async function getPortfolioBlob(store) {
-  try {
-    const blob = await store.get('items');
-    return blob ? JSON.parse(blob) : [];
-  } catch {
-    return [];
-  }
-}
 
 const DEFAULT_PORTFOLIO = [
   { title: 'Aurora Audio Systems', tag: 'Demo', desc: 'Premium audio hardware concept. CNC-machined precision.', url: 'https://blok-web-studio.github.io/demo-sites/audiosystem_aurora/index.html' },
@@ -48,17 +41,17 @@ export const handler = async (event, context) => {
     return fail('Unauthorized.', 401);
   }
 
-  const store = getStore(STORE_NAME, { context });
+  const store = tryGetStore(STORE_NAME, { context });
   const method = event.httpMethod;
 
   // ── GET: List all items ────────────────────────────────────
   if (method === 'GET') {
-    let items = await getPortfolioBlob(store);
+    let items = await safeBlobGet(store, 'items');
 
-    // Seed defaults if empty
-    if (items.length === 0) {
+    // Seed defaults if empty (only when blob storage works)
+    if (items.length === 0 && store) {
       items = withIds(DEFAULT_PORTFOLIO);
-      await store.setJSON('items', items);
+      await safeBlobSet(store, 'items', items);
     }
 
     return ok({ portfolio: items });
@@ -74,7 +67,7 @@ export const handler = async (event, context) => {
         return fail('Title is required.');
       }
 
-      const items = await getPortfolioBlob(store);
+      const items = await safeBlobGet(store, 'items');
       const item = {
         id: 'port_' + Date.now(),
         title: title.trim(),
@@ -85,7 +78,7 @@ export const handler = async (event, context) => {
       };
 
       items.push(item);
-      await store.setJSON('items', items);
+      await safeBlobSet(store, 'items', items);
 
       return ok({ item }, 201);
     } catch (err) {
@@ -100,7 +93,7 @@ export const handler = async (event, context) => {
       return fail('id query parameter is required.');
     }
 
-    let items = await getPortfolioBlob(store);
+    let items = await safeBlobGet(store, 'items');
     const before = items.length;
     items = items.filter((item) => item.id !== id);
 
@@ -108,7 +101,7 @@ export const handler = async (event, context) => {
       return fail('Item not found.', 404);
     }
 
-    await store.setJSON('items', items);
+    await safeBlobSet(store, 'items', items);
     return ok({ deleted: true });
   }
 

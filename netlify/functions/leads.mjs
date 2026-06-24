@@ -6,24 +6,17 @@
 //
 // Data stored in Netlify Blob store: "blok-leads"
 
-import { getStore } from '@netlify/blobs';
 import {
   authenticateRequest,
   handleOptions,
   ok,
   fail,
+  tryGetStore,
+  safeBlobGet,
+  safeBlobSet,
 } from './_shared.mjs';
 
 const STORE_NAME = 'blok-leads';
-
-async function getLeadsBlob(store) {
-  try {
-    const blob = await store.get('leads');
-    return blob ? JSON.parse(blob) : [];
-  } catch {
-    return [];
-  }
-}
 
 export const handler = async (event, context) => {
   // CORS preflight
@@ -36,12 +29,12 @@ export const handler = async (event, context) => {
     return fail('Unauthorized.', 401);
   }
 
-  const store = getStore(STORE_NAME, { context });
+  const store = tryGetStore(STORE_NAME, { context });
   const method = event.httpMethod;
 
   // ── GET: List all leads ────────────────────────────────────
   if (method === 'GET') {
-    const leads = await getLeadsBlob(store);
+    const leads = await safeBlobGet(store, 'leads');
     return ok({ leads });
   }
 
@@ -55,7 +48,7 @@ export const handler = async (event, context) => {
         return fail('Name, email, and message are required.');
       }
 
-      const leads = await getLeadsBlob(store);
+      const leads = await safeBlobGet(store, 'leads');
       const lead = {
         id: 'lead_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
         name,
@@ -67,7 +60,7 @@ export const handler = async (event, context) => {
       };
 
       leads.unshift(lead);
-      await store.setJSON('leads', leads);
+      await safeBlobSet(store, 'leads', leads);
 
       return ok({ lead }, 201);
     } catch (err) {
@@ -89,14 +82,14 @@ export const handler = async (event, context) => {
         return fail('Invalid status. Must be: new, read, or archived.');
       }
 
-      const leads = await getLeadsBlob(store);
+      const leads = await safeBlobGet(store, 'leads');
       const lead = leads.find((l) => l.id === id);
       if (!lead) {
         return fail('Lead not found.', 404);
       }
 
       lead.status = status;
-      await store.setJSON('leads', leads);
+      await safeBlobSet(store, 'leads', leads);
 
       return ok({ lead });
     } catch (err) {
@@ -111,14 +104,14 @@ export const handler = async (event, context) => {
       return fail('id query parameter is required.');
     }
 
-    const leads = await getLeadsBlob(store);
+    const leads = await safeBlobGet(store, 'leads');
     const idx = leads.findIndex((l) => l.id === id);
     if (idx === -1) {
       return fail('Lead not found.', 404);
     }
 
     leads.splice(idx, 1);
-    await store.setJSON('leads', leads);
+    await safeBlobSet(store, 'leads', leads);
 
     return ok({ deleted: true });
   }
