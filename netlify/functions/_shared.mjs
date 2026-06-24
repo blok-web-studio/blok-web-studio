@@ -121,27 +121,39 @@ export function fail(message, statusCode = 400) {
  * if blobs aren't configured so callers can fall back gracefully.
  *
  * Tries in order:
- * 1. Automatic via Lambda context (works when deployed on Netlify)
- * 2. Manual via NETLIFY_BLOBS_SITE_ID / NETLIFY_BLOBS_TOKEN env vars
+ * 1. Auto-detect from deployment environment (no options)
+ * 2. Automatic via Lambda context
+ * 3. Manual via NETLIFY_BLOBS_SITE_ID / NETLIFY_BLOBS_TOKEN or
+ *    NETLIFY_SITE_ID / NETLIFY_ACCESS_TOKEN env vars
  */
 export function tryGetStore(storeName, context) {
-  // Attempt 1: automatic via context
+  // Attempt 1: auto-detect from environment
+  try {
+    return getStore(storeName);
+  } catch {
+    // fall through
+  }
+
+  // Attempt 2: automatic via Lambda context
   try {
     return getStore(storeName, { context });
-  } catch (err1) {
-    // Attempt 2: manual via env vars
-    try {
-      const siteID = process.env.NETLIFY_BLOBS_SITE_ID || process.env.NETLIFY_SITE_ID;
-      const token = process.env.NETLIFY_BLOBS_TOKEN || process.env.NETLIFY_ACCESS_TOKEN;
-      if (siteID && token) {
-        return getStore({ name: storeName, siteID, token });
-      }
-    } catch (err2) {
-      console.warn(`[blob] ${storeName} manual fallback failed:`, err2.message);
-    }
-    console.warn(`[blob] ${storeName} not available:`, err1.message);
-    return null;
+  } catch {
+    // fall through
   }
+
+  // Attempt 3: manual via env vars
+  try {
+    const siteID = process.env.NETLIFY_BLOBS_SITE_ID || process.env.NETLIFY_SITE_ID;
+    const token = process.env.NETLIFY_BLOBS_TOKEN || process.env.NETLIFY_ACCESS_TOKEN;
+    if (siteID && token) {
+      return getStore({ name: storeName, siteID, token });
+    }
+  } catch {
+    // fall through
+  }
+
+  console.warn(`[blob] ${storeName} not available`);
+  return null;
 }
 
 /**
