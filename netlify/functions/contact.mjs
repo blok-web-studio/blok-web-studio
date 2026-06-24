@@ -37,7 +37,7 @@ export const handler = async (event, context) => {
       id: 'lead_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
       name: name.trim(),
       email: email.trim(),
-      budget: budget || 'not-sure',
+      budget: budget || 'not-selected',
       message: message.trim(),
       status: 'new',
       createdAt: new Date().toISOString(),

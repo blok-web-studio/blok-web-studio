@@ -176,6 +176,10 @@
       return await API.del('/portfolio?id=' + encodeURIComponent(id));
     },
 
+    async updatePortfolioItem(data) {
+      return await API.patch('/portfolio', data);
+    },
+
     // ── Contact form (public, no auth needed on the function) ──
     async submitContact(data) {
       // The contact endpoint is public, but we can't use API.headers() without token
@@ -297,6 +301,8 @@
     },
 
     // ── Leads table ────────────────────────────────────────────
+    _expandedLeadId: null,
+
     renderLeads() {
       const fullContainer = document.getElementById('leadsContainer');
       const previewContainer = document.getElementById('leadsPreviewContainer');
@@ -312,7 +318,7 @@
       if (leads.length === 0) {
         const emptyHtml = `
           <div class="admin-table__empty">
-            <i class="ph ph-inbox"></i>
+            <i class="ph ph-tray"></i>
             <p>No leads yet. Contact form submissions will appear here.</p>
           </div>
         `;
@@ -324,7 +330,7 @@
       // ── Full leads table (leads page) ────────────────────────
       let html = `
         <div class="admin-table-wrap">
-        <table class="admin-table">
+        <table class="admin-table lead-table">
           <thead>
             <tr>
               <th>Status</th>
@@ -340,6 +346,7 @@
       `;
 
       leads.forEach(function (lead) {
+        const isExpanded = this._expandedLeadId === lead.id;
         const statusClass = 'status-badge--' + lead.status;
         const statusLabel = lead.status.charAt(0).toUpperCase() + lead.status.slice(1);
         const date = new Date(lead.createdAt);
@@ -347,21 +354,59 @@
         const messagePreview = lead.message && lead.message.length > 60 ? lead.message.slice(0, 60) + '…' : (lead.message || '');
 
         html += `
-          <tr>
-            <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+          <tr class="lead-row ${isExpanded ? 'lead-row--expanded' : ''}" onclick="BLOK_ADMIN.toggleLeadExpand('${lead.id}')" tabindex="0">
+            <td><span class="status-badge ${statusClass}" onclick="event.stopPropagation()">${statusLabel}</span></td>
             <td><strong>${esc(lead.name)}</strong></td>
-            <td><a href="mailto:${esc(lead.email)}">${esc(lead.email)}</a></td>
+            <td onclick="event.stopPropagation()"><a href="mailto:${esc(lead.email)}">${esc(lead.email)}</a></td>
             <td><span class="tag tag--steel">${esc(lead.budget)}</span></td>
-            <td class="text-muted text-sm" title="${esc(lead.message)}">${esc(messagePreview)}</td>
+            <td class="text-muted text-sm">${esc(messagePreview)}</td>
             <td class="text-muted text-sm">${dateStr}</td>
-            <td>
+            <td onclick="event.stopPropagation()">
               <div class="lead-actions">
-                <button onclick="BLOK_ADMIN.toggleLeadRead('${lead.id}')" title="Toggle read">${lead.status === 'new' ? 'Read' : 'Unread'}</button>
-                <button onclick="BLOK_ADMIN.archiveLead('${lead.id}')" title="Archive">Archive</button>
-                <button class="btn--danger" onclick="BLOK_ADMIN.deleteLead('${lead.id}')" title="Delete">✕</button>
+                <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.toggleLeadRead('${lead.id}')" title="Mark as ${lead.status === 'new' ? 'read' : 'unread'}"><i class="ph ph-${lead.status === 'new' ? 'envelope-open' : 'envelope'}"></i></button>
+                <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.archiveLead('${lead.id}')" title="Archive"><i class="ph ph-archive"></i></button>
+                <button class="admin-btn admin-btn--small btn--danger" onclick="BLOK_ADMIN.deleteLead('${lead.id}')" title="Delete"><i class="ph ph-trash"></i></button>
               </div>
             </td>
           </tr>
+          ${isExpanded ? `
+          <tr class="lead-detail-row">
+            <td colspan="7">
+              <div class="lead-detail">
+                <div class="lead-detail__grid">
+                  <div class="lead-detail__field">
+                    <span class="lead-detail__label"><i class="ph ph-user"></i> Name</span>
+                    <span class="lead-detail__value">${esc(lead.name)}</span>
+                  </div>
+                  <div class="lead-detail__field">
+                    <span class="lead-detail__label"><i class="ph ph-envelope"></i> Email</span>
+                    <span class="lead-detail__value"><a href="mailto:${esc(lead.email)}">${esc(lead.email)}</a></span>
+                  </div>
+                  <div class="lead-detail__field">
+                    <span class="lead-detail__label"><i class="ph ph-currency-dollar"></i> Budget</span>
+                    <span class="lead-detail__value"><span class="tag tag--steel">${esc(lead.budget)}</span></span>
+                  </div>
+                  <div class="lead-detail__field">
+                    <span class="lead-detail__label"><i class="ph ph-calendar"></i> Received</span>
+                    <span class="lead-detail__value">${dateStr}</span>
+                  </div>
+                  <div class="lead-detail__field">
+                    <span class="lead-detail__label"><i class="ph ph-folder"></i> Status</span>
+                    <span class="lead-detail__value"><span class="status-badge ${statusClass}">${statusLabel}</span></span>
+                  </div>
+                  <div class="lead-detail__field">
+                    <span class="lead-detail__label"><i class="ph ph-tag"></i> ID</span>
+                    <span class="lead-detail__value text-muted text-sm">${esc(lead.id)}</span>
+                  </div>
+                </div>
+                <div class="lead-detail__message">
+                  <span class="lead-detail__label"><i class="ph ph-chat-text"></i> Full Message</span>
+                  <div class="lead-detail__message-body">${esc(lead.message || '(no message)')}</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          ` : ''}
         `;
       }.bind(this));
 
@@ -371,13 +416,13 @@
         </div>
         <div class="card__footer" style="display:flex;justify-content:space-between;align-items:center;">
           <span>${leads.length} total lead${leads.length !== 1 ? 's' : ''} · Netlify Blob storage</span>
-          <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.exportLeads()">Export JSON</button>
+          <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.exportLeads()"><i class="ph ph-download-simple"></i> Export JSON</button>
         </div>
       `;
 
       if (fullContainer) fullContainer.innerHTML = html;
 
-      // ── Preview table (dashboard) — actions only show status ─
+      // ── Preview table (dashboard) — minimal, no expand ───────
       let previewHtml = `
         <div class="admin-table-wrap">
         <table class="admin-table">
@@ -418,6 +463,8 @@
     },
 
     // ── Portfolio ──────────────────────────────────────────────
+    _editingPortfolioId: null,
+
     renderPortfolio() {
       const container = document.getElementById('portfolioContainer');
       if (!container) return;
@@ -439,18 +486,40 @@
 
       let html = '<div class="portfolio-grid">';
       items.forEach(function (item) {
+        const isEditing = this._editingPortfolioId === item.id;
         html += `
-          <div class="portfolio-card">
+          <div class="portfolio-card ${isEditing ? 'portfolio-card--editing' : ''}">
             <div class="portfolio-card__thumb">
-              <span class="tag tag--steel">${esc(item.tag || 'Uncategorized')}</span>
+              ${item.url
+                ? `<iframe class="portfolio-card__iframe" src="${esc(item.url)}" sandbox="allow-scripts allow-same-origin" loading="lazy" title="Preview of ${esc(item.title)}"></iframe>`
+                : `<span class="tag tag--steel">${esc(item.tag || 'Uncategorized')}</span>`
+              }
             </div>
             <div class="portfolio-card__body">
-              <div class="portfolio-card__title">${esc(item.title)}</div>
-              <div class="portfolio-card__tag">${item.url ? '🔗 linked' : 'local'}</div>
-              <p class="text-sm text-muted" style="margin-top:4px">${esc(item.desc || '')}</p>
+              <div class="portfolio-card__title">${isEditing ? `<input type="text" class="admin-input" value="${esc(item.title)}" id="portEditTitle_${item.id}">` : esc(item.title)}</div>
+              <div class="portfolio-card__meta">
+                <span class="tag tag--steel">${isEditing ? `<input type="text" class="admin-input" value="${esc(item.tag || '')}" id="portEditTag_${item.id}" placeholder="Category">` : esc(item.tag || 'Uncategorized')}</span>
+                ${item.url
+                  ? `<span class="tag tag--accent"><i class="ph ph-link"></i> ${isEditing ? `<input type="url" class="admin-input" value="${esc(item.url)}" id="portEditUrl_${item.id}" placeholder="https://..." style="width:200px">` : 'linked'}</span>`
+                  : `<span class="tag tag--steel"><i class="ph ph-link-simple-break"></i> local</span>`
+                }
+              </div>
+              ${isEditing
+                ? `<textarea class="admin-input" id="portEditDesc_${item.id}" placeholder="Description" rows="2" style="width:100%;margin-top:4px">${esc(item.desc || '')}</textarea>`
+                : `<p class="text-sm text-muted" style="margin-top:4px">${esc(item.desc || '')}</p>`
+              }
               <div class="portfolio-card__actions">
-                <button onclick="window.open('${esc(item.url)}','_blank')" ${item.url ? '' : 'disabled'}>View</button>
-                <button class="btn--danger" onclick="BLOK_ADMIN.removePortfolioItem('${item.id}')">Remove</button>
+                ${isEditing
+                  ? `
+                    <button class="admin-btn admin-btn--primary" onclick="BLOK_ADMIN.savePortfolioItem('${item.id}')"><i class="ph ph-check"></i> Save</button>
+                    <button class="admin-btn" onclick="BLOK_ADMIN.cancelEditPortfolio()"><i class="ph ph-x"></i> Cancel</button>
+                  `
+                  : `
+                    <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.editPortfolioItem('${item.id}')"><i class="ph ph-pencil-simple"></i> Edit</button>
+                    <button onclick="window.open('${esc(item.url)}','_blank')" class="admin-btn admin-btn--small" ${item.url ? '' : 'disabled'}><i class="ph ph-arrow-square-out"></i> View</button>
+                    <button class="admin-btn admin-btn--small btn--danger" onclick="BLOK_ADMIN.removePortfolioItem('${item.id}')"><i class="ph ph-trash"></i></button>
+                  `
+                }
               </div>
             </div>
           </div>
@@ -459,12 +528,37 @@
       html += '</div>';
       container.innerHTML = html;
 
-      // Also populate preview on dashboard
+      // Also populate preview on dashboard (no edit actions, simplified)
       if (previewContainer) {
-        previewContainer.innerHTML = html;
+        let prevHtml = '<div class="portfolio-grid">';
+        items.forEach(function (item) {
+          prevHtml += `
+            <div class="portfolio-card portfolio-card--preview">
+              <div class="portfolio-card__thumb">
+                ${item.url
+                  ? `<iframe class="portfolio-card__iframe" src="${esc(item.url)}" sandbox="allow-scripts allow-same-origin" loading="lazy" title="Preview of ${esc(item.title)}"></iframe>`
+                  : `<span class="tag tag--steel">${esc(item.tag || 'Uncategorized')}</span>`
+                }
+              </div>
+              <div class="portfolio-card__body">
+                <div class="portfolio-card__title">${esc(item.title)}</div>
+                <div class="portfolio-card__meta">
+                  <span class="tag tag--steel">${esc(item.tag || 'Uncategorized')}</span>
+                  ${item.url ? `<span class="tag tag--accent"><i class="ph ph-link"></i> linked</span>` : ''}
+                </div>
+                <p class="text-sm text-muted" style="margin-top:4px">${esc(item.desc || '')}</p>
+                <div class="portfolio-card__actions">
+                  <button onclick="window.open('${esc(item.url)}','_blank')" class="admin-btn admin-btn--small" ${item.url ? '' : 'disabled'}><i class="ph ph-arrow-square-out"></i> View</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }.bind(this));
+        prevHtml += '</div>';
+        previewContainer.innerHTML = prevHtml;
       }
 
-      // Populate the add form
+      // Populate the add/edit form
       const form = document.getElementById('portfolioForm');
       if (form) {
         form.innerHTML = `
@@ -487,8 +581,7 @@
             <input type="text" class="admin-input" id="portDesc" placeholder="Brief description">
           </div>
           <div style="margin-top:12px;">
-            <button class="admin-btn admin-btn--primary" onclick="BLOK_ADMIN.addPortfolioItem()">+ Add Item</button>
-            <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.seedPortfolio()" style="margin-left:8px;">Restore Defaults</button>
+            <button class="admin-btn admin-btn--primary" onclick="BLOK_ADMIN.addPortfolioItem()"><i class="ph ph-plus"></i> Add Item</button>
           </div>
         `;
       }
@@ -582,7 +675,7 @@
             <i class="ph ph-globe"></i> View Live Site
           </a>
           <button class="quick-action" onclick="document.getElementById('leadsNav').click()">
-            <i class="ph ph-inbox"></i> View Leads
+            <i class="ph ph-tray"></i> View Leads
           </button>
           <button class="quick-action" onclick="document.getElementById('portfolioNav').click()">
             <i class="ph ph-image"></i> Manage Portfolio
@@ -707,6 +800,11 @@
       await DASHBOARD.refresh();
     },
 
+    toggleLeadExpand(id) {
+      DASHBOARD._expandedLeadId = DASHBOARD._expandedLeadId === id ? null : id;
+      DASHBOARD.renderLeads();
+    },
+
     async exportLeads() {
       const data = DASHBOARD._leads;
       downloadJSON(data, 'blok-leads-' + new Date().toISOString().slice(0, 10));
@@ -740,6 +838,7 @@
         tag.value = '';
         url.value = '';
         desc.value = '';
+        DASHBOARD._editingPortfolioId = null;
         DB.addLog('info', 'Portfolio item added: ' + title.value);
         await DASHBOARD.refresh();
       }
@@ -748,33 +847,41 @@
     async removePortfolioItem(id) {
       if (!confirm('Remove this portfolio item?')) return;
       await DB.removePortfolioItem(id);
+      DASHBOARD._editingPortfolioId = null;
       DB.addLog('info', 'Portfolio item removed');
       await DASHBOARD.refresh();
     },
 
-    async seedPortfolio() {
-      if (!confirm('Replace all items with defaults? This will clear existing items.')) return;
+    editPortfolioItem(id) {
+      DASHBOARD._editingPortfolioId = id;
+      DASHBOARD.renderPortfolio();
+    },
 
-      // Clear and add defaults
-      const defaults = [
-        { title: 'Aurora Audio Systems', tag: 'Demo', desc: 'Premium audio hardware concept.', url: 'https://blok-web-studio.github.io/demo-sites/audiosystem_aurora/index.html' },
-        { title: 'Iron & Shears', tag: 'Demo', desc: 'Traditional barbershop with a modern edge.', url: 'https://blok-web-studio.github.io/demo-sites/barbershop_ironnshears/index.html' },
-        { title: "L'ambre", tag: 'Demo', desc: 'Mediterranean bistro concept.', url: 'https://blok-web-studio.github.io/demo-sites/cafe_lambre/index.html' },
-        { title: 'Vanguard', tag: 'Demo', desc: 'Corporate law firm with cold precision.', url: 'https://blok-web-studio.github.io/demo-sites/lawfirm_vanguard/index.html' },
-      ];
+    cancelEditPortfolio() {
+      DASHBOARD._editingPortfolioId = null;
+      DASHBOARD.renderPortfolio();
+    },
 
-      // Remove all existing items
-      for (const item of DASHBOARD._portfolio) {
-        await DB.removePortfolioItem(item.id);
+    async savePortfolioItem(id) {
+      const title = document.getElementById('portEditTitle_' + id);
+      const tag = document.getElementById('portEditTag_' + id);
+      const url = document.getElementById('portEditUrl_' + id);
+      const desc = document.getElementById('portEditDesc_' + id);
+
+      if (!title) return;
+
+      const update = { id };
+      if (title.value !== undefined) update.title = title.value.trim() || 'Untitled';
+      if (tag) update.tag = tag.value.trim() || 'Custom';
+      if (url) update.url = url.value.trim();
+      if (desc) update.desc = desc.value.trim();
+
+      const result = await DB.updatePortfolioItem(update);
+      if (result.ok) {
+        DASHBOARD._editingPortfolioId = null;
+        DB.addLog('ok', 'Portfolio item updated: ' + update.title);
+        await DASHBOARD.refresh();
       }
-
-      // Add defaults
-      for (const item of defaults) {
-        await DB.addPortfolioItem(item);
-      }
-
-      DB.addLog('ok', 'Portfolio reset to defaults');
-      await DASHBOARD.refresh();
     },
 
     // ── Utility ────────────────────────────────────────────────

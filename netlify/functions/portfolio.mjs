@@ -1,6 +1,7 @@
 // ── BLOK. Portfolio Function ─────────────────────────────────
 // GET    /api/portfolio                  → List all items (auth required)
 // POST   /api/portfolio                  → Add item (auth required)
+// PATCH  /api/portfolio                  → Update item (auth required)
 // DELETE /api/portfolio?id=<id>          → Remove item (auth required)
 //
 // Data stored in Netlify Blob store: "blok-portfolio"
@@ -81,6 +82,35 @@ export const handler = async (event, context) => {
       await safeBlobSet(store, 'items', items);
 
       return ok({ item }, 201);
+    } catch (err) {
+      return fail('Invalid request body.', 400);
+    }
+  }
+
+  // ── PATCH: Update item ─────────────────────────────────────
+  if (method === 'PATCH') {
+    try {
+      const body = JSON.parse(event.body || '{}');
+      const { id, title, tag, url, desc } = body;
+
+      if (!id) {
+        return fail('Item id is required.');
+      }
+
+      let items = await safeBlobGet(store, 'items');
+      const idx = items.findIndex(item => item.id === id);
+      if (idx === -1) {
+        return fail('Item not found.', 404);
+      }
+
+      if (title !== undefined) items[idx].title = title.trim();
+      if (tag !== undefined) items[idx].tag = tag;
+      if (url !== undefined) items[idx].url = url;
+      if (desc !== undefined) items[idx].desc = desc;
+      items[idx].updatedAt = new Date().toISOString();
+
+      await safeBlobSet(store, 'items', items);
+      return ok({ item: items[idx] });
     } catch (err) {
       return fail('Invalid request body.', 400);
     }

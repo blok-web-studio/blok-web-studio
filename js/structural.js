@@ -14,8 +14,12 @@
   if (oldCanvas) oldCanvas.remove();
 
   var discContainer = document.getElementById('heroDisciplines');
+  var heroEl = discContainer ? document.querySelector('.hero') : null;
+  // Cached element refs for bounce + overlap checks in RAF loop
+  var siEl = document.querySelector('.scroll-indicator');
+  var hcEl = document.querySelector('.hero__copy');
 
-  if (discContainer) {
+  if (discContainer && heroEl) {
 
     // --- Pool of 12 disciplines ---
     var DISCIPLINES = [
@@ -47,28 +51,184 @@
     var shuffled = DISCIPLINES.slice().sort(function () { return Math.random() - 0.5; });
     var picked = shuffled.slice(0, count);
 
-    // --- Organic cluster position generator (no math curves) ---
-    function generatePositions(num) {
-      var zones = [
-        { cx: 44, cy: 20, rx: 15, ry: 13 },
-        { cx: 32, cy: 44, rx: 17, ry: 15 },
-        { cx: 17, cy: 66, rx: 14, ry: 14 },
-      ];
-      var positions = [];
-      for (var i = 0; i < num; i++) {
-        var z = zones[Math.floor(Math.random() * zones.length)];
-        var x = z.cx + (Math.random() - 0.5) * 2 * z.rx;
-        var y = z.cy + (Math.random() - 0.5) * 2 * z.ry;
-        x = Math.max(2, Math.min(60, x));
-        y = Math.max(2, Math.min(85, y));
-        positions.push({ x: x, y: y });
+    // Scale sizes to container — on narrow viewports use smaller blocks
+    // so they don't crowd the panel.
+    var containerRect = discContainer.getBoundingClientRect();
+    var containerW = containerRect.width;
+    var containerH = containerRect.height;
+    // Size scaling: on narrow viewports we need smaller blocks
+    // so the cell‑based layout can find room for all of them.
+    var idealMaxCell = Math.sqrt((containerW - 16) * (containerH - 16) / count) * 0.65;
+    var sizeScale = Math.min(1, Math.max(0.35, idealMaxCell / 160));
+
+    function pickSize() {
+      var raw = SIZES[Math.floor(Math.random() * SIZES.length)];
+      return Math.max(50, Math.round(raw * sizeScale));
+    }
+
+    // Assign sizes & colours upfront so we can use them in collision detection
+    var blockDefs = picked.map(function (d) {
+      return {
+        label: d.label,
+        icon: d.icon,
+        size: pickSize(),
+        colorKey: COLORS[Math.floor(Math.random() * COLORS.length)],
+      };
+    });
+
+    // --- Pixel‑based position generator with AABB collision avoidance ---
+
+    function shuffle(arr) {
+      for (var s = arr.length - 1; s > 0; s--) {
+        var j = Math.floor(Math.random() * (s + 1));
+        var tmp = arr[s]; arr[s] = arr[j]; arr[j] = tmp;
       }
+      return arr;
+    }
+
+    function generatePositions(defs, cw, ch) {
+      var gap = 10;
+      var edgePad = 8;
+      var num = defs.length;
+
+      // --- Cell‑based layout (guarantees no overlap) ---
+      // Sort by size descending so we place largest first
+      var sorted = defs.map(function (d, idx) { return { idx: idx, size: d.size }; });
+      sorted.sort(function (a, b) { return b.size - a.size; });
+
+      var positions = new Array(num);
+
+      function tryLayout(rows) {
+        var cols = Math.ceil(num / rows);
+        var cellW = (cw - edgePad * 2) / cols;
+        var cellH = (ch - edgePad * 2) / rows;
+        var minDim = Math.min(cellW, cellH);
+
+        // Largest block must fit in a cell
+        if (sorted[0].size > minDim - gap) return false;
+
+        // Create shuffled cell list
+        var cells = [];
+        for (var r = 0; r < rows; r++) {
+          for (var c = 0; c < cols; c++) {
+            if (cells.length < num) cells.push({ row: r, col: c });
+          }
+        }
+        cells = shuffle(cells);
+
+        for (var i = 0; i < sorted.length; i++) {
+          var info = sorted[i];
+          var cell = cells[i];
+          var size = info.size;
+
+          var jitterW = cellW - size - gap;
+          var jitterH = cellH - size - gap;
+          if (jitterW < 0 || jitterH < 0) return false;
+
+          var px = edgePad + cell.col * cellW + Math.random() * jitterW;
+          var py = edgePad + cell.row * cellH + Math.random() * jitterH;
+
+          // Final clamp
+          px = Math.max(edgePad, Math.min(cw - size - edgePad, px));
+          py = Math.max(edgePad, Math.min(ch - size - edgePad, py));
+
+          positions[info.idx] = {
+            x: px / cw * 100,
+            y: py / ch * 100,
+            px: px, py: py, size: size
+          };
+        }
+        return true;
+      }
+
+      // Try every possible row count; more rows = wider columns but shorter rows,
+      // so at least one layout should fit when blocks are scaled appropriately.
+      var placed = false;
+      for (var rows = 1; rows <= num && !placed; rows++) {
+        placed = tryLayout(rows);
+      }
+
+      // Fallback: scatter with overlap avoidance (for edge cases)
+      if (!placed) {
+        var zones = shuffle([
+          { cx: 22, cy: 12, rx: 12, ry: 7 }, { cx: 52, cy: 10, rx: 14, ry: 7 },
+          { cx: 15, cy: 30, rx: 12, ry: 9 }, { cx: 42, cy: 28, rx: 14, ry: 10 },
+          { cx: 62, cy: 32, rx: 11, ry: 9 }, { cx: 25, cy: 50, rx: 13, ry: 10 },
+          { cx: 50, cy: 52, rx: 14, ry: 11 }, { cx: 18, cy: 70, rx: 11, ry: 9 },
+          { cx: 40, cy: 72, rx: 13, ry: 9 }, { cx: 60, cy: 68, rx: 11, ry: 9 },
+          { cx: 35, cy: 85, rx: 14, ry: 7 },
+        ]);
+
+        for (var i = 0; i < num; i++) {
+          positions[i] = positions[i] || null;
+          var size = defs[i].size;
+          var found = false;
+          var attempts = 0;
+
+          while (!found && attempts < 80) {
+            var z = zones[Math.floor(Math.random() * zones.length)];
+            var px = (z.cx + (Math.random() - 0.5) * 2 * z.rx) / 100 * cw;
+            var py = (z.cy + (Math.random() - 0.5) * 2 * z.ry) / 100 * ch;
+            px = Math.max(edgePad, Math.min(cw - size - edgePad, px));
+            py = Math.max(edgePad, Math.min(ch - size - edgePad, py));
+
+            var ok = true;
+            for (var j = 0; j < i && ok; j++) {
+              var p = positions[j];
+              if (!p) continue;
+              if (Math.min(px + size + gap, p.px + p.size + gap) - Math.max(px - gap, p.px - gap) > 0
+               && Math.min(py + size + gap, p.py + p.size + gap) - Math.max(py - gap, p.py - gap) > 0) {
+                ok = false;
+              }
+            }
+            if (ok) {
+              positions[i] = { x: px / cw * 100, y: py / ch * 100, px: px, py: py, size: size };
+              found = true;
+            }
+            attempts++;
+          }
+
+          if (!found) {
+            // Fine‑grid scan
+            var step = 8;
+            var scanPlaced = false;
+            for (var gy = edgePad; gy < ch - size - edgePad && !scanPlaced; gy += step) {
+              for (var gx = edgePad; gx < cw - size - edgePad && !scanPlaced; gx += step) {
+                var ok = true;
+                for (var k = 0; k < i && ok; k++) {
+                  var p = positions[k];
+                  if (!p) continue;
+                  if (Math.min(gx + size + gap, p.px + p.size + gap) - Math.max(gx - gap, p.px - gap) > 0
+                   && Math.min(gy + size + gap, p.py + p.size + gap) - Math.max(gy - gap, p.py - gap) > 0) {
+                    ok = false;
+                  }
+                }
+                if (ok) {
+                  positions[i] = { x: gx / cw * 100, y: gy / ch * 100, px: gx, py: gy, size: size };
+                  scanPlaced = true;
+                }
+              }
+            }
+            if (!scanPlaced) {
+              // Last resort — just pin it
+              positions[i] = {
+                x: (edgePad + (i * 47) % (cw - size - edgePad * 2)) / cw * 100,
+                y: (edgePad + (i * 31) % (ch - size - edgePad * 2)) / ch * 100,
+                px: edgePad + (i * 47) % (cw - size - edgePad * 2),
+                py: edgePad + (i * 31) % (ch - size - edgePad * 2),
+                size: size
+              };
+            }
+          }
+        }
+      }
+
       return positions;
     }
 
-    var positions = generatePositions(count);
+    var positions = generatePositions(blockDefs, containerW, containerH);
 
-    // --- Random entrance delays (shuffled, not sequential) ---
+    // --- Random entrance delays ---
     var delays = [];
     for (var d = 0; d < count; d++) {
       delays.push(Math.random() * 0.7);
@@ -78,18 +238,19 @@
     var floatStates = [];
     var blocks = [];
 
-    picked.forEach(function (d, i) {
-      var size = SIZES[Math.floor(Math.random() * SIZES.length)];
-      var colorKey = COLORS[Math.floor(Math.random() * COLORS.length)];
-      var colorClass = COLOR_CLASSES[colorKey];
+    blockDefs.forEach(function (d, i) {
+      var colorClass = COLOR_CLASSES[d.colorKey];
       var pos = positions[i];
 
       var el = document.createElement('div');
       el.className = 'disc-block ' + colorClass;
-      el.style.width = size + 'px';
-      el.style.height = size + 'px';
-      el.style.left = pos.x + '%';
+      el.style.width = d.size + 'px';
+      el.style.height = d.size + 'px';
+      // Convert from .hero__disciplines‑relative to .hero‑relative coords
+      // .hero__disciplines = 48% width starting at 52% from hero left
+      el.style.left = (52 + pos.x * 0.48) + '%';
       el.style.top = pos.y + '%';
+      el.style.zIndex = '100';
       el.style.animationDelay = delays[i] + 's';
       el.setAttribute('data-index', i);
 
@@ -97,7 +258,7 @@
         '<div class="disc-block__icon"><i class="ph ' + d.icon + '"></i></div>' +
         '<span class="disc-block__label">' + d.label + '</span>';
 
-      discContainer.appendChild(el);
+      heroEl.appendChild(el);
       blocks.push(el);
 
       floatStates.push({
@@ -111,9 +272,21 @@
         ampR: 0.3 + Math.random() * 1.2,     // 0.3-1.5° wobble
         parallaxX: 0,
         parallaxY: 0,
-        dragOffsetX: 0,
-        dragOffsetY: 0,
+        // Heavy drag physics — spring toward target with damping
+        smoothX: 0,
+        smoothY: 0,
+        targetX: 0,
+        targetY: 0,
+        velX: 0,
+        velY: 0,
         isDragging: false,
+        dragTilt: 0,                         // rotation tilt during drag
+        // Proximity reaction — repel + scale near cursor
+        repelX: 0,
+        repelY: 0,
+        proxScale: 1,
+        // Text overlap → semi‑transparent
+        overlapOpacity: 1,
       });
     });
 
@@ -127,15 +300,135 @@
 
       for (var f = 0; f < floatStates.length; f++) {
         var fs = floatStates[f];
-        if (fs.isDragging) continue;
 
-        var floatY = Math.sin(t * (Math.PI * 2 / fs.dur) + fs.phaseY) * fs.ampY;
-        var floatX = Math.sin(t * (Math.PI * 2 / (fs.dur * 0.7)) + fs.phaseX) * fs.ampX;
-        var floatR = Math.sin(t * (Math.PI * 2 / (fs.dur * 1.2)) + fs.phaseR) * fs.ampR;
+        // 1. Float oscillation — pause while dragging so block follows cursor cleanly
+        var floatY = fs.isDragging ? 0 : Math.sin(t * (Math.PI * 2 / fs.dur) + fs.phaseY) * fs.ampY;
+        var floatX = fs.isDragging ? 0 : Math.sin(t * (Math.PI * 2 / (fs.dur * 0.7)) + fs.phaseX) * fs.ampX;
+        var floatR = fs.isDragging ? 0 : Math.sin(t * (Math.PI * 2 / (fs.dur * 1.2)) + fs.phaseR) * fs.ampR;
 
+        // 2. Smooth heavy drag — spring toward target with damping
+        if (fs.isDragging) {
+          var springK = 0.12;
+          var damping = 0.70;
+          fs.velX += (fs.targetX - fs.smoothX) * springK;
+          fs.velY += (fs.targetY - fs.smoothY) * springK;
+          fs.velX *= damping;
+          fs.velY *= damping;
+          fs.smoothX += fs.velX;
+          fs.smoothY += fs.velY;
+
+          // Tilt slightly toward movement direction
+          var targetTilt = Math.min(6, Math.abs(fs.velX) * 0.3);
+          fs.dragTilt += (targetTilt - fs.dragTilt) * 0.15;
+        } else {
+          // Throw friction — coasts to a stop after release
+          fs.velX *= 0.88;
+          fs.velY *= 0.88;
+          fs.smoothX += fs.velX;
+          fs.smoothY += fs.velY;
+          fs.dragTilt *= 0.88;
+
+          if (Math.abs(fs.velX) < 0.01 && Math.abs(fs.velY) < 0.01) {
+            fs.velX = 0;
+            fs.velY = 0;
+          }
+        }
+
+        // 3. Proximity reaction — repel + scale when mouse is near
+        if (!fs.isDragging && mouseX >= 0) {
+          var rect = fs.el.getBoundingClientRect();
+          var cx = rect.left + rect.width / 2;
+          var cy = rect.top + rect.height / 2;
+          var dx = mouseX - cx;
+          var dy = mouseY - cy;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          var radius = Math.max(rect.width, rect.height) * 2.5;
+
+          if (dist < radius) {
+            var force = (1 - dist / radius) * 15;
+            var angle = Math.atan2(dy, dx);
+            fs.repelX += (Math.cos(angle) * force - fs.repelX) * 0.1;
+            fs.repelY += (Math.sin(angle) * force - fs.repelY) * 0.1;
+            fs.proxScale += (1.1 - fs.proxScale) * 0.06;
+          } else {
+            fs.repelX *= 0.9;
+            fs.repelY *= 0.9;
+            fs.proxScale += (1 - fs.proxScale) * 0.06;
+          }
+        } else {
+          fs.repelX *= 0.9;
+          fs.repelY *= 0.9;
+          fs.proxScale += (1 - fs.proxScale) * 0.06;
+        }
+
+        // Compute combined transform values
+        var totalX = floatX + fs.parallaxX + fs.smoothX + fs.repelX;
+        var totalY = floatY + fs.parallaxY + fs.smoothY + fs.repelY;
+        var totalR = floatR + fs.dragTilt;
+
+        // Block position helpers (shared by bounce + overlap checks)
+        var hRect = heroEl.getBoundingClientRect();
+        var eL = fs.el.offsetLeft;
+        var eT = fs.el.offsetTop;
+        var eW = fs.el.offsetWidth;
+        var eH = fs.el.offsetHeight;
+        var vpL = hRect.left + eL + totalX;
+        var vpT = hRect.top + eT + totalY;
+
+        // 4. Bounce off viewport edges + scroll indicator (only when actively thrown/dragged)
+        var hasMomentum = fs.isDragging || Math.abs(fs.velX) > 0.5 || Math.abs(fs.velY) > 0.5;
+        if (hasMomentum) {
+          var bm = 15;
+
+          // Hero‑container edges (blocks stay inside .hero at all times)
+          if (vpL < hRect.left + bm) {
+            var push = (hRect.left + bm) - vpL;
+            fs.smoothX += push; totalX += push;
+            fs.velX = Math.abs(fs.velX) * 0.45;
+          }
+          if (vpL + eW > hRect.right - bm) {
+            var push = (vpL + eW) - (hRect.right - bm);
+            fs.smoothX -= push; totalX -= push;
+            fs.velX = -Math.abs(fs.velX) * 0.45;
+          }
+          if (vpT < hRect.top + bm) {
+            var push = (hRect.top + bm) - vpT;
+            fs.smoothY += push; totalY += push;
+            fs.velY = Math.abs(fs.velY) * 0.45;
+          }
+          if (vpT + eH > hRect.bottom - bm) {
+            var push = (vpT + eH) - (hRect.bottom - bm);
+            fs.smoothY -= push; totalY -= push;
+            fs.velY = -Math.abs(fs.velY) * 0.45;
+          }
+
+          // Scroll‑indicator floor obstacle (bounce up off its top edge)
+          if (siEl) {
+            var siRect = siEl.getBoundingClientRect();
+            var overlapX = vpL + eW > siRect.left + 10 && vpL < siRect.right - 10;
+            if (overlapX && vpT + eH > siRect.top) {
+              var pushUp = (vpT + eH) - siRect.top;
+              fs.smoothY -= pushUp; totalY -= pushUp;
+              fs.velY = -Math.abs(fs.velY) * 0.45;
+            }
+          }
+        }
+
+        // 5. Hero‑text overlap → semi‑transparent
+        if (hcEl) {
+          var hcRect = hcEl.getBoundingClientRect();
+          var overlapping = vpL + eW > hcRect.left && vpL < hcRect.right &&
+                           vpT + eH > hcRect.top && vpT < hcRect.bottom;
+          var targetOp = overlapping ? 0.4 : 1;
+          fs.overlapOpacity += (targetOp - fs.overlapOpacity) * 0.08;
+          fs.el.style.opacity = fs.overlapOpacity.toFixed(2);
+        }
+
+        // 6. Apply combined transform
         fs.el.style.transform =
-          'translate3d(' + (floatX + fs.parallaxX + fs.dragOffsetX).toFixed(1) + 'px, '
-          + (floatY + fs.parallaxY + fs.dragOffsetY).toFixed(1) + 'px, 0) rotate(' + floatR.toFixed(1) + 'deg)';
+          'translate3d(' + totalX.toFixed(1) + 'px, ' + totalY.toFixed(1) + 'px, 0) ' +
+          'rotate(' + totalR.toFixed(1) + 'deg) ' +
+          'scale(' + fs.proxScale.toFixed(3) + ')';
       }
 
       floatRAF = requestAnimationFrame(tickFloat);
@@ -171,7 +464,21 @@
       containerRect = discContainer.getBoundingClientRect();
     });
 
-    // --- Pointer-event drag ---
+    // --- Global mouse position for proximity ---
+    var mouseX = -1000;
+    var mouseY = -1000;
+
+    document.addEventListener('mousemove', function (e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    }, { passive: true });
+
+    document.addEventListener('mouseleave', function () {
+      mouseX = -1000;
+      mouseY = -1000;
+    }, { passive: true });
+
+    // --- Pointer-event drag with heavy physics ---
     var dragState = null;
 
     function onPointerDown(e) {
@@ -184,30 +491,41 @@
       fs.el.style.zIndex = 50;
       fs.el.style.cursor = 'grabbing';
 
+      // Carry current smooth position as the drag base so there's no jump
       dragState = {
         fs: fs,
         startX: e.clientX,
         startY: e.clientY,
-        origOffsetX: fs.dragOffsetX,
-        origOffsetY: fs.dragOffsetY,
+        origX: fs.smoothX,
+        origY: fs.smoothY,
       };
+
+      // Dampen existing velocity so the block starts heavy, not whipping
+      fs.velX *= 0.4;
+      fs.velY *= 0.4;
 
       block.setPointerCapture(e.pointerId);
     }
 
     function onPointerMove(e) {
+      // Always update global mouse for proximity
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
       if (!dragState) return;
       var fs = dragState.fs;
-      fs.dragOffsetX = dragState.origOffsetX + (e.clientX - dragState.startX);
-      fs.dragOffsetY = dragState.origOffsetY + (e.clientY - dragState.startY);
+      // Target is where the cursor wants the block to be
+      fs.targetX = dragState.origX + (e.clientX - dragState.startX);
+      fs.targetY = dragState.origY + (e.clientY - dragState.startY);
     }
 
     function onPointerUp() {
       if (!dragState) return;
       var fs = dragState.fs;
       fs.isDragging = false;
-      fs.el.style.zIndex = 1;
+      fs.el.style.zIndex = '100';
       fs.el.style.cursor = 'grab';
+      // velX/velY carry on with friction → throw momentum on release
       dragState = null;
     }
 
@@ -220,6 +538,11 @@
 
     // --- Kick off float after entrance animation completes ---
     setTimeout(function () {
+      // Remove animation so inline transform stops being overridden
+      for (var b = 0; b < blocks.length; b++) {
+        blocks[b].style.animation = 'none';
+        blocks[b].style.opacity = '1';
+      }
       floatRAF = requestAnimationFrame(tickFloat);
     }, 1500);
 
@@ -692,7 +1015,7 @@
     // Start collapsed
     body.style.maxHeight = '0px';
     body.style.overflow = 'hidden';
-    body.style.transition = 'max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+    body.style.transition = 'max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
 
     function expandCard() {
       body.style.maxHeight = body.scrollHeight + 'px';
@@ -730,7 +1053,10 @@
     var progress = Math.max(0, Math.min(1, scrolled / totalDist));
 
     // Map progress to how many cards should be expanded (0..cardCount)
-    var targetCards = Math.min(cardCount, Math.floor(progress * (cardCount + 0.5)));
+    // Thresholds: card 0 at 20%, card 1 at 35%, card 2 at 50%
+    var thresholds = [0.20, 0.35, 0.50];
+    var targetCards = 0;
+    while (targetCards < cardCount && progress >= thresholds[targetCards]) targetCards++;
 
     for (var i = 0; i < cardCount; i++) {
       var c = serviceCards[i];
@@ -774,7 +1100,6 @@
   //     and both layers follow the mouse subtly.
   // =============================================================
 
-  var parallaxGrid = document.querySelector('.structural-grid');
   var parallaxRunning = true;
   var pScrollY = 0;
   var pMouseX = 0.5; // normalised 0-1
@@ -783,7 +1108,7 @@
   var pSmoothMouseX = 0.5;
   var pSmoothMouseY = 0.5;
 
-  function tickParallax(now) {
+  function tickParallax() {
     if (!parallaxRunning) return;
 
     // Smooth toward targets
@@ -791,12 +1116,11 @@
     pSmoothMouseX += (pMouseX - pSmoothMouseX) * 0.08;
     pSmoothMouseY += (pMouseY - pSmoothMouseY) * 0.08;
 
-    // -- Structural grid: translate based on scroll + mouse --
-    if (parallaxGrid) {
-      var gridDx = (pSmoothMouseX - 0.5) * 20;   // ±10px
-      var gridDy = pSmoothScroll * -0.08 + (pSmoothMouseY - 0.5) * 12; // scroll parallax + mouse
-      parallaxGrid.style.transform = 'translate3d(' + gridDx.toFixed(1) + 'px, ' + gridDy.toFixed(1) + 'px, 0)';
-    }
+    // -- Structural grid: parallax via background-position CSS custom properties --
+    var gridDx = (pSmoothMouseX - 0.5) * 20;   // ±10px mouse drift
+    var gridDy = pSmoothScroll * -0.08 + (pSmoothMouseY - 0.5) * 12; // scroll parallax + mouse
+    document.body.style.setProperty('--grid-x', gridDx.toFixed(1) + 'px');
+    document.body.style.setProperty('--grid-y', gridDy.toFixed(1) + 'px');
 
     // -- Concrete noise: even subtler via background-position --
     var noiseDx = (pSmoothMouseX - 0.5) * 8;    // ±4px
@@ -822,18 +1146,15 @@
     pMouseY = 0.5;
   }
 
-  // Only start if the structural grid exists (this page has wallpaper)
-  if (parallaxGrid) {
-    window.addEventListener('scroll', onParallaxScroll, { passive: true });
-    document.addEventListener('mousemove', onParallaxMouse, { passive: true });
-    document.addEventListener('mouseleave', onParallaxMouseLeave, { passive: true });
+  window.addEventListener('scroll', onParallaxScroll, { passive: true });
+  document.addEventListener('mousemove', onParallaxMouse, { passive: true });
+  document.addEventListener('mouseleave', onParallaxMouseLeave, { passive: true });
 
-    // Set initial scroll value
-    pScrollY = window.scrollY;
-    pSmoothScroll = window.scrollY;
+  // Set initial scroll value
+  pScrollY = window.scrollY;
+  pSmoothScroll = window.scrollY;
 
-    // Start the animation loop
-    requestAnimationFrame(tickParallax);
-  }
+  // Start the animation loop
+  requestAnimationFrame(tickParallax);
 
 })();

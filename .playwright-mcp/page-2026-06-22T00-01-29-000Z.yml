@@ -1,0 +1,437 @@
+- generic [active] [ref=e1]:
+  - navigation "Floor plan" [ref=e2]:
+    - link "Ground" [ref=e3] [cursor=pointer]:
+      - /url: "#hero"
+    - link "Lobby" [ref=e4] [cursor=pointer]:
+      - /url: "#services"
+    - link "Mezz" [ref=e5] [cursor=pointer]:
+      - /url: "#work"
+    - link "Core" [ref=e6] [cursor=pointer]:
+      - /url: "#process"
+    - link "Upper" [ref=e7] [cursor=pointer]:
+      - /url: "#pricing"
+    - link "Roof" [ref=e8] [cursor=pointer]:
+      - /url: "#contact"
+  - generic [ref=e9]:
+    - generic [ref=e10]: "01"
+    - text: GROUND
+  - radiogroup "Visual mode" [ref=e11]:
+    - radio "Structure" [checked] [ref=e12] [cursor=pointer]
+    - radio "Blueprint" [ref=e13] [cursor=pointer]
+  - generic [ref=e14]:
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - generic [ref=e18]: WebDev Studio
+        - heading "BLOK." [level=1] [ref=e20]
+        - paragraph [ref=e21]: We build sites, block by BLOK.
+        - generic [ref=e22]:
+          - link "See the work" [ref=e23] [cursor=pointer]:
+            - /url: "#work"
+          - link "Start a project" [ref=e24] [cursor=pointer]:
+            - /url: "#contact"
+      - generic [ref=e26]: Traverse structure
+      - generic:
+        - generic:
+          - text: "0"
+          - generic: / 0
+        - generic: Blocks laid
+    - generic [ref=e29]:
+      - generic [ref=e30]: Web Design
+      - generic [ref=e31]: Web Development
+      - generic [ref=e32]: E-Commerce
+      - generic [ref=e33]: Brand Identity
+      - generic [ref=e34]: UX Strategy
+      - generic [ref=e35]: Custom CMS
+      - generic [ref=e36]: Web Design
+      - generic [ref=e37]: Web Development
+      - generic [ref=e38]: E-Commerce
+      - generic [ref=e39]: Brand Identity
+      - generic [ref=e40]: UX Strategy
+      - generic [ref=e41]: Custom CMS
+    - generic [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e45]: What We Build
+        - heading "Every block, from ground up." [level=2] [ref=e46]
+      - generic [ref=e47]:
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - generic [ref=e50]: 
+            - heading "Web Design" [level=3] [ref=e51]
+            - generic [ref=e53]: 
+          - generic [ref=e54]:
+            - paragraph [ref=e55]: Custom layouts, brutalist aesthetics, and intentional typography. No templates. No shortcuts. Every pixel placed with purpose.
+            - list [ref=e56]:
+              - listitem [ref=e57]:
+                - generic [ref=e58]: 
+                - text: UI/UX strategy & wireframes
+              - listitem [ref=e59]:
+                - generic [ref=e60]: 
+                - text: Responsive design systems
+              - listitem [ref=e61]:
+                - generic [ref=e62]: 
+                - text: Interactive prototypes
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - generic [ref=e65]: 
+            - heading "Web Development" [level=3] [ref=e66]
+            - generic [ref=e68]: 
+          - generic [ref=e69]:
+            - paragraph [ref=e70]: Clean, semantic code that loads fast and scales well. From static sites to full-stack applications — we use the right tool for the job.
+            - list [ref=e71]:
+              - listitem [ref=e72]:
+                - generic [ref=e73]: 
+                - text: Front-end (HTML, CSS, JS, React)
+              - listitem [ref=e74]:
+                - generic [ref=e75]: 
+                - text: Back-end & API integration
+              - listitem [ref=e76]:
+                - generic [ref=e77]: 
+                - text: CMS & admin panels
+        - generic [ref=e78]:
+          - generic [ref=e79]:
+            - generic [ref=e80]: 
+            - heading "E-Commerce" [level=3] [ref=e81]
+            - generic [ref=e83]: 
+          - generic [ref=e84]:
+            - paragraph [ref=e85]: Online stores that actually convert. Clean product pages, frictionless checkout, and inventory management that doesn't make you want to scream.
+            - list [ref=e86]:
+              - listitem [ref=e87]:
+                - generic [ref=e88]: 
+                - text: Shopify & WooCommerce
+              - listitem [ref=e89]:
+                - generic [ref=e90]: 
+                - text: Custom storefronts
+              - listitem [ref=e91]:
+                - generic [ref=e92]: 
+                - text: Payment & shipping integration
+    - generic [ref=e95]:
+      - generic [ref=e96]:
+        - generic [ref=e97]: "0"
+        - generic [ref=e98]: Projects Delivered
+        - text: "structural load: 100%"
+      - generic [ref=e100]:
+        - generic [ref=e101]: "0"
+        - generic [ref=e102]: Happy Clients
+        - text: "satisfaction index: 0.94"
+      - generic [ref=e104]:
+        - generic [ref=e105]: "0"
+        - generic [ref=e106]: Years in Business
+        - text: "operational: continuous"
+      - generic [ref=e108]:
+        - generic [ref=e109]: "0"
+        - generic [ref=e110]: On Time / On Budget
+        - text: "variance: ±0.02"
+    - generic [ref=e113]:
+      - generic [ref=e114]:
+        - generic [ref=e115]: Completed Structures
+        - heading "Sites we're proud of." [level=2] [ref=e116]
+      - tablist [ref=e117]:
+        - tab "All" [ref=e118] [cursor=pointer]
+        - tab "Demos" [ref=e119] [cursor=pointer]
+        - tab "Clients" [ref=e120] [cursor=pointer]
+      - generic [ref=e121]:
+        - link "A U R O R A Demo Aurora Audio Systems Premium audio hardware concept. CNC-machined precision, studio-reference clarity, and industrial design showcase." [ref=e122] [cursor=pointer]:
+          - /url: https://blok-web-studio.github.io/demo-sites/audiosystem_aurora/index.html
+          - generic [ref=e125]: A U R O R A
+          - generic [ref=e126]:
+            - generic [ref=e127]: Demo
+            - generic [ref=e128]: Aurora Audio Systems
+            - paragraph [ref=e129]: Premium audio hardware concept. CNC-machined precision, studio-reference clarity, and industrial design showcase.
+        - link "I R O N Demo Iron & Shears Traditional barbershop with a modern edge. Straight-razor shaves, classic cuts, and dark atmosphere." [ref=e130] [cursor=pointer]:
+          - /url: https://blok-web-studio.github.io/demo-sites/barbershop_ironnshears/index.html
+          - generic [ref=e133]: I R O N
+          - generic [ref=e134]:
+            - generic [ref=e135]: Demo
+            - generic [ref=e136]: Iron & Shears
+            - paragraph [ref=e137]: Traditional barbershop with a modern edge. Straight-razor shaves, classic cuts, and dark atmosphere.
+        - link "L' A M B R E Demo L'ambre Mediterranean bistro concept. Candlelit Aegean flavors, wood-fired hearth, and warm hospitality." [ref=e138] [cursor=pointer]:
+          - /url: https://blok-web-studio.github.io/demo-sites/cafe_lambre/index.html
+          - generic [ref=e141]: L' A M B R E
+          - generic [ref=e142]:
+            - generic [ref=e143]: Demo
+            - generic [ref=e144]: L'ambre
+            - paragraph [ref=e145]: Mediterranean bistro concept. Candlelit Aegean flavors, wood-fired hearth, and warm hospitality.
+        - link "V A N G U A R D Demo Vanguard Corporate law firm with cold precision. Authoritative defense, ironclad strategy, and professional service design." [ref=e146] [cursor=pointer]:
+          - /url: https://blok-web-studio.github.io/demo-sites/lawfirm_vanguard/index.html
+          - generic [ref=e149]: V A N G U A R D
+          - generic [ref=e150]:
+            - generic [ref=e151]: Demo
+            - generic [ref=e152]: Vanguard
+            - paragraph [ref=e153]: Corporate law firm with cold precision. Authoritative defense, ironclad strategy, and professional service design.
+    - generic [ref=e155]:
+      - generic [ref=e156]:
+        - generic [ref=e157]: Construction Schedule
+        - heading "From brief to launch." [level=2] [ref=e158]
+      - generic [ref=e159]:
+        - generic [ref=e160]:
+          - generic [ref=e161]: "01"
+          - generic [ref=e162]: Brief & Discovery
+          - paragraph [ref=e163]: We learn about your business, your audience, and what makes you different. One focused session, no fluff.
+          - generic [ref=e164]:
+            - generic [ref=e165]: "Duration: 1 week"
+            - generic [ref=e166]: "Deliverable: brief document"
+        - generic [ref=e167]:
+          - generic [ref=e168]: "02"
+          - generic [ref=e169]: Design & Direction
+          - paragraph [ref=e170]: We nail the visual direction fast — moodboards, typography, layout. You see options, pick one, we run.
+          - generic [ref=e171]:
+            - generic [ref=e172]: "Duration: 1–2 weeks"
+            - generic [ref=e173]: "Deliverable: design system"
+        - generic [ref=e174]:
+          - generic [ref=e175]: "03"
+          - generic [ref=e176]: Build & Iterate
+          - paragraph [ref=e177]: We build block by block. You get a live preview as we go. Feedback is quick, changes are cheaper early.
+          - generic [ref=e178]:
+            - generic [ref=e179]: "Duration: 3–6 weeks"
+            - generic [ref=e180]: "Deliverable: staging site"
+        - generic [ref=e181]:
+          - generic [ref=e182]: "04"
+          - generic [ref=e183]: Launch & Support
+          - paragraph [ref=e184]: We deploy, test everything twice, and hand over the keys. You're never left hanging after launch day.
+          - generic [ref=e185]:
+            - generic [ref=e186]: "Duration: 1 week"
+            - generic [ref=e187]: "Deliverable: live site"
+    - generic [ref=e189]:
+      - generic [ref=e190]:
+        - generic [ref=e191]: Client Reports
+        - heading "What clients say." [level=2] [ref=e192]
+      - generic [ref=e193]:
+        - generic [ref=e194]:
+          - generic [ref=e195]: Brand Identity
+          - paragraph [ref=e196]: "\"BLOK. took our vague ideas and turned them into a site that actually feels like us. No template could've done what they did.\""
+          - generic [ref=e197]:
+            - generic [ref=e198]:
+              - generic [ref=e199]: JD
+              - generic [ref=e200]: Jordan Davis, Bent Creative
+            - generic [ref=e201]: LOAD 98%
+        - generic [ref=e202]:
+          - generic [ref=e203]: Web Design
+          - paragraph [ref=e204]: "\"We'd been burned by agencies before. BLOK. was straight up about timeline and budget — and they actually delivered on both.\""
+          - generic [ref=e205]:
+            - generic [ref=e206]:
+              - generic [ref=e207]: MK
+              - generic [ref=e208]: Maya Krishnan, Form Arch.
+            - generic [ref=e209]: LOAD 96%
+        - generic [ref=e210]:
+          - generic [ref=e211]: E-Commerce
+          - paragraph [ref=e212]: "\"I've worked with six agencies. BLOK. is the only one I'd recommend to a friend.\""
+          - generic [ref=e213]:
+            - generic [ref=e214]:
+              - generic [ref=e215]: CW
+              - generic [ref=e216]: Chris Wong, Ridgetop Gear
+            - generic [ref=e217]: LOAD 99%
+        - generic [ref=e218]:
+          - generic [ref=e219]: Full Site
+          - paragraph [ref=e220]: "\"The design is brutalist but warm — that's a hard line to walk. They nailed it.\""
+          - generic [ref=e221]:
+            - generic [ref=e222]:
+              - generic [ref=e223]: LC
+              - generic [ref=e224]: Lena Cruz, Studio 8
+            - generic [ref=e225]: LOAD 97%
+        - generic [ref=e226]:
+          - generic [ref=e227]: Brand + Site
+          - paragraph [ref=e228]: "\"BLOK. doesn't do 'I'll have my people call your people.' You talk directly to the people building your site.\""
+          - generic [ref=e229]:
+            - generic [ref=e230]:
+              - generic [ref=e231]: TN
+              - generic [ref=e232]: Taylor Nguyen, Common Ground
+            - generic [ref=e233]: LOAD 93%
+        - generic [ref=e234]:
+          - generic [ref=e235]: Web App
+          - paragraph [ref=e236]: "\"BLOK. is the real deal. No ego, no jargon, just excellent craft.\""
+          - generic [ref=e237]:
+            - generic [ref=e238]:
+              - generic [ref=e239]: MH
+              - generic [ref=e240]: Marcus Hall, Overlap Studio
+            - generic [ref=e241]: LOAD 96%
+    - generic [ref=e243]:
+      - generic [ref=e244]:
+        - generic [ref=e245]: Structural Tiers
+        - heading "Straight up about cost." [level=2] [ref=e246]
+        - paragraph [ref=e247]: No hidden fees. No surprise charges. Pick the tier that fits your stage.
+      - generic [ref=e248]:
+        - generic [ref=e249]:
+          - generic [ref=e251]: Starter
+          - generic [ref=e252]: $2,500
+          - generic [ref=e253]: per project
+          - list [ref=e254]:
+            - listitem [ref=e255]:
+              - generic [ref=e256]: 
+              - text: 5-page custom design
+            - listitem [ref=e257]:
+              - generic [ref=e258]: 
+              - text: Responsive development
+            - listitem [ref=e259]:
+              - generic [ref=e260]: 
+              - text: Basic SEO setup
+            - listitem [ref=e261]:
+              - generic [ref=e262]: 
+              - text: CMS integration
+            - listitem [ref=e263]:
+              - generic [ref=e264]: 
+              - text: E-commerce
+          - link "Get Started" [ref=e265] [cursor=pointer]:
+            - /url: "#contact"
+        - generic [ref=e266]:
+          - generic [ref=e267]: Most Popular
+          - generic [ref=e269]: Growth
+          - generic [ref=e270]: $6,000
+          - generic [ref=e271]: per project
+          - list [ref=e272]:
+            - listitem [ref=e273]:
+              - generic [ref=e274]: 
+              - text: 10-page custom design
+            - listitem [ref=e275]:
+              - generic [ref=e276]: 
+              - text: Responsive development
+            - listitem [ref=e277]:
+              - generic [ref=e278]: 
+              - text: Advanced SEO & analytics
+            - listitem [ref=e279]:
+              - generic [ref=e280]: 
+              - text: CMS integration
+            - listitem [ref=e281]:
+              - generic [ref=e282]: 
+              - text: E-commerce
+          - link "Get Started" [ref=e283] [cursor=pointer]:
+            - /url: "#contact"
+        - generic [ref=e284]:
+          - generic [ref=e286]: Custom
+          - generic [ref=e287]: $12,000+
+          - generic [ref=e288]: per project
+          - list [ref=e289]:
+            - listitem [ref=e290]:
+              - generic [ref=e291]: 
+              - text: Unlimited pages
+            - listitem [ref=e292]:
+              - generic [ref=e293]: 
+              - text: Full-stack development
+            - listitem [ref=e294]:
+              - generic [ref=e295]: 
+              - text: Custom SEO strategy
+            - listitem [ref=e296]:
+              - generic [ref=e297]: 
+              - text: CMS integration
+            - listitem [ref=e298]:
+              - generic [ref=e299]: 
+              - text: E-commerce ready
+          - link "Get Started" [ref=e300] [cursor=pointer]:
+            - /url: "#contact"
+    - generic [ref=e303]:
+      - generic [ref=e304]: Next Steps
+      - heading "Ready to build something monumental?" [level=2] [ref=e305]:
+        - text: Ready to build
+        - text: something monumental?
+      - paragraph [ref=e306]: No pitch decks. No pressure. Just tell us about your thing and we'll see if we click.
+      - link "Start a project " [ref=e307] [cursor=pointer]:
+        - /url: "#contact"
+        - text: Start a project
+        - generic [ref=e308]: 
+    - generic [ref=e310]:
+      - generic [ref=e311]:
+        - generic [ref=e312]: Site Office
+        - heading "Tell us about your thing." [level=2] [ref=e313]
+      - generic [ref=e314]:
+        - generic [ref=e315]:
+          - paragraph [ref=e316]: We'll listen, ask smart questions, and let you know if we're a good fit. No obligation, no follow-up spam — we hate that as much as you do.
+          - generic [ref=e317]:
+            - generic [ref=e318]: 
+            - generic [ref=e319]: hello@blok.studio
+          - generic [ref=e320]:
+            - generic [ref=e321]: 
+            - generic [ref=e322]: Portland, OR — working remote worldwide
+          - generic [ref=e323]:
+            - generic [ref=e324]: 
+            - generic [ref=e325]: Reply within 24 hours. Usually faster.
+          - generic [ref=e326]:
+            - generic [ref=e327]: 
+            - generic [ref=e328]:
+              - text: "Structural integrity:"
+              - strong [ref=e329]: 98.7%
+        - generic [ref=e330]:
+          - generic [ref=e331]:
+            - generic [ref=e332]: Your Name
+            - textbox "Your Name" [ref=e333]:
+              - /placeholder: e.g. Jamie Chen
+          - generic [ref=e334]:
+            - generic [ref=e335]: Email
+            - textbox "Email" [ref=e336]:
+              - /placeholder: jamie@example.com
+          - generic [ref=e337]:
+            - generic [ref=e338]: Budget Range
+            - combobox "Budget Range" [ref=e339]:
+              - option "Select range" [disabled] [selected]
+              - option "Under $5,000"
+              - option "$5,000 — $15,000"
+              - option "$15,000 — $50,000"
+              - option "$50,000+"
+              - option "Not sure yet"
+          - generic [ref=e340]:
+            - generic [ref=e341]: Tell us about your project
+            - textbox "Tell us about your project" [ref=e342]:
+              - /placeholder: What are you building? What's the timeline? Got a reference?
+          - button "Send brief " [ref=e343] [cursor=pointer]:
+            - text: Send brief
+            - generic [ref=e344]: 
+  - contentinfo [ref=e345]:
+    - generic [ref=e347]:
+      - generic [ref=e350]:
+        - generic [ref=e352]: Tension
+        - generic [ref=e356]: Load
+        - generic [ref=e360]: Stress
+      - generic [ref=e363]:
+        - generic [ref=e364]: "3.0"
+        - generic [ref=e365]: kN
+    - generic [ref=e367]:
+      - generic [ref=e368]:
+        - generic [ref=e369]:
+          - generic [ref=e370]: BLOK.
+          - paragraph [ref=e371]: WebDev Studio. Building bold websites for people who thought they couldn't afford it.
+        - generic [ref=e372]:
+          - generic [ref=e373]: Navigation
+          - generic [ref=e374]:
+            - link "Services" [ref=e375] [cursor=pointer]:
+              - /url: "#services"
+            - link "Work" [ref=e376] [cursor=pointer]:
+              - /url: "#work"
+            - link "Process" [ref=e377] [cursor=pointer]:
+              - /url: "#process"
+            - link "Pricing" [ref=e378] [cursor=pointer]:
+              - /url: "#pricing"
+        - generic [ref=e379]:
+          - generic [ref=e380]: Services
+          - generic [ref=e381]:
+            - link "Web Design" [ref=e382] [cursor=pointer]:
+              - /url: "#services"
+            - link "Web Development" [ref=e383] [cursor=pointer]:
+              - /url: "#services"
+            - link "E-Commerce" [ref=e384] [cursor=pointer]:
+              - /url: "#services"
+            - link "Consulting" [ref=e385] [cursor=pointer]:
+              - /url: "#services"
+        - generic [ref=e386]:
+          - generic [ref=e387]: Connect
+          - generic [ref=e388]:
+            - link "hello@blok.studio" [ref=e389] [cursor=pointer]:
+              - /url: mailto:hello@blok.studio
+            - link "Twitter / X" [ref=e390] [cursor=pointer]:
+              - /url: "#"
+            - link "GitHub" [ref=e391] [cursor=pointer]:
+              - /url: "#"
+            - link "Dribbble" [ref=e392] [cursor=pointer]:
+              - /url: "#"
+      - generic [ref=e393]:
+        - generic [ref=e394]: © 2026 BLOK. WebDev Studio. All rights reserved.
+        - generic [ref=e395]:
+          - link "Twitter" [ref=e396] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=e397]: 
+          - link "GitHub" [ref=e398] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=e399]: 
+          - link "Dribbble" [ref=e400] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=e401]: 
+          - link "Instagram" [ref=e402] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=e403]: 

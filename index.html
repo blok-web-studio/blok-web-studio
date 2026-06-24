@@ -14,9 +14,6 @@
 </head>
 <body>
 
-  <!-- Structural grid overlay -->
-  <div class="structural-grid" aria-hidden="true"></div>
-
   <!-- Structural navigation -- floor plan panel (left rail) -->
   <nav class="structural-nav" role="navigation" aria-label="Floor plan">
     <div class="structural-nav__indicator" aria-hidden="true"></div>
@@ -55,7 +52,7 @@
         </h1>
 
         <p class="hero__tagline">
-          We build sites, <span class="mono">block by BLOK.</span>
+          We build sites, block by BLOK.
         </p>
 
         <div class="hero__actions">
@@ -214,7 +211,7 @@
       <div class="work-grid reveal-stagger" data-reveal-stagger="">
         <a href="https://blok-web-studio.github.io/demo-sites/audiosystem_aurora/index.html" target="_blank" rel="noopener" class="work-item" data-category="demo">
           <div class="work-item__thumb">
-            <div class="work-item__thumb-grid"></div>
+            <iframe class="work-item__iframe" src="https://blok-web-studio.github.io/demo-sites/audiosystem_aurora/index.html" sandbox="allow-scripts allow-same-origin" loading="lazy" title="Aurora Audio Systems preview"></iframe>
             <span class="work-item__thumb-label">A U R O R A</span>
           </div>
           <div class="work-item__body">
@@ -225,7 +222,7 @@
         </a>
         <a href="https://blok-web-studio.github.io/demo-sites/barbershop_ironnshears/index.html" target="_blank" rel="noopener" class="work-item" data-category="demo">
           <div class="work-item__thumb">
-            <div class="work-item__thumb-grid"></div>
+            <iframe class="work-item__iframe" src="https://blok-web-studio.github.io/demo-sites/barbershop_ironnshears/index.html" sandbox="allow-scripts allow-same-origin" loading="lazy" title="Iron &amp; Shears preview"></iframe>
             <span class="work-item__thumb-label">I R O N</span>
           </div>
           <div class="work-item__body">
@@ -236,7 +233,7 @@
         </a>
         <a href="https://blok-web-studio.github.io/demo-sites/cafe_lambre/index.html" target="_blank" rel="noopener" class="work-item" data-category="demo">
           <div class="work-item__thumb">
-            <div class="work-item__thumb-grid"></div>
+            <iframe class="work-item__iframe" src="https://blok-web-studio.github.io/demo-sites/cafe_lambre/index.html" sandbox="allow-scripts allow-same-origin" loading="lazy" title="L'ambre preview"></iframe>
             <span class="work-item__thumb-label">L' A M B R E</span>
           </div>
           <div class="work-item__body">
@@ -247,7 +244,7 @@
         </a>
         <a href="https://blok-web-studio.github.io/demo-sites/lawfirm_vanguard/index.html" target="_blank" rel="noopener" class="work-item" data-category="demo">
           <div class="work-item__thumb">
-            <div class="work-item__thumb-grid"></div>
+            <iframe class="work-item__iframe" src="https://blok-web-studio.github.io/demo-sites/lawfirm_vanguard/index.html" sandbox="allow-scripts allow-same-origin" loading="lazy" title="Vanguard preview"></iframe>
             <span class="work-item__thumb-label">V A N G U A R D</span>
           </div>
           <div class="work-item__body">
@@ -467,11 +464,10 @@
             <label for="budget">Budget Range</label>
             <select id="budget">
               <option value="" disabled="" selected="">Select range</option>
-              <option value="under-5k">Under $5,000</option>
-              <option value="5k-15k">$5,000 — $15,000</option>
-              <option value="15k-50k">$15,000 — $50,000</option>
-              <option value="over-50k">$50,000+</option>
-              <option value="not-sure">Not sure yet</option>
+              <option value="400-1k">$400 — $1,000</option>
+              <option value="1k-2k">$1,000 — $2,000</option>
+              <option value="3k-5k">$3,000 — $5,000</option>
+              <option value="5k+">$5,000+</option>
             </select>
           </div>
           <div class="form-group">
