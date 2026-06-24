@@ -491,7 +491,7 @@
           <div class="portfolio-card ${isEditing ? 'portfolio-card--editing' : ''}">
             <div class="portfolio-card__thumb">
               ${item.url
-                ? `<iframe class="portfolio-card__iframe" src="${esc(item.url)}" sandbox="allow-scripts allow-same-origin" loading="lazy" title="Preview of ${esc(item.title)}"></iframe>`
+                ? `<iframe class="portfolio-card__iframe" src="${esc(item.url)}${item.url.includes('?') ? '&' : '?'}embed=1" sandbox="allow-scripts allow-same-origin" loading="lazy" title="Preview of ${esc(item.title)}"></iframe>`
                 : `<span class="tag tag--steel">${esc(item.tag || 'Uncategorized')}</span>`
               }
             </div>
@@ -536,7 +536,7 @@
             <div class="portfolio-card portfolio-card--preview">
               <div class="portfolio-card__thumb">
                 ${item.url
-                  ? `<iframe class="portfolio-card__iframe" src="${esc(item.url)}" sandbox="allow-scripts allow-same-origin" loading="lazy" title="Preview of ${esc(item.title)}"></iframe>`
+                ? `<iframe class="portfolio-card__iframe" src="${esc(item.url)}${item.url.includes('?') ? '&' : '?'}embed=1" sandbox="allow-scripts allow-same-origin" loading="lazy" title="Preview of ${esc(item.title)}"></iframe>`
                   : `<span class="tag tag--steel">${esc(item.tag || 'Uncategorized')}</span>`
                 }
               </div>

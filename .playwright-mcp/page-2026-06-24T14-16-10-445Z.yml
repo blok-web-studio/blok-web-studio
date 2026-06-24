@@ -1,0 +1,17 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: BLOK.
+    - generic [ref=e6]: Structural Admin
+  - generic [ref=e7]: Access Control
+  - generic [ref=e8]: Authorized personnel only
+  - generic [ref=e9]:
+    - generic [ref=e10]: Username
+    - textbox "Username" [ref=e11]:
+      - /placeholder: Enter username
+  - generic [ref=e12]:
+    - generic [ref=e13]: Password
+    - textbox "Password" [ref=e14]:
+      - /placeholder: Enter password
+  - button " Access control" [ref=e15] [cursor=pointer]:
+    - generic [ref=e16]: 
+    - text: Access control
