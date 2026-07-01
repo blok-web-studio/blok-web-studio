@@ -9,10 +9,112 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/structural.css">
+  <link rel="stylesheet" href="css/mobile-redesign.css">
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
   <script>document.documentElement.classList.replace('no-js', 'js');</script>
 </head>
 <body>
+
+  <!-- Mobile bottom tab bar -->
+  <nav class="bottom-tabs" id="bottomTabs" role="tablist" aria-label="Navigation">
+    <button class="bottom-tab bottom-tab--active" data-tab="hero" data-screen="Ground" role="tab" aria-selected="true">
+      <i class="ph ph-compass"></i>
+      <span>Ground</span>
+    </button>
+    <button class="bottom-tab" data-tab="services" data-screen="Lobby" role="tab" aria-selected="false">
+      <i class="ph ph-grid-nine"></i>
+      <span>Lobby</span>
+    </button>
+    <button class="bottom-tab" data-tab="work" data-screen="Mezz" role="tab" aria-selected="false">
+      <i class="ph ph-squares-four"></i>
+      <span>Mezz</span>
+    </button>
+    <button class="bottom-tab" data-tab="process" data-screen="Core" role="tab" aria-selected="false">
+      <i class="ph ph-timer"></i>
+      <span>Core</span>
+    </button>
+    <button class="bottom-tab" data-tab="contact" data-screen="Roof" role="tab" aria-selected="false">
+      <i class="ph ph-envelope"></i>
+      <span>Roof</span>
+    </button>
+  </nav>
+
+  <!-- Floating floor pill -->
+  <button class="floor-pill" id="floorPill" aria-label="Current floor">
+    <i class="ph ph-caret-up"></i>
+    <span class="floor-pill__num" id="floorPillNum">01</span>
+    <span id="floorPillLabel">GROUND</span>
+  </button>
+
+  <!-- Bottom sheet overlay -->
+  <div class="sheet-overlay" id="sheetOverlay"></div>
+
+  <!-- Bottom sheet menu -->
+  <div class="bottom-sheet" id="bottomSheet" role="dialog" aria-label="Floor plan">
+    <div class="bottom-sheet__handle"></div>
+    <div class="bottom-sheet__head">
+      <span class="bottom-sheet__title">Floor Plan</span>
+      <button class="bottom-sheet__close" id="sheetClose" aria-label="Close">
+        <i class="ph ph-x"></i>
+      </button>
+    </div>
+    <nav class="bottom-sheet__body" aria-label="Floor plan">
+      <a href="#hero" class="bottom-sheet__item bottom-sheet__item--active" data-screen="Ground">
+        <span class="bottom-sheet__item-num">01</span>
+        <span class="bottom-sheet__item-info">
+          <span class="bottom-sheet__item-label">Ground</span>
+          <span class="bottom-sheet__item-sub">Home</span>
+        </span>
+        <span class="bottom-sheet__item-arrow"><i class="ph ph-arrow-up-right"></i></span>
+      </a>
+      <a href="#services" class="bottom-sheet__item" data-screen="Lobby">
+        <span class="bottom-sheet__item-num">02</span>
+        <span class="bottom-sheet__item-info">
+          <span class="bottom-sheet__item-label">Lobby</span>
+          <span class="bottom-sheet__item-sub">Services</span>
+        </span>
+        <span class="bottom-sheet__item-arrow"><i class="ph ph-arrow-up-right"></i></span>
+      </a>
+      <a href="#work" class="bottom-sheet__item" data-screen="Mezz">
+        <span class="bottom-sheet__item-num">03</span>
+        <span class="bottom-sheet__item-info">
+          <span class="bottom-sheet__item-label">Mezz</span>
+          <span class="bottom-sheet__item-sub">Work</span>
+        </span>
+        <span class="bottom-sheet__item-arrow"><i class="ph ph-arrow-up-right"></i></span>
+      </a>
+      <a href="#process" class="bottom-sheet__item" data-screen="Core">
+        <span class="bottom-sheet__item-num">04</span>
+        <span class="bottom-sheet__item-info">
+          <span class="bottom-sheet__item-label">Core</span>
+          <span class="bottom-sheet__item-sub">Process</span>
+        </span>
+        <span class="bottom-sheet__item-arrow"><i class="ph ph-arrow-up-right"></i></span>
+      </a>
+      <a href="#cta" class="bottom-sheet__item" data-screen="Upper">
+        <span class="bottom-sheet__item-num">05</span>
+        <span class="bottom-sheet__item-info">
+          <span class="bottom-sheet__item-label">Upper</span>
+          <span class="bottom-sheet__item-sub">Get Started</span>
+        </span>
+        <span class="bottom-sheet__item-arrow"><i class="ph ph-arrow-up-right"></i></span>
+      </a>
+      <a href="#contact" class="bottom-sheet__item" data-screen="Roof">
+        <span class="bottom-sheet__item-num">06</span>
+        <span class="bottom-sheet__item-info">
+          <span class="bottom-sheet__item-label">Roof</span>
+          <span class="bottom-sheet__item-sub">Contact</span>
+        </span>
+        <span class="bottom-sheet__item-arrow"><i class="ph ph-arrow-up-right"></i></span>
+      </a>
+    </nav>
+    <div class="bottom-sheet__foot">
+      <div class="viz-toggle" role="radiogroup" aria-label="Visual mode">
+        <button class="viz-toggle__btn viz-toggle__btn--active" data-viz="structure" role="radio" aria-checked="true">Structure</button>
+        <button class="viz-toggle__btn" data-viz="blueprint" role="radio" aria-checked="false">Blueprint</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Structural navigation -- floor plan panel (left rail) -->
   <nav class="structural-nav" role="navigation" aria-label="Floor plan">
@@ -52,7 +154,7 @@
         </h1>
 
         <p class="hero__tagline">
-          We build sites, block by BLOK.
+          We build <strong>bold</strong> sites for people who thought they couldn't afford one. Projects from <strong>$400</strong>.
         </p>
 
         <div class="hero__actions">
@@ -64,9 +166,24 @@
       <div class="hero__disciplines" id="heroDisciplines"></div>
     </div>
 
+    <!-- Mobile discipline tags -->
+    <div class="hero__discipline-blocks">
+      <span class="hero__discipline-block">Web Design</span>
+      <span class="hero__discipline-block">Web Dev</span>
+      <span class="hero__discipline-block">E-Commerce</span>
+      <span class="hero__discipline-block">Brand</span>
+      <span class="hero__discipline-block">UX</span>
+    </div>
+
     <div class="scroll-indicator">
       <span>Traverse structure</span>
       <div class="scroll-indicator__line"></div>
+    </div>
+
+    <!-- Mobile scroll hint -->
+    <div class="hero__scroll-hint">
+      <span>Scroll to explore</span>
+      <div class="hero__scroll-hint__line"></div>
     </div>
   </section>
 
@@ -158,6 +275,12 @@
             </div>
           </div>
         </div>
+      </div>
+      <!-- Carousel dots (mobile) -->
+      <div class="carousel-dots" id="serviceDots">
+        <button class="carousel-dot carousel-dot--active" data-index="0" aria-label="Service 1"></button>
+        <button class="carousel-dot" data-index="1" aria-label="Service 2"></button>
+        <button class="carousel-dot" data-index="2" aria-label="Service 3"></button>
       </div>
     </div>
   </section>
@@ -253,6 +376,17 @@
             <p class="work-item__desc">Corporate law firm with cold precision. Authoritative defense, ironclad strategy, and professional service design.</p>
           </div>
         </a>
+        <a href="https://blok-web-studio.github.io/demo-sites/conserv/index.html" target="_blank" rel="noopener" class="work-item" data-category="demo">
+          <div class="work-item__thumb">
+            <iframe class="work-item__iframe" src="https://blok-web-studio.github.io/demo-sites/conserv/index.html" sandbox="allow-scripts allow-same-origin" loading="lazy" title="Conserv preview"></iframe>
+            <span class="work-item__thumb-label">C O N S E R V</span>
+          </div>
+          <div class="work-item__body">
+            <span class="work-item__tag">Demo</span>
+            <div class="work-item__title">Conserv</div>
+            <p class="work-item__desc">Greenhouse wellness tincture concept. Botanical formulations, glassmorphism greenhouse atmosphere, and scroll-driven product story.</p>
+          </div>
+        </a>
       </div>
     </div>
   </section>
@@ -273,26 +407,45 @@
               <div class="process-step__marker">01</div>
               <div class="process-step__title">Brief &amp; Brand</div>
               <p class="process-step__desc">Message me your business details and any branding you have. One focused share, no fluff.</p>
+              <div class="process-step__meta">
+                <span><i class="ph ph-clock"></i> Day 1</span>
+                <span><i class="ph ph-file-text"></i> You share</span>
+              </div>
             </div>
             <div class="process-step" data-step="2">
               <div class="process-step__marker">02</div>
               <div class="process-step__title">Free Demo Build</div>
               <p class="process-step__desc">I build a working demo on the house — no payment needed. You see the vision before committing a cent.</p>
+              <div class="process-step__meta">
+                <span><i class="ph ph-clock"></i> Day 2-3</span>
+                <span><i class="ph ph-gift"></i> Free</span>
+              </div>
             </div>
             <div class="process-step" data-step="3">
               <div class="process-step__marker">03</div>
               <div class="process-step__title">You Decide</div>
               <p class="process-step__desc">Love it? We proceed to refine and build the full site. Not the right fit? No pressure, no hard feelings.</p>
+              <div class="process-step__meta">
+                <span><i class="ph ph-check-circle"></i> No pressure</span>
+              </div>
             </div>
             <div class="process-step" data-step="4">
               <div class="process-step__marker">04</div>
               <div class="process-step__title">Build &amp; Refine</div>
               <p class="process-step__desc">Full site build-out block by block. You get a live preview as we go — feedback is quick, changes are cheap early.</p>
+              <div class="process-step__meta">
+                <span><i class="ph ph-clock"></i> 1-2 weeks</span>
+                <span><i class="ph ph-eye"></i> Live preview</span>
+              </div>
             </div>
             <div class="process-step" data-step="5">
               <div class="process-step__marker">05</div>
               <div class="process-step__title">Launch &amp; Host</div>
               <p class="process-step__desc">Final site delivered and live out of the box — free hosting included. You're never left hanging after launch day.</p>
+              <div class="process-step__meta">
+                <span><i class="ph ph-rocket-launch"></i> Launch</span>
+                <span><i class="ph ph-cloud"></i> Free hosting</span>
+              </div>
             </div>
           </div>
         </div>
@@ -308,7 +461,7 @@
         <h2>What clients say.</h2>
       </div>
 
-      <div class="testimonial-wall" data-reveal-stagger="">
+      <div class="testimonial-wall" id="testimonialWall" data-reveal-stagger="">
 
         <!-- Brand Identity — Jordan Davis, LOAD 98% -->
         <div class="testimonial-block testimonial-block--featured">
@@ -388,6 +541,15 @@
           </div>
         </div>
 
+      </div>
+      <!-- Carousel dots (mobile) -->
+      <div class="carousel-dots" id="testimonialDots">
+        <button class="carousel-dot carousel-dot--active" data-index="0" aria-label="Testimonial 1"></button>
+        <button class="carousel-dot" data-index="1" aria-label="Testimonial 2"></button>
+        <button class="carousel-dot" data-index="2" aria-label="Testimonial 3"></button>
+        <button class="carousel-dot" data-index="3" aria-label="Testimonial 4"></button>
+        <button class="carousel-dot" data-index="4" aria-label="Testimonial 5"></button>
+        <button class="carousel-dot" data-index="5" aria-label="Testimonial 6"></button>
       </div>
     </div>
   </section>
@@ -645,6 +807,6 @@
   </footer>
 
   <script src="js/structural.js"></script>
-
+  <script src="js/mobile-engine.js"></script>
 
 </body></html>
