@@ -19,7 +19,10 @@
   var siEl = document.querySelector('.scroll-indicator');
   var hcEl = document.querySelector('.hero__copy');
 
-  if (discContainer && heroEl) {
+  // Skip discipline blocks on narrow viewports (they're hidden via CSS anyway)
+  var isMobile = window.innerWidth <= 768;
+
+  if (discContainer && heroEl && !isMobile) {
 
     // --- Pool of 12 disciplines ---
     var DISCIPLINES = [
@@ -773,7 +776,99 @@
   });
 
   // =============================================================
-  // 7. Work Filters
+  // 7. Mobile Hamburger Menu
+  // =============================================================
+
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileMenuClose = document.getElementById('mobileMenuClose');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileMenuItems = mobileMenu ? mobileMenu.querySelectorAll('.mobile-menu__item') : [];
+  const mobileVizBtn = document.getElementById('mobileVizBtn');
+
+  function openMobileMenu() {
+    if (!mobileMenu) return;
+    mobileMenu.setAttribute('aria-hidden', 'false');
+    mobileMenu.classList.add('mobile-menu--open');
+    if (mobileMenuBtn) mobileMenuBtn.classList.add('mobile-bar__btn--open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMobileMenu() {
+    if (!mobileMenu) return;
+    mobileMenu.setAttribute('aria-hidden', 'true');
+    mobileMenu.classList.remove('mobile-menu--open');
+    if (mobileMenuBtn) mobileMenuBtn.classList.remove('mobile-bar__btn--open');
+    document.body.style.overflow = '';
+  }
+
+  if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', openMobileMenu);
+  }
+
+  if (mobileMenuClose) {
+    mobileMenuClose.addEventListener('click', closeMobileMenu);
+  }
+
+  // Close menu on item click (smooth scroll handled by existing listener)
+  mobileMenuItems.forEach(function (item) {
+    item.addEventListener('click', function () {
+      closeMobileMenu();
+    });
+  });
+
+  // Update mobile menu active item on scroll
+  function updateMobileMenuFloor() {
+    if (!mobileMenu || mobileMenu.getAttribute('aria-hidden') !== 'false') return;
+    const mSections = document.querySelectorAll('[data-screen]');
+    const mScrollY = window.scrollY;
+    const mViewH = window.innerHeight;
+    let mActiveScreen = 'Ground';
+
+    mSections.forEach(function (section) {
+      const rect = section.getBoundingClientRect();
+      const mid = rect.top + rect.height / 2;
+      if (mid < mViewH * 0.6) {
+        mActiveScreen = section.getAttribute('data-screen');
+      }
+    });
+
+    mobileMenuItems.forEach(function (item) {
+      const screen = item.getAttribute('data-screen');
+      item.classList.toggle('mobile-menu__item--active', screen === mActiveScreen);
+    });
+  }
+
+  // Throttled scroll for mobile menu
+  let mobileMenuTicking = false;
+  window.addEventListener('scroll', function () {
+    if (!mobileMenuTicking) {
+      requestAnimationFrame(function () {
+        updateMobileMenuFloor();
+        mobileMenuTicking = false;
+      });
+      mobileMenuTicking = true;
+    }
+  }, { passive: true });
+
+  // Viz toggle in mobile bar
+  var vizCycle = ['structure', 'blueprint'];
+  var vizIdx = 0;
+  if (mobileVizBtn) {
+    mobileVizBtn.addEventListener('click', function () {
+      vizIdx = (vizIdx + 1) % vizCycle.length;
+      var nextViz = vizCycle[vizIdx];
+      document.documentElement.setAttribute('data-viz', nextViz);
+      // Sync all viz buttons
+      document.querySelectorAll('.viz-toggle__btn').forEach(function (b) {
+        var active = b.getAttribute('data-viz') === nextViz;
+        b.classList.toggle('viz-toggle__btn--active', active);
+        b.setAttribute('aria-checked', active ? 'true' : 'false');
+      });
+    });
+  }
+
+  // =============================================================
+  // 8. Work Filters
   // =============================================================
 
   const filterBtns = document.querySelectorAll('.work-filter');
@@ -802,7 +897,7 @@
   });
 
   // =============================================================
-  // 8. Process Timeline — Step activation on scroll
+  // 9. Process Timeline — Step activation on scroll
   // =============================================================
 
   const processSteps = document.querySelectorAll('.process-step');
@@ -820,7 +915,7 @@
   });
 
   // =============================================================
-  // 10. Contact Form — Enhanced Brief Sender
+  // 11. Contact Form — Enhanced Brief Sender
   // =============================================================
 
   var BLOK = window.BLOK || {};
@@ -1063,7 +1158,7 @@
   }
 
   // =============================================================
-  // 11. Smooth scroll for nav links
+  // 12. Smooth scroll for nav links
   // =============================================================
 
   document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
@@ -1097,7 +1192,7 @@
   });
 
   // =============================================================
-  // 11b. Service Cards — scroll-triggered expand animation
+  // 12b. Service Cards — scroll-triggered expand animation
   //      Cards expand gradually from left to right as the user
   //      scrolls through the section. Click toggle also available.
   // =============================================================
@@ -1143,7 +1238,9 @@
   // --- Scroll-progress tracker: expand cards one-by-one as user
   //     scrolls through the section. Card 0 expands first (left),
   //     then card 1 (middle), then card 2 (right). ---
+  //     Skipped on mobile — manual click toggle only.
   var cardCount = serviceCards.length;
+  if (window.innerWidth <= 768) return;
 
   function updateScrollExpand() {
     var gridRect = serviceGrid.getBoundingClientRect();
@@ -1185,7 +1282,7 @@
   updateScrollExpand();
 
   // =============================================================
-  // 12. Window resize — re-run floor tracking
+  // 13. Window resize — re-run floor tracking
   // =============================================================
 
   let resizeTimer;
@@ -1197,7 +1294,7 @@
   });
 
   // =============================================================
-  // 13. Wallpaper Parallax — structural grid + concrete noise
+  // 14. Wallpaper Parallax — structural grid + concrete noise
   //     The grid drifts with scroll at a slower rate (depth cue)
   //     and both layers follow the mouse subtly.
   // =============================================================

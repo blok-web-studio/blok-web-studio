@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/admin.css?v=7">
+  <link rel="stylesheet" href="css/admin.css?v=10">
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
   <script>document.documentElement.classList.replace('no-js', 'js');</script>
 </head>
@@ -15,6 +15,12 @@
 
   <!-- Grid background -->
   <div class="admin-grid-bg" aria-hidden="true"></div>
+
+  <!-- Mobile nav toggle -->
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+    <i class="ph ph-list"></i>
+  </button>
+  <div class="nav-overlay" id="navOverlay" aria-hidden="true"></div>
 
   <div class="admin-layout" id="adminApp">
 
@@ -43,6 +49,11 @@
         <li class="admin-nav__item" data-page="portfolio" id="portfolioNav">
           <i class="ph ph-image"></i>
           <span>Portfolio</span>
+        </li>
+
+        <li class="admin-nav__item" data-page="users" id="usersNav">
+          <i class="ph ph-users"></i>
+          <span>Users</span>
         </li>
 
         <li class="admin-nav__section-label">System</li>
@@ -87,16 +98,16 @@
              ========================================================== -->
         <section class="admin-page admin-page--active" id="dashboardPage">
 
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px;position:relative;z-index:1;">
+          <div class="page-header">
             <div>
-              <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">Dashboard</h2>
-              <p style="font-size:0.85rem;color:var(--muted);margin-top:2px;">
-                Key metrics, recent leads, and portfolio at a glance.
-              </p>
+              <h2 class="page-header__title">Dashboard</h2>
+              <p class="page-header__desc">Key metrics, recent leads, and portfolio at a glance.</p>
             </div>
-            <a href="../index.html" target="_blank" class="admin-btn admin-btn--small" style="display:inline-flex;align-items:center;gap:6px;">
-              <i class="ph ph-arrow-square-out"></i> View site
-            </a>
+            <div class="page-header__actions">
+              <a href="../index.html" target="_blank" class="admin-btn admin-btn--small">
+                <i class="ph ph-arrow-square-out"></i> View site
+              </a>
+            </div>
           </div>
 
           <!-- KPI Grid -->
@@ -137,14 +148,12 @@
              ========================================================== -->
         <section class="admin-page" id="leadsPage">
 
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px;position:relative;z-index:1;">
+          <div class="page-header">
             <div>
-              <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">Contact Leads</h2>
-              <p style="font-size:0.85rem;color:var(--muted);margin-top:2px;">
-                All incoming project briefs. Filter, search, update status workflow, and add internal notes.
-              </p>
+              <h2 class="page-header__title">Contact Leads</h2>
+              <p class="page-header__desc">All incoming project briefs. Select a lead to view details.</p>
             </div>
-            <div style="display:flex;gap:8px;">
+            <div class="page-header__actions">
               <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.exportLeads()">
                 <i class="ph ph-download"></i> JSON
               </button>
@@ -154,14 +163,8 @@
             </div>
           </div>
 
-          <div class="panel">
-            <div class="panel__header">
-              <span class="panel__header-title"><i class="ph ph-list"></i> All Submissions</span>
-              <span class="tag tag--steel" id="leadCountLabel">0 total</span>
-            </div>
-            <div class="panel__body" id="leadsContainer">
-              <!-- Rendered by JS -->
-            </div>
+          <div class="leads-layout" id="leadsContainer">
+            <!-- Rendered by JS -->
           </div>
 
         </section>
@@ -171,14 +174,12 @@
              ========================================================== -->
         <section class="admin-page" id="portfolioPage">
 
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px;position:relative;z-index:1;">
+          <div class="page-header">
             <div>
-              <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">Portfolio Manager</h2>
-              <p style="font-size:0.85rem;color:var(--muted);margin-top:2px;">
-                Add, remove, or reorder portfolio items. Data is stored locally.
-              </p>
+              <h2 class="page-header__title">Portfolio Manager</h2>
+              <p class="page-header__desc">Add, remove, or reorder portfolio items. Data is stored locally.</p>
             </div>
-            <div style="display:flex;gap:8px;">
+            <div class="page-header__actions">
               <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.exportPortfolio()">
                 <i class="ph ph-download"></i> Export JSON
               </button>
@@ -206,16 +207,37 @@
         </section>
 
         <!-- ==========================================================
+             PAGE: USERS
+             ========================================================== -->
+        <section class="admin-page" id="usersPage">
+
+          <div class="page-header">
+            <div>
+              <h2 class="page-header__title">User Management</h2>
+              <p class="page-header__desc">Manage who has access to this dashboard. Credentials are stored in <code>admin/credentials.json</code>.</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__header">
+              <span class="panel__header-title"><i class="ph ph-users"></i> All Users</span>
+            </div>
+            <div class="panel__body" id="userManagerContent">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==========================================================
              PAGE: INSPECTOR
              ========================================================== -->
         <section class="admin-page" id="inspectorPage">
 
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px;position:relative;z-index:1;">
+          <div class="page-header">
             <div>
-              <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">Site Inspector</h2>
-              <p style="font-size:0.85rem;color:var(--muted);margin-top:2px;">
-                Runtime diagnostics and environment info.
-              </p>
+              <h2 class="page-header__title">Site Inspector</h2>
+              <p class="page-header__desc">Runtime diagnostics and environment info.</p>
             </div>
           </div>
 
@@ -235,14 +257,12 @@
              ========================================================== -->
         <section class="admin-page" id="consolePage">
 
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px;position:relative;z-index:1;">
+          <div class="page-header">
             <div>
-              <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">System Console</h2>
-              <p style="font-size:0.85rem;color:var(--muted);margin-top:2px;">
-                Event log for admin actions and system events.
-              </p>
+              <h2 class="page-header__title">System Console</h2>
+              <p class="page-header__desc">Event log for admin actions and system events.</p>
             </div>
-            <div style="display:flex;gap:8px;">
+            <div class="page-header__actions">
               <button class="admin-btn admin-btn--small admin-btn--danger" onclick="BLOK_ADMIN.clearLog()">
                 <i class="ph ph-trash"></i> Clear
               </button>
@@ -266,12 +286,10 @@
              ========================================================== -->
         <section class="admin-page" id="actionsPage">
 
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px;position:relative;z-index:1;">
+          <div class="page-header">
             <div>
-              <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-0.01em;">Quick Actions</h2>
-              <p style="font-size:0.85rem;color:var(--muted);margin-top:2px;">
-                Common tasks and shortcuts.
-              </p>
+              <h2 class="page-header__title">Quick Actions</h2>
+              <p class="page-header__desc">Common tasks and shortcuts.</p>
             </div>
           </div>
 
@@ -288,9 +306,9 @@
             <div class="panel__header">
               <span class="panel__header-title"><i class="ph ph-info"></i> About This Admin</span>
             </div>
-            <div class="panel__body" style="font-size:0.85rem;color:var(--muted);line-height:1.8;">
+            <div class="panel__body panel__body--about">
               <p><strong><span class="brand-lot">BLOK.</span> Admin Panel v1.0</strong> — Client-side admin interface for the <span class="brand-lot">BLOK.</span> WebDev Studio site.</p>
-              <p style="margin-top:8px;">
+              <p class="mt-2">
                 • <strong>Data Storage:</strong> All data is persisted via Netlify Blobs.<br>
                 • <strong>Authentication:</strong> Credentials are stored in a gitignored <code>credentials.json</code> file — never in the repo.<br>
                 • <strong>Leads:</strong> Contact form submissions from the live site are captured here.<br>
@@ -306,6 +324,6 @@
 
   </div><!-- /admin-layout -->
 
-  <script src="js/admin.js?v=7"></script>
+  <script src="js/admin.js?v=10"></script>
 
 </body></html>

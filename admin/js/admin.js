@@ -227,6 +227,7 @@
     _portfolio: [],
 
     async init() {
+      this._showLoading();
       const [leads, portfolio] = await Promise.all([DB.getLeads(), DB.getPortfolio()]);
       this._leads = leads;
       this._portfolio = portfolio;
@@ -234,10 +235,21 @@
     },
 
     async refresh() {
+      this._showLoading();
       const [leads, portfolio] = await Promise.all([DB.getLeads(), DB.getPortfolio()]);
       this._leads = leads;
       this._portfolio = portfolio;
       this.renderAll();
+    },
+
+    _showLoading() {
+      var containers = ['kpiGrid', 'leadsContainer', 'leadsPreviewContainer', 'portfolioContainer', 'portfolioPreviewContainer', 'inspectorContainer', 'logContainer', 'quickActionsContainer', 'userManagerContent'];
+      containers.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el && el.children.length === 0) {
+          el.innerHTML = '<div class="loading-state"><div class="loading-state__spinner"></div><div class="loading-state__text">Loading…</div></div>';
+        }
+      });
     },
 
     renderAll() {
@@ -247,6 +259,7 @@
       this.renderInspector();
       this.renderLog();
       this.renderQuickActions();
+      this.renderUserManager();
     },
 
     // ── KPI cards ──────────────────────────────────────────────
@@ -290,14 +303,15 @@
       `;
     },
 
-    // ── Leads table ────────────────────────────────────────────
-    _expandedLeadId: null,
+    // ── Leads master-detail ─────────────────────────────────────
+    _activeLeadId: null,
     _leadSearch: '',
     _leadFilter: 'all',
     _leadSort: { field: 'createdAt', dir: 'desc' },
     _selectedLeads: new Set(),
     _currentLeadPage: 1,
-    _leadsPerPage: 15,
+    _leadsPerPage: 30,
+    _archivedOpen: false,
 
     renderLeads() {
       const fullContainer = document.getElementById('leadsContainer');
@@ -308,8 +322,6 @@
       const leads = this._leads;
       const activeLeads = leads.filter(function (l) { return l.status !== 'archived'; });
       const archivedLeads = leads.filter(function (l) { return l.status === 'archived'; });
-      const countLabel = document.getElementById('leadCountLabel');
-      if (countLabel) countLabel.textContent = activeLeads.length + ' active · ' + archivedLeads.length + ' archived';
 
       if (leads.length === 0) {
         const emptyHtml = `
@@ -328,32 +340,19 @@
         let previewHtml = `
           <div class="admin-table-wrap">
           <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Status</th>
-                <th>Name</th>
-                <th>Company</th>
-                <th>Budget</th>
-                <th>Received</th>
-              </tr>
-            </thead>
+            <thead><tr>
+              <th>Status</th><th>Name</th><th>Company</th><th>Budget</th><th>Received</th>
+            </tr></thead>
             <tbody>
         `;
         leads.slice(0, 5).forEach(function (lead) {
-          const statusClass = 'status-badge--' + lead.status;
-          const statusLabel = lead.status.charAt(0).toUpperCase() + lead.status.slice(1);
-          const date = new Date(lead.createdAt);
-          const dateStr = date.toLocaleDateString();
-          const comp = lead.company || '-';
-          previewHtml += `
-            <tr>
-              <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
-              <td><strong>${esc(lead.name)}</strong></td>
-              <td class="text-muted text-sm">${esc(comp)}</td>
-              <td><span class="tag tag--steel">${esc(lead.budget)}</span></td>
-              <td class="text-muted text-sm">${dateStr}</td>
-            </tr>
-          `;
+          const sc = 'status-badge--' + lead.status;
+          const sl = lead.status.charAt(0).toUpperCase() + lead.status.slice(1);
+          previewHtml += '<tr><td><span class="status-badge ' + sc + '">' + sl + '</span></td>'
+            + '<td><strong>' + esc(lead.name) + '</strong></td>'
+            + '<td class="text-muted text-sm">' + esc(lead.company || '-') + '</td>'
+            + '<td><span class="tag tag--steel">' + esc(lead.budget) + '</span></td>'
+            + '<td class="text-muted text-sm">' + new Date(lead.createdAt).toLocaleDateString() + '</td></tr>';
         }.bind(this));
         previewHtml += '</tbody></table></div>';
         previewContainer.innerHTML = previewHtml;
@@ -361,37 +360,27 @@
 
       if (!fullContainer) return;
 
-      // ── Filter + Search + Sort (on active leads only) ─────
+      // ── Filter + Search + Sort ─────────────────────────────
       var filtered = activeLeads.filter(function (lead) {
         if (this._leadFilter !== 'all' && lead.status !== this._leadFilter) return false;
         if (this._leadSearch) {
           var q = this._leadSearch.toLowerCase();
-          var matchable = (lead.name + ' ' + lead.email + ' ' + (lead.company || '') + ' ' + (lead.message || '') + ' ' + (lead.phone || '')).toLowerCase();
-          if (matchable.indexOf(q) === -1) return false;
+          var m = (lead.name + ' ' + lead.email + ' ' + (lead.company || '') + ' ' + (lead.message || '') + ' ' + (lead.phone || '')).toLowerCase();
+          if (m.indexOf(q) === -1) return false;
         }
         return true;
       }.bind(this));
 
       // Sort
-      var sortField = this._leadSort.field;
-      var sortDir = this._leadSort.dir;
+      var sf = this._leadSort.field, sd = this._leadSort.dir;
       filtered.sort(function (a, b) {
-        var aVal, bVal;
-        if (sortField === 'createdAt') {
-          aVal = new Date(a.createdAt).getTime();
-          bVal = new Date(b.createdAt).getTime();
-        } else if (sortField === 'budget') {
-          aVal = a.budget || '';
-          bVal = b.budget || '';
-        } else if (sortField === 'name') {
-          aVal = (a.name || '').toLowerCase();
-          bVal = (b.name || '').toLowerCase();
-        } else {
-          aVal = (a[sortField] || '').toLowerCase();
-          bVal = (b[sortField] || '').toLowerCase();
-        }
-        if (aVal < bVal) return sortDir === 'asc' ? -1 : 1;
-        if (aVal > bVal) return sortDir === 'asc' ? 1 : -1;
+        var av, bv;
+        if (sf === 'createdAt') { av = new Date(a.createdAt).getTime(); bv = new Date(b.createdAt).getTime(); }
+        else if (sf === 'name') { av = (a.name || '').toLowerCase(); bv = (b.name || '').toLowerCase(); }
+        else if (sf === 'budget') { av = a.budget || ''; bv = b.budget || ''; }
+        else { av = (a[sf] || '').toLowerCase(); bv = (b[sf] || '').toLowerCase(); }
+        if (av < bv) return sd === 'asc' ? -1 : 1;
+        if (av > bv) return sd === 'asc' ? 1 : -1;
         return 0;
       });
 
@@ -400,221 +389,182 @@
       if (this._currentLeadPage > totalPages) this._currentLeadPage = totalPages;
       var pageLeads = filtered.slice((this._currentLeadPage - 1) * this._leadsPerPage, this._currentLeadPage * this._leadsPerPage);
 
-      // ── Build filter bar ───────────────────────────────────
-      var sortArrow = function (field) {
-        if (this._leadSort.field !== field) return '';
-        return this._leadSort.dir === 'asc' ? ' ↑' : ' ↓';
-      }.bind(this);
-
-      var statusCounts = { all: activeLeads.length };
-      activeLeads.forEach(function (l) {
-        statusCounts[l.status] = (statusCounts[l.status] || 0) + 1;
-      });
-
-      var filterHtml = `
-        <div class="lead-toolbar">
-          <div class="lead-toolbar__left">
-            <div class="lead-search">
-              <i class="ph ph-magnifying-glass"></i>
-              <input type="text" class="lead-search__input" id="leadSearchInput" placeholder="Search name, email, company…" value="${esc(this._leadSearch)}">
-            </div>
-            <div class="lead-filter-group">
-              <button class="lead-filter-btn ${this._leadFilter === 'all' ? 'lead-filter-btn--active' : ''}" data-filter="all">All <span class="lead-filter-count">${statusCounts.all || 0}</span></button>
-              <button class="lead-filter-btn ${this._leadFilter === 'new' ? 'lead-filter-btn--active' : ''}" data-filter="new">New <span class="lead-filter-count">${statusCounts.new || 0}</span></button>
-              <button class="lead-filter-btn ${this._leadFilter === 'read' ? 'lead-filter-btn--active' : ''}" data-filter="read">Read <span class="lead-filter-count">${statusCounts.read || 0}</span></button>
-              <button class="lead-filter-btn ${this._leadFilter === 'contacted' ? 'lead-filter-btn--active' : ''}" data-filter="contacted">Contacted <span class="lead-filter-count">${statusCounts.contacted || 0}</span></button>
-              <button class="lead-filter-btn ${this._leadFilter === 'won' ? 'lead-filter-btn--active' : ''}" data-filter="won">Won <span class="lead-filter-count">${statusCounts.won || 0}</span></button>
-              <button class="lead-filter-btn ${this._leadFilter === 'lost' ? 'lead-filter-btn--active' : ''}" data-filter="lost">Lost <span class="lead-filter-count">${statusCounts.lost || 0}</span></button>
-            </div>
-          </div>
-          <div class="lead-toolbar__right">
-            <span class="lead-toolbar__count">${filtered.length} of ${activeLeads.length} active</span>
-            <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.exportLeads()" title="Export JSON"><i class="ph ph-download-simple"></i></button>
-            <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.exportLeadsCSV()" title="Export CSV"><i class="ph ph-file-csv"></i></button>
-          </div>
-        </div>
-      `;
-
-      // ── Bulk actions bar ────────────────────────────────────
-      var bulkBarHtml = '';
-      if (this._selectedLeads.size > 0) {
-        bulkBarHtml = `
-          <div class="lead-bulk-bar">
-            <span class="lead-bulk-bar__count">${this._selectedLeads.size} selected</span>
-            <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.bulkUpdateStatus('read')"><i class="ph ph-envelope-open"></i> Mark Read</button>
-            <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.bulkUpdateStatus('archived')"><i class="ph ph-archive"></i> Archive</button>
-            <button class="admin-btn admin-btn--small btn--danger" onclick="BLOK_ADMIN.bulkDelete()"><i class="ph ph-trash"></i> Delete</button>
-            <button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.clearSelection()"><i class="ph ph-x"></i> Clear</button>
-          </div>
-        `;
+      // Auto-select first lead if none selected or selected is not in view
+      if (pageLeads.length > 0) {
+        var stillInView = pageLeads.some(function (l) { return l.id === this._activeLeadId; }.bind(this));
+        if (!stillInView) this._activeLeadId = pageLeads[0].id;
+      } else {
+        this._activeLeadId = null;
       }
 
-      // ── Full leads table ────────────────────────────────────
-      var html = filterHtml + bulkBarHtml + '<div class="admin-table-wrap"><table class="admin-table lead-table"><thead><tr>';
+      // Status counts
+      var scounts = { all: activeLeads.length };
+      activeLeads.forEach(function (l) { scounts[l.status] = (scounts[l.status] || 0) + 1; });
 
-      // Header with sortable columns
-      var cols = [
-        { key: 'sel', label: '' },
-        { key: 'status', label: 'Status' },
-        { key: 'name', label: 'Name', sortable: true },
-        { key: 'company', label: 'Company' },
-        { key: 'email', label: 'Email' },
-        { key: 'budget', label: 'Budget', sortable: true },
-        { key: 'services', label: 'Services' },
-        { key: 'message', label: 'Message' },
-        { key: 'createdAt', label: 'Received', sortable: true },
-        { key: 'actions', label: 'Actions' },
-      ];
+      var statusFilters = ['all', 'new', 'read', 'contacted', 'won', 'lost'];
 
-      cols.forEach(function (col) {
-        if (col.sortable) {
-          html += '<th class="lead-table__sortable" onclick="BLOK_ADMIN.toggleSort(\'' + col.key + '\')">' + col.label + sortArrow(col.key) + '</th>';
-        } else {
-          html += '<th>' + col.label + '</th>';
-        }
-      });
+      // Build HTML
+      var html = '<div class="leads-list-panel">';
 
-      html += '</tr></thead><tbody>';
+      // ── Toolbar (search + filters) ─────────────────────────
+      html += '<div class="leads-list-panel__toolbar">';
+      html += '<div class="leads-list-panel__search">';
+      html += '<i class="ph ph-magnifying-glass"></i>';
+      html += '<input type="text" id="leadSearchInput" placeholder="Search name, email, company…" value="' + esc(this._leadSearch) + '">';
+      html += '</div>';
+      html += '<div class="leads-list-panel__filters">';
+      statusFilters.forEach(function (f) {
+        var active = this._leadFilter === f ? ' leads-list-panel__filter-btn--active' : '';
+        var label = f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1);
+        html += '<button class="leads-list-panel__filter-btn' + active + '" data-filter="' + f + '">' + label + ' <span class="leads-list-panel__filter-count">' + (scounts[f] || 0) + '</span></button>';
+      }.bind(this));
+      html += '</div>';
+      html += '</div>';
+
+      // ── Bulk bar ───────────────────────────────────────────
+      if (this._selectedLeads.size > 0) {
+        html += '<div class="leads-bulk-bar">';
+        html += '<span class="leads-bulk-bar__count">' + this._selectedLeads.size + ' selected</span>';
+        html += '<button class="admin-btn" onclick="BLOK_ADMIN.bulkUpdateStatus(\'read\')"><i class="ph ph-envelope-open"></i> Read</button>';
+        html += '<button class="admin-btn" onclick="BLOK_ADMIN.bulkUpdateStatus(\'archived\')"><i class="ph ph-archive"></i> Archive</button>';
+        html += '<button class="admin-btn btn--danger" onclick="BLOK_ADMIN.bulkDelete()"><i class="ph ph-trash"></i> Delete</button>';
+        html += '<button class="admin-btn" onclick="BLOK_ADMIN.clearSelection()"><i class="ph ph-x"></i> Clear</button>';
+        html += '</div>';
+      }
+
+      // ── Card list ──────────────────────────────────────────
+      html += '<div class="leads-list-panel__body">';
 
       if (pageLeads.length === 0) {
-        html += '<tr><td colspan="10"><div class="admin-table__empty"><i class="ph ph-funnel"></i><p>No leads match your filter.</p></div></td></tr>';
+        html += '<div style="padding:40px 20px;text-align:center;color:var(--muted);font-family:var(--font-mono);font-size:0.65rem;"><i class="ph ph-funnel" style="font-size:1.5rem;display:block;margin-bottom:8px;opacity:0.3;"></i>No leads match your filter.</div>';
       }
 
       pageLeads.forEach(function (lead) {
-        var isExpanded = this._expandedLeadId === lead.id;
         var isSelected = this._selectedLeads.has(lead.id);
-        var statusClass = 'status-badge--' + lead.status;
-        var statusLabel = lead.status.charAt(0).toUpperCase() + lead.status.slice(1);
+        var isActive = this._activeLeadId === lead.id;
+        var sc = 'status-badge--' + lead.status;
+        var sl = lead.status.charAt(0).toUpperCase() + lead.status.slice(1);
         var date = new Date(lead.createdAt);
         var dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        var messagePreview = lead.message && lead.message.length > 60 ? lead.message.slice(0, 60) + '…' : (lead.message || '');
-
-        // Format budget for display
         var budgetDisplay = (lead.budget || '').replace(/-/g, ' — ').replace(/^under\s/i, 'Under ');
+        var messagePreview = lead.message && lead.message.length > 80 ? lead.message.slice(0, 80) + '…' : (lead.message || '');
 
-        // Format services
-        var servicesList = Array.isArray(lead.services) ? lead.services.join(', ') : lead.services || '';
-        servicesList = servicesList.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
-
-        html += '<tr class="lead-row ' + (isExpanded ? 'lead-row--expanded' : '') + (isSelected ? ' lead-row--selected' : '') + '" tabindex="0">';
-
-        // Checkbox
-        html += '<td onclick="event.stopPropagation()"><input type="checkbox" class="lead-checkbox" ' + (isSelected ? 'checked' : '') + ' onchange="BLOK_ADMIN.toggleSelectLead(\'' + lead.id + '\')"></td>';
-
-        // Status
-        html += '<td><span class="status-badge ' + statusClass + '">' + statusLabel + '</span></td>';
-
-        // Name (clickable to expand)
-        html += '<td onclick="BLOK_ADMIN.toggleLeadExpand(\'' + lead.id + '\')"><strong>' + esc(lead.name) + '</strong></td>';
-
-        // Company
-        html += '<td class="text-muted text-sm">' + esc(lead.company || '-') + '</td>';
-
-        // Email
-        html += '<td onclick="event.stopPropagation()"><a href="mailto:' + esc(lead.email) + '">' + esc(lead.email) + '</a></td>';
-
-        // Budget
-        html += '<td><span class="tag tag--steel">' + esc(budgetDisplay) + '</span></td>';
-
-        // Services
-        html += '<td class="text-muted text-sm">' + esc(servicesList || '-') + '</td>';
-
-        // Message preview
-        html += '<td class="text-muted text-sm" title="' + esc(lead.message || '') + '" onclick="BLOK_ADMIN.toggleLeadExpand(\'' + lead.id + '\')">' + esc(messagePreview) + '</td>';
-
-        // Date
-        html += '<td class="text-muted text-sm">' + dateStr + '</td>';
-
-        // Actions
-        html += '<td onclick="event.stopPropagation()"><div class="lead-actions">';
-        html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.toggleLeadExpand(\'' + lead.id + '\')" title="View details"><i class="ph ph-eye"></i></button>';
-        html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.updateLeadStatus(\'' + lead.id + '\', \'read\')" title="Mark read"><i class="ph ph-envelope-open"></i></button>';
-        html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.archiveLead(\'' + lead.id + '\')" title="Archive"><i class="ph ph-archive"></i></button>';
-        html += '<button class="admin-btn admin-btn--small btn--danger" onclick="BLOK_ADMIN.deleteLead(\'' + lead.id + '\')" title="Delete"><i class="ph ph-trash"></i></button>';
-        html += '</div></td>';
-
-        html += '</tr>';
-
-        // ── Expanded detail row ──────────────────────────────
-        if (isExpanded) {
-          html += '<tr class="lead-detail-row"><td colspan="10"><div class="lead-detail">';
-
-          // Info grid
-          html += '<div class="lead-detail__grid">';
-          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-user"></i> Name</span><span class="lead-detail__value">' + esc(lead.name) + '</span></div>';
-          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-building"></i> Company</span><span class="lead-detail__value">' + esc(lead.company || '-') + '</span></div>';
-          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-envelope"></i> Email</span><span class="lead-detail__value"><a href="mailto:' + esc(lead.email) + '">' + esc(lead.email) + '</a></span></div>';
-          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-phone"></i> Phone</span><span class="lead-detail__value">' + esc(lead.phone || '-') + '</span></div>';
-          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-currency-dollar"></i> Budget</span><span class="lead-detail__value"><span class="tag tag--steel">' + esc(budgetDisplay) + '</span></span></div>';
-          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-clock"></i> Timeline</span><span class="lead-detail__value">' + esc((lead.timeline || '').replace(/-/g, ' ') || 'Not specified') + '</span></div>';
-          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-wrench"></i> Services</span><span class="lead-detail__value">' + esc(servicesList || 'Not specified') + '</span></div>';
-          html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-calendar"></i> Received</span><span class="lead-detail__value">' + dateStr + '</span></div>';
-          html += '</div>';
-
-          // Status workflow
-          var statuses = ['new', 'read', 'contacted', 'qualified', 'won', 'lost', 'archived'];
-          html += '<div class="lead-detail__status-flow">';
-          statuses.forEach(function (s) {
-            var active = lead.status === s ? 'lead-status-flow__step--active' : '';
-            var label = s.charAt(0).toUpperCase() + s.slice(1);
-            html += '<button class="lead-status-flow__step ' + active + '" onclick="BLOK_ADMIN.updateLeadStatus(\'' + lead.id + '\', \'' + s + '\')">' + label + '</button>';
-          });
-          html += '</div>';
-
-          // Message
-          html += '<div class="lead-detail__message"><span class="lead-detail__label"><i class="ph ph-chat-text"></i> Full Message</span><div class="lead-detail__message-body">' + esc(lead.message || '(no message)') + '</div></div>';
-
-          // Internal notes
-          var notesId = 'leadNotes_' + lead.id;
-          html += '<div class="lead-detail__notes">';
-          html += '<span class="lead-detail__label"><i class="ph ph-notepad"></i> Internal Notes</span>';
-          html += '<textarea class="lead-notes__textarea" id="' + notesId + '" placeholder="Add private notes about this lead…" rows="3">' + esc(lead.notes || '') + '</textarea>';
-          html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.saveLeadNotes(\'' + lead.id + '\')" style="margin-top:8px"><i class="ph ph-floppy-disk"></i> Save Notes</button>';
-          html += '</div>';
-
-          html += '</div></td></tr>';
+        html += '<div class="lead-card' + (isActive ? ' lead-card--selected' : '') + '" onclick="BLOK_ADMIN.selectLead(\'' + lead.id + '\')">';
+        html += '<div class="lead-card__checkbox" onclick="event.stopPropagation()"><input type="checkbox" ' + (isSelected ? 'checked' : '') + ' onchange="BLOK_ADMIN.toggleSelectLead(\'' + lead.id + '\')"></div>';
+        html += '<div class="lead-card__content">';
+        html += '<div class="lead-card__header"><span class="lead-card__name">' + esc(lead.name) + '</span><span class="lead-card__status"><span class="status-badge ' + sc + '">' + sl + '</span></span></div>';
+        html += '<div class="lead-card__company">' + esc(lead.company || '') + '</div>';
+        html += '<div class="lead-card__meta">';
+        html += '<span class="lead-card__budget">' + esc(budgetDisplay) + '</span>';
+        html += '<span class="lead-card__date">' + dateStr + '</span>';
+        html += '</div>';
+        if (messagePreview) {
+          html += '<div class="lead-card__preview">' + esc(messagePreview) + '</div>';
         }
+        html += '</div></div>';
       }.bind(this));
 
-      html += '</tbody></table></div>';
+      html += '</div>'; // list body
 
-      // ── Pagination ──────────────────────────────────────────
+      // ── Footer (pagination + count) ────────────────────────
+      html += '<div class="leads-list-panel__footer">';
+      html += '<span>' + filtered.length + ' of ' + activeLeads.length + ' active</span>';
       if (totalPages > 1) {
-        html += '<div class="lead-pagination"><div class="lead-pagination__inner">';
-        html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.goToLeadPage(1)" ' + (this._currentLeadPage <= 1 ? 'disabled' : '') + '><i class="ph ph-caret-double-left"></i></button>';
+        html += '<div style="display:flex;gap:4px;align-items:center;">';
         html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.goToLeadPage(' + (this._currentLeadPage - 1) + ')" ' + (this._currentLeadPage <= 1 ? 'disabled' : '') + '><i class="ph ph-caret-left"></i></button>';
-        html += '<span class="lead-pagination__info">Page ' + this._currentLeadPage + ' of ' + totalPages + '</span>';
+        html += '<span>' + this._currentLeadPage + ' / ' + totalPages + '</span>';
         html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.goToLeadPage(' + (this._currentLeadPage + 1) + ')" ' + (this._currentLeadPage >= totalPages ? 'disabled' : '') + '><i class="ph ph-caret-right"></i></button>';
-        html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.goToLeadPage(' + totalPages + ')" ' + (this._currentLeadPage >= totalPages ? 'disabled' : '') + '><i class="ph ph-caret-double-right"></i></button>';
-        html += '</div></div>';
+        html += '</div>';
       }
+      html += '</div>';
 
-      // ── Footer ─────────────────────────────────────────────
-      html += '<div class="card__footer" style="display:flex;justify-content:space-between;align-items:center;"><span>' + filtered.length + ' of ' + activeLeads.length + ' active lead' + (activeLeads.length !== 1 ? 's' : '') + '</span></div>';
-
-      // ── Archived Leads Collapse ────────────────────────────
+      // ── Archived toggle ────────────────────────────────────
       if (archivedLeads.length > 0) {
-        html += '<div class="archived-collapse" id="archivedCollapse">';
-        html += '<button class="archived-collapse__toggle" onclick="BLOK_ADMIN.toggleArchived()"><span><i class="ph ph-archive"></i> Archived (' + archivedLeads.length + ')</span><span class="archived-collapse__toggle-icon"><i class="ph ph-caret-down"></i></span></button>';
-        html += '<div class="archived-collapse__body"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Status</th><th>Name</th><th>Company</th><th>Email</th><th>Budget</th><th>Received</th><th>Actions</th></tr></thead><tbody>';
-        archivedLeads.forEach(function (lead) {
-          var statusClass = 'status-badge--' + lead.status;
-          var statusLabel = lead.status.charAt(0).toUpperCase() + lead.status.slice(1);
-          var date = new Date(lead.createdAt);
-          var dateStr = date.toLocaleDateString();
-          html += '<tr><td><span class="status-badge ' + statusClass + '">' + statusLabel + '</span></td>';
-          html += '<td><strong>' + esc(lead.name) + '</strong></td>';
-          html += '<td class="text-muted text-sm">' + esc(lead.company || '-') + '</td>';
-          html += '<td class="text-muted text-sm">' + esc(lead.email) + '</td>';
-          html += '<td><span class="tag tag--steel">' + esc((lead.budget || '').replace(/-/g, ' — ')) + '</span></td>';
-          html += '<td class="text-muted text-sm">' + dateStr + '</td>';
-          html += '<td><div class="lead-actions">';
-          html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.updateLeadStatus(\'' + lead.id + '\', \'read\')" title="Unarchive"><i class="ph ph-archive"></i></button>';
-          html += '<button class="admin-btn admin-btn--small btn--danger" onclick="BLOK_ADMIN.deleteLead(\'' + lead.id + '\')" title="Delete"><i class="ph ph-trash"></i></button>';
-          html += '</div></td></tr>';
-        }.bind(this));
-        html += '</tbody></table></div></div></div>';
+        html += '<button class="leads-archived-toggle' + (this._archivedOpen ? ' leads-archived-toggle--open' : '') + '" onclick="BLOK_ADMIN.toggleArchived()">';
+        html += '<span><i class="ph ph-archive"></i> Archived (' + archivedLeads.length + ')</span>';
+        html += '<span class="leads-archived-toggle__icon"><i class="ph ph-caret-down"></i></span>';
+        html += '</button>';
+        if (this._archivedOpen) {
+          html += '<div style="padding:6px;">';
+          archivedLeads.forEach(function (lead) {
+            var sc = 'status-badge--' + lead.status;
+            var sl = lead.status.charAt(0).toUpperCase() + lead.status.slice(1);
+            var ds = new Date(lead.createdAt).toLocaleDateString();
+            html += '<div class="lead-card" style="cursor:pointer" onclick="BLOK_ADMIN.selectLead(\'' + lead.id + '\')">';
+            html += '<div class="lead-card__content">';
+            html += '<div class="lead-card__header"><span class="lead-card__name">' + esc(lead.name) + '</span><span class="lead-card__status"><span class="status-badge ' + sc + '">' + sl + '</span></span></div>';
+            html += '<div class="lead-card__company">' + esc(lead.company || '') + '</div>';
+            html += '<div class="lead-card__meta"><span class="lead-card__date">' + ds + '</span></div>';
+            html += '</div></div>';
+          }.bind(this));
+          html += '</div>';
+        }
       }
+
+      html += '</div>'; // list panel
+
+      // ── Detail Panel ───────────────────────────────────────
+      html += '<div class="leads-detail-panel">';
+      html += '<button class="leads-detail-panel__back" onclick="BLOK_ADMIN.closeDetailMobile()"><i class="ph ph-caret-left"></i> Back</button>';
+
+      var activeLead = this._activeLeadId ? this._leads.find(function (l) { return l.id === this._activeLeadId; }.bind(this)) : null;
+
+      if (!activeLead) {
+        html += '<div class="leads-detail-panel__empty">';
+        html += '<i class="ph ph-tray"></i>';
+        html += '<p>Select a lead to view details</p>';
+        html += '</div>';
+      } else {
+        var servicesList = Array.isArray(activeLead.services) ? activeLead.services.join(', ') : activeLead.services || '';
+        servicesList = servicesList.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+        var budgetDisplay = (activeLead.budget || '').replace(/-/g, ' — ').replace(/^under\s/i, 'Under ');
+
+        html += '<div class="leads-detail-panel__body">';
+
+        // Header
+        html += '<h3 style="font-family:var(--font-display);font-size:1.1rem;font-weight:600;margin-bottom:4px;">' + esc(activeLead.name) + '</h3>';
+        html += '<p style="font-family:var(--font-mono);font-size:0.6rem;color:var(--muted);margin-bottom:16px;">' + esc(activeLead.email) + '</p>';
+
+        // Status workflow
+        var statuses = ['new', 'read', 'contacted', 'qualified', 'won', 'lost', 'archived'];
+        html += '<div class="lead-detail__status-flow">';
+        statuses.forEach(function (s) {
+          var active = activeLead.status === s ? 'lead-status-flow__step--active' : '';
+          var label = s.charAt(0).toUpperCase() + s.slice(1);
+          html += '<button class="lead-status-flow__step ' + active + '" onclick="BLOK_ADMIN.updateLeadStatus(\'' + activeLead.id + '\', \'' + s + '\')">' + label + '</button>';
+        });
+        html += '</div>';
+
+        // Info grid
+        html += '<div class="lead-detail__grid">';
+        html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-user"></i> Name</span><span class="lead-detail__value">' + esc(activeLead.name) + '</span></div>';
+        html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-building"></i> Company</span><span class="lead-detail__value">' + esc(activeLead.company || '-') + '</span></div>';
+        html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-envelope"></i> Email</span><span class="lead-detail__value"><a href="mailto:' + esc(activeLead.email) + '">' + esc(activeLead.email) + '</a></span></div>';
+        html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-phone"></i> Phone</span><span class="lead-detail__value">' + esc(activeLead.phone || '-') + '</span></div>';
+        html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-currency-dollar"></i> Budget</span><span class="lead-detail__value"><span class="lead-card__budget">' + esc(budgetDisplay) + '</span></span></div>';
+        html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-clock"></i> Timeline</span><span class="lead-detail__value">' + esc((activeLead.timeline || '').replace(/-/g, ' ') || 'Not specified') + '</span></div>';
+        html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-wrench"></i> Services</span><span class="lead-detail__value">' + esc(servicesList || 'Not specified') + '</span></div>';
+        html += '<div class="lead-detail__field"><span class="lead-detail__label"><i class="ph ph-calendar"></i> Received</span><span class="lead-detail__value">' + new Date(activeLead.createdAt).toLocaleString() + '</span></div>';
+        html += '</div>';
+
+        // Message
+        html += '<div class="lead-detail__message"><span class="lead-detail__label"><i class="ph ph-chat-text"></i> Full Message</span><div class="lead-detail__message-body">' + esc(activeLead.message || '(no message)') + '</div></div>';
+
+        // Notes
+        var notesId = 'leadNotes_' + activeLead.id;
+        html += '<div class="lead-detail__notes">';
+        html += '<span class="lead-detail__label"><i class="ph ph-notepad"></i> Internal Notes</span>';
+        html += '<textarea id="' + notesId + '" placeholder="Add private notes about this lead…" rows="3">' + esc(activeLead.notes || '') + '</textarea>';
+        html += '<div class="lead-detail__actions">';
+        html += '<button class="admin-btn admin-btn--small" onclick="BLOK_ADMIN.saveLeadNotes(\'' + activeLead.id + '\')"><i class="ph ph-floppy-disk"></i> Save Notes</button>';
+        html += '<button class="admin-btn admin-btn--small btn--danger" onclick="BLOK_ADMIN.deleteLead(\'' + activeLead.id + '\')"><i class="ph ph-trash"></i> Delete</button>';
+        html += '</div>';
+        html += '</div>';
+
+        html += '</div>'; // body
+      }
+
+      html += '</div>'; // detail panel
 
       fullContainer.innerHTML = html;
 
@@ -630,7 +580,7 @@
       }
 
       // ── Bind filter buttons ─────────────────────────────────
-      document.querySelectorAll('.lead-filter-btn').forEach(function (btn) {
+      document.querySelectorAll('.leads-list-panel__filter-btn').forEach(function (btn) {
         if (!btn._bound) {
           btn._bound = true;
           btn.addEventListener('click', function () {
@@ -742,7 +692,7 @@
       const form = document.getElementById('portfolioForm');
       if (form) {
         form.innerHTML = `
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:end;">
+          <div class="portfolio-form-grid">
             <div>
               <label class="admin-label">Title</label>
               <input type="text" class="admin-input" id="portTitle" placeholder="Project name">
@@ -756,11 +706,11 @@
               <input type="url" class="admin-input" id="portUrl" placeholder="https://...">
             </div>
           </div>
-          <div style="margin-top:8px;">
+          <div class="portfolio-form-desc">
             <label class="admin-label">Description</label>
             <input type="text" class="admin-input" id="portDesc" placeholder="Brief description">
           </div>
-          <div style="margin-top:12px;">
+          <div class="portfolio-form-submit">
             <button class="admin-btn admin-btn--primary" onclick="BLOK_ADMIN.addPortfolioItem()"><i class="ph ph-plus"></i> Add Item</button>
           </div>
         `;
@@ -773,7 +723,7 @@
       if (!container) return;
 
       const navStatus = navigator.onLine ? 'Online' : 'Offline';
-      const navColor = navigator.onLine ? 'var(--green)' : 'var(--red)';
+      const navStatusClass = navigator.onLine ? 'inspector-item__value--online' : 'inspector-item__value--offline';
       const memory = navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'N/A';
       const cores = navigator.hardwareConcurrency ? navigator.hardwareConcurrency + ' cores' : 'N/A';
 
@@ -781,11 +731,11 @@
         <div class="inspector-grid">
           <div class="inspector-item">
             <span class="inspector-item__label"><i class="ph ph-wifi-high"></i> Network</span>
-            <span class="inspector-item__value" style="color:${navColor}">${navStatus}</span>
+            <span class="inspector-item__value ${navStatusClass}">${navStatus}</span>
           </div>
           <div class="inspector-item">
             <span class="inspector-item__label"><i class="ph ph-cloud"></i> API Status</span>
-            <span class="inspector-item__value" style="color:var(--green)">Active</span>
+            <span class="inspector-item__value inspector-item__value--active">Active</span>
           </div>
           <div class="inspector-item">
             <span class="inspector-item__label"><i class="ph ph-cpu"></i> CPU Cores</span>
@@ -873,12 +823,56 @@
         item.addEventListener('click', function () {
           const page = item.getAttribute('data-page');
           NAV.goTo(page);
+          // Close mobile nav on navigation
+          NAV.closeMobile();
         });
       });
+
+      // Mobile nav toggle
+      var toggleBtn = document.getElementById('navToggle');
+      var overlay = document.getElementById('navOverlay');
+      if (toggleBtn && overlay) {
+        toggleBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          NAV.toggleMobile();
+        });
+        overlay.addEventListener('click', function () {
+          NAV.closeMobile();
+        });
+      }
 
       // Restore hash or default to dashboard
       const hash = window.location.hash.replace('#', '');
       NAV.goTo(hash || 'dashboard');
+    },
+
+    toggleMobile() {
+      var nav = document.querySelector('.admin-nav');
+      var toggle = document.getElementById('navToggle');
+      var overlay = document.getElementById('navOverlay');
+      if (!nav) return;
+      var isOpen = nav.classList.toggle('admin-nav--open');
+      if (toggle) toggle.classList.toggle('nav-toggle--open', isOpen);
+      if (overlay) overlay.classList.toggle('nav-overlay--visible', isOpen);
+      // Update icon
+      if (toggle) {
+        var icon = toggle.querySelector('.ph');
+        if (icon) icon.className = isOpen ? 'ph ph-x' : 'ph ph-list';
+      }
+    },
+
+    closeMobile() {
+      var nav = document.querySelector('.admin-nav');
+      var toggle = document.getElementById('navToggle');
+      var overlay = document.getElementById('navOverlay');
+      if (!nav) return;
+      nav.classList.remove('admin-nav--open');
+      if (toggle) {
+        toggle.classList.remove('nav-toggle--open');
+        var icon = toggle.querySelector('.ph');
+        if (icon) icon.className = 'ph ph-list';
+      }
+      if (overlay) overlay.classList.remove('nav-overlay--visible');
     },
 
     goTo(pageId) {
@@ -902,7 +896,7 @@
       }
 
       // Refresh data when navigating to data-heavy pages
-      if (['dashboard', 'leads', 'portfolio', 'inspector'].includes(pageId)) {
+      if (['dashboard', 'leads', 'portfolio', 'inspector', 'users'].includes(pageId)) {
         DASHBOARD.refresh();
       }
     },
@@ -964,12 +958,14 @@
       if (!lead) return;
       await DB.updateLeadStatus(id, status);
       DB.addLog('info', 'Lead ' + lead.name + ' → ' + status);
+      TOAST.success('Lead status updated');
       await DASHBOARD.refresh();
     },
 
     async archiveLead(id) {
       await DB.updateLeadStatus(id, 'archived');
       DB.addLog('info', 'Lead archived');
+      TOAST.success('Lead archived');
       await DASHBOARD.refresh();
     },
 
@@ -977,23 +973,31 @@
       if (!confirm('Delete this lead permanently?')) return;
       await DB.deleteLead(id);
       DB.addLog('info', 'Lead deleted');
+      TOAST.success('Lead deleted');
       await DASHBOARD.refresh();
     },
 
-    toggleLeadExpand(id) {
-      DASHBOARD._expandedLeadId = DASHBOARD._expandedLeadId === id ? null : id;
+    selectLead(id) {
+      DASHBOARD._activeLeadId = id;
+      DASHBOARD.renderLeads();
+    },
+
+    closeDetailMobile() {
+      DASHBOARD._activeLeadId = null;
       DASHBOARD.renderLeads();
     },
 
     async exportLeads() {
       const data = DASHBOARD._leads;
+      if (!data.length) { TOAST.error('No leads to export'); return; }
       downloadJSON(data, 'blok-leads-' + new Date().toISOString().slice(0, 10));
       DB.addLog('info', 'Leads exported');
+      TOAST.success('Leads exported');
     },
 
     async exportLeadsCSV() {
       const data = DASHBOARD._leads;
-      if (!data.length) return;
+      if (!data.length) { TOAST.error('No leads to export'); return; }
       var headers = ['Name', 'Email', 'Company', 'Phone', 'Budget', 'Timeline', 'Services', 'Message', 'Status', 'Date', 'Notes'];
       var rows = data.map(function (l) {
         var services = Array.isArray(l.services) ? l.services.join('; ') : (l.services || '');
@@ -1012,6 +1016,7 @@
       a.click();
       URL.revokeObjectURL(url);
       DB.addLog('info', 'Leads exported as CSV');
+      TOAST.success('Leads exported as CSV');
     },
 
     async saveLeadNotes(id) {
@@ -1020,9 +1025,7 @@
       var notes = notesEl.value;
       await DB.updateLeadNotes(id, notes);
       DB.addLog('info', 'Notes saved for lead ' + id);
-      // Flash feedback
-      notesEl.style.borderColor = 'var(--green)';
-      setTimeout(function () { notesEl.style.borderColor = ''; }, 1500);
+      TOAST.success('Notes saved');
     },
 
     // ── Search / Filter / Sort ──────────────────────────────────
@@ -1060,6 +1063,7 @@
         await DB.updateLeadStatus(ids[i], status);
       }
       DB.addLog('info', count + ' leads marked as ' + status);
+      TOAST.success(count + ' leads updated');
       DASHBOARD._selectedLeads.clear();
       await DASHBOARD.refresh();
     },
@@ -1072,6 +1076,7 @@
         await DB.deleteLead(ids[i]);
       }
       DB.addLog('info', ids.length + ' leads deleted');
+      TOAST.success(ids.length + ' leads deleted');
       DASHBOARD._selectedLeads.clear();
       await DASHBOARD.refresh();
     },
@@ -1084,8 +1089,10 @@
 
     async exportPortfolio() {
       const data = DASHBOARD._portfolio;
+      if (!data.length) { TOAST.error('No portfolio items to export'); return; }
       downloadJSON(data, 'blok-portfolio-' + new Date().toISOString().slice(0, 10));
       DB.addLog('info', 'Portfolio exported');
+      TOAST.success('Portfolio exported');
     },
 
     // ── Portfolio Actions ───────────────────────────────────────
@@ -1095,7 +1102,10 @@
       const url = document.getElementById('portUrl');
       const desc = document.getElementById('portDesc');
 
-      if (!title.value.trim()) return;
+      if (!title.value.trim()) {
+        TOAST.error('Title is required');
+        return;
+      }
 
       const result = await DB.addPortfolioItem({
         title: title.value.trim(),
@@ -1105,13 +1115,17 @@
       });
 
       if (result.ok) {
+        var addedTitle = title.value.trim();
         title.value = '';
         tag.value = '';
         url.value = '';
         desc.value = '';
         DASHBOARD._editingPortfolioId = null;
-        DB.addLog('info', 'Portfolio item added: ' + title.value);
+        DB.addLog('info', 'Portfolio item added: ' + addedTitle);
+        TOAST.success('Portfolio item added');
         await DASHBOARD.refresh();
+      } else {
+        TOAST.error(result.error || 'Failed to add item');
       }
     },
 
@@ -1120,6 +1134,7 @@
       await DB.removePortfolioItem(id);
       DASHBOARD._editingPortfolioId = null;
       DB.addLog('info', 'Portfolio item removed');
+      TOAST.success('Portfolio item removed');
       await DASHBOARD.refresh();
     },
 
@@ -1151,7 +1166,10 @@
       if (result.ok) {
         DASHBOARD._editingPortfolioId = null;
         DB.addLog('ok', 'Portfolio item updated: ' + update.title);
+        TOAST.success('Portfolio item updated');
         await DASHBOARD.refresh();
+      } else {
+        TOAST.error(result.error || 'Failed to update');
       }
     },
 
@@ -1160,8 +1178,7 @@
 
     toggleArchived() {
       this._archivedOpen = !this._archivedOpen;
-      var el = document.getElementById('archivedCollapse');
-      if (el) el.classList.toggle('archived-collapse--open', this._archivedOpen);
+      DASHBOARD.renderLeads();
     },
 
     // ── User Menu ────────────────────────────────────────────────
@@ -1175,36 +1192,28 @@
       if (el) el.classList.remove('admin-header__user--open');
     },
 
-    openUserManager() {
-      this.closeUserMenu();
-      var overlay = document.getElementById('userManagerModal');
-      if (overlay) overlay.classList.add('admin-modal-overlay--open');
-      this.renderUserManager();
-    },
-
-    closeUserManager() {
-      var overlay = document.getElementById('userManagerModal');
-      if (overlay) overlay.classList.remove('admin-modal-overlay--open');
+    navToUsers() {
+      NAV.goTo('users');
     },
 
     renderUserManager() {
       var container = document.getElementById('userManagerContent');
       if (!container) return;
       var users = this._getUsers();
-      var html = '<div style="margin-bottom:16px;">';
-      html += '<p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Manage who has access to this dashboard. Credentials are stored in <code>admin/credentials.json</code>.</p>';
+      var html = '<div class="user-manager-section">';
+      html += '<p class="user-manager-intro">Manage who has access to this dashboard. Credentials are stored in <code>admin/credentials.json</code>.</p>';
       html += '<table class="admin-table"><thead><tr><th>Username</th><th>Role</th><th>Actions</th></tr></thead><tbody>';
       users.forEach(function (u) {
         html += '<tr><td><strong>' + esc(u.username) + '</strong></td><td><span class="tag tag--steel">' + esc(u.role || 'admin') + '</span></td>';
         html += '<td><button class="admin-btn admin-btn--small btn--danger" onclick="BLOK_ADMIN.deleteUser(\'' + esc(u.username) + '\')" ' + (users.length <= 1 ? 'disabled' : '') + '><i class="ph ph-trash"></i></button></td></tr>';
       });
       html += '</tbody></table></div>';
-      html += '<div style="border-top:1px solid var(--border);padding-top:16px;">';
+      html += '<div class="user-manager-add">';
       html += '<label class="admin-label">Add User</label>';
-      html += '<div style="display:flex;gap:8px;align-items:end;">';
-      html += '<div style="flex:1;"><input type="text" class="admin-input" id="newUserName" placeholder="Username"></div>';
-      html += '<div style="flex:1;"><input type="password" class="admin-input" id="newUserPass" placeholder="Password"></div>';
-      html += '<button class="admin-btn admin-btn--primary admin-btn--small" onclick="BLOK_ADMIN.addUser()"><i class="ph ph-plus"></i> Add</button>';
+      html += '<div class="user-manager-add__form">';
+      html += '<div class="user-manager-add__field"><input type="text" class="admin-input" id="newUserName" placeholder="Username"></div>';
+      html += '<div class="user-manager-add__field"><input type="password" class="admin-input" id="newUserPass" placeholder="Password"></div>';
+      html += '<button class="admin-btn admin-btn--primary" onclick="BLOK_ADMIN.addUser()"><i class="ph ph-plus"></i> Add</button>';
       html += '</div></div>';
       container.innerHTML = html;
     },
@@ -1255,7 +1264,54 @@
   };
 
   // =============================================================
-  // 6. Helpers
+  // 6. Toast / UI helpers
+  // =============================================================
+
+  const TOAST = {
+    _container: null,
+
+    _ensureContainer() {
+      if (!this._container) {
+        this._container = document.createElement('div');
+        this._container.className = 'toast-container';
+        document.body.appendChild(this._container);
+      }
+      return this._container;
+    },
+
+    show(msg, type) {
+      type = type || 'info';
+      const container = this._ensureContainer();
+      const el = document.createElement('div');
+      el.className = 'toast toast--' + type;
+      el.innerHTML = msg;
+      container.appendChild(el);
+      setTimeout(function () {
+        el.classList.add('toast--out');
+        setTimeout(function () { el.remove(); }, 250);
+      }, 3000);
+    },
+
+    success(msg) { this.show(msg, 'success'); },
+    error(msg) { this.show(msg, 'error'); },
+    info(msg) { this.show(msg, 'info'); },
+  };
+
+  /** Show a loading spinner in a container while an async op runs */
+  async function withLoading(containerId, fn) {
+    const el = document.getElementById(containerId);
+    if (!el) return fn();
+    el.innerHTML = '<div class="loading-state"><div class="loading-state__spinner"></div><div class="loading-state__text">Loading…</div></div>';
+    try {
+      return await fn();
+    } catch (e) {
+      TOAST.error('Error: ' + (e.message || e));
+      throw e;
+    }
+  }
+
+  // =============================================================
+  // 7. Helpers
   // =============================================================
 
   function esc(str) {
@@ -1300,12 +1356,15 @@
             <span class="admin-header__user-name">${esc(user)}</span>
             <span class="admin-header__user-chevron"><i class="ph ph-caret-down"></i></span>
             <div class="admin-header__user-dropdown">
-              <button class="admin-header__user-dropdown-item" onclick="BLOK_ADMIN.openUserManager()">
-                <i class="ph ph-users"></i> Manage Users
+              <button class="admin-header__user-dropdown-item" onclick="BLOK_ADMIN.logout()">
+                <i class="ph ph-user-switch"></i> Change User
+              </button>
+              <button class="admin-header__user-dropdown-item" onclick="BLOK_ADMIN.logout()">
+                <i class="ph ph-sign-out"></i> Log Out
               </button>
               <div class="admin-header__user-dropdown-divider"></div>
               <button class="admin-header__user-dropdown-item admin-header__user-dropdown-item--danger" onclick="BLOK_ADMIN.logout()">
-                <i class="ph ph-sign-out"></i> Disconnect
+                <i class="ph ph-plugs-out"></i> Disconnect
               </button>
             </div>
           </div>
@@ -1320,21 +1379,6 @@
           BLOK_ADMIN.closeUserMenu();
         });
       }
-
-      // Inject user management modal
-      var modal = document.createElement('div');
-      modal.className = 'admin-modal-overlay';
-      modal.id = 'userManagerModal';
-      modal.innerHTML = '<div class="admin-modal">' +
-        '<button class="admin-modal__close" onclick="BLOK_ADMIN.closeUserManager()"><i class="ph ph-x"></i></button>' +
-        '<div class="admin-modal__title"><i class="ph ph-users" style="margin-right:8px;color:var(--steel);"></i>Manage Users &amp; Permissions</div>' +
-        '<div id="userManagerContent"></div>' +
-        '</div>';
-      document.body.appendChild(modal);
-      // Close on overlay click
-      modal.addEventListener('click', function (e) {
-        if (e.target === modal) BLOK_ADMIN.closeUserManager();
-      });
 
       DB.addLog('ok', 'Dashboard loaded — Netlify backend');
 

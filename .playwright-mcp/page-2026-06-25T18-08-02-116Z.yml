@@ -1,0 +1,884 @@
+- generic [active] [ref=e1]:
+  - navigation "Floor plan" [ref=e2]:
+    - link "Ground" [ref=e3] [cursor=pointer]:
+      - /url: "#hero"
+    - link "Lobby" [ref=e4] [cursor=pointer]:
+      - /url: "#services"
+    - link "Mezz" [ref=e5] [cursor=pointer]:
+      - /url: "#work"
+    - link "Core" [ref=e6] [cursor=pointer]:
+      - /url: "#process"
+    - link "Upper" [ref=e7] [cursor=pointer]:
+      - /url: "#cta"
+    - link "Roof" [ref=e8] [cursor=pointer]:
+      - /url: "#contact"
+  - generic [ref=e9]:
+    - generic [ref=e10]: "01"
+    - text: GROUND
+  - radiogroup "Visual mode" [ref=e11]:
+    - radio "Structure" [checked] [ref=e12] [cursor=pointer]
+    - radio "Blueprint" [ref=e13] [cursor=pointer]
+  - generic [ref=e14]:
+    - generic [ref=e15]:
+      - generic [ref=e17]:
+        - generic [ref=e19]: WebDev Studio
+        - heading "BLOK." [level=1] [ref=e20]
+        - paragraph [ref=e21]: We build sites, block by BLOK.
+        - generic [ref=e22]:
+          - link "See the work" [ref=e23] [cursor=pointer]:
+            - /url: "#work"
+          - link "Start a project" [ref=e24] [cursor=pointer]:
+            - /url: "#contact"
+      - generic [ref=e27]: Traverse structure
+    - generic [ref=e30]:
+      - generic [ref=e31]: Web Design
+      - generic [ref=e32]: Web Development
+      - generic [ref=e33]: E-Commerce
+      - generic [ref=e34]: Brand Identity
+      - generic [ref=e35]: UX Strategy
+      - generic [ref=e36]: Custom CMS
+      - generic [ref=e37]: Web Design
+      - generic [ref=e38]: Web Development
+      - generic [ref=e39]: E-Commerce
+      - generic [ref=e40]: Brand Identity
+      - generic [ref=e41]: UX Strategy
+      - generic [ref=e42]: Custom CMS
+    - generic [ref=e44]:
+      - generic [ref=e45]:
+        - generic [ref=e46]: What We Build
+        - heading "Every block, from ground up." [level=2] [ref=e47]
+      - generic [ref=e48]:
+        - generic [ref=e49]:
+          - generic [ref=e50] [cursor=pointer]:
+            - generic [ref=e51]: 
+            - heading "Web Design" [level=3] [ref=e52]
+            - generic [ref=e54]: 
+          - generic [ref=e56]:
+            - paragraph [ref=e57]: Custom layouts, brutalist aesthetics, and intentional typography. No templates. No shortcuts. Every pixel placed with purpose.
+            - list [ref=e58]:
+              - listitem [ref=e59]:
+                - generic [ref=e60]: 
+                - text: UI/UX strategy & wireframes
+              - listitem [ref=e61]:
+                - generic [ref=e62]: 
+                - text: Responsive design systems
+              - listitem [ref=e63]:
+                - generic [ref=e64]: 
+                - text: Interactive prototypes
+        - generic [ref=e65]:
+          - generic [ref=e66] [cursor=pointer]:
+            - generic [ref=e67]: 
+            - heading "Web Development" [level=3] [ref=e68]
+            - generic [ref=e70]: 
+          - generic [ref=e72]:
+            - paragraph [ref=e73]: Clean, semantic code that loads fast and scales well. From static sites to full-stack applications — we use the right tool for the job.
+            - list [ref=e74]:
+              - listitem [ref=e75]:
+                - generic [ref=e76]: 
+                - text: Front-end (HTML, CSS, JS, React)
+              - listitem [ref=e77]:
+                - generic [ref=e78]: 
+                - text: Back-end & API integration
+              - listitem [ref=e79]:
+                - generic [ref=e80]: 
+                - text: CMS & admin panels
+        - generic [ref=e81]:
+          - generic [ref=e82] [cursor=pointer]:
+            - generic [ref=e83]: 
+            - heading "E-Commerce" [level=3] [ref=e84]
+            - generic [ref=e86]: 
+          - generic [ref=e88]:
+            - paragraph [ref=e89]: Online stores that actually convert. Clean product pages, frictionless checkout, and inventory management that doesn't make you want to scream.
+            - list [ref=e90]:
+              - listitem [ref=e91]:
+                - generic [ref=e92]: 
+                - text: Shopify & WooCommerce
+              - listitem [ref=e93]:
+                - generic [ref=e94]: 
+                - text: Custom storefronts
+              - listitem [ref=e95]:
+                - generic [ref=e96]: 
+                - text: Payment & shipping integration
+    - generic [ref=e99]:
+      - generic [ref=e100]:
+        - generic [ref=e101]: "0"
+        - generic [ref=e102]: Projects Delivered
+        - text: "structural load: 100%"
+      - generic [ref=e104]:
+        - generic [ref=e105]: "0"
+        - generic [ref=e106]: Happy Clients
+        - text: "satisfaction index: 0.94"
+      - generic [ref=e108]:
+        - generic [ref=e109]: "0"
+        - generic [ref=e110]: Years in Business
+        - text: "operational: continuous"
+      - generic [ref=e112]:
+        - generic [ref=e113]: "0"
+        - generic [ref=e114]: On Time / On Budget
+        - text: "variance: ±0.02"
+    - generic [ref=e117]:
+      - generic [ref=e118]:
+        - generic [ref=e119]: Completed Structures
+        - heading "Sites we're proud of." [level=2] [ref=e120]
+      - tablist [ref=e121]:
+        - tab "All" [ref=e122] [cursor=pointer]
+        - tab "Demos" [ref=e123] [cursor=pointer]
+        - tab "Clients" [ref=e124] [cursor=pointer]
+      - generic [ref=e125]:
+        - link "Aurora Audio Systems preview A U R O R A Demo Aurora Audio Systems Premium audio hardware concept. CNC-machined precision, studio-reference clarity, and industrial design showcase." [ref=e126] [cursor=pointer]:
+          - /url: https://blok-web-studio.github.io/demo-sites/audiosystem_aurora/index.html
+          - generic [ref=e127]:
+            - iframe [ref=e128]:
+              - generic [active] [ref=f5e1]:
+                - generic [ref=f5e2]:
+                  - generic:
+                    - paragraph: Aurora Audio Systems
+                    - heading "A U R x $ I" [level=1]:
+                      - generic: A
+                      - generic: U
+                      - generic: R
+                      - generic: x
+                      - generic: $
+                      - generic: I
+                    - paragraph: The sound of precision. Engineered beyond measure.
+                - list [ref=f5e8]:
+                  - listitem [ref=f5e9]:
+                    - text: Driver
+                    - generic [ref=f5e10]: 40mm dynamic
+                  - listitem [ref=f5e11]:
+                    - text: Input
+                    - generic [ref=f5e12]: USB-C lossless
+                  - listitem [ref=f5e13]:
+                    - text: Impedance
+                    - generic [ref=f5e14]: 32Ω
+                  - listitem [ref=f5e15]:
+                    - text: Frequency range
+                    - generic [ref=f5e16]: 20Hz – 20kHz
+                  - listitem [ref=f5e17]:
+                    - text: Weight
+                    - generic [ref=f5e18]: 254g
+                - generic [ref=f5e20]:
+                  - generic [ref=f5e21]:
+                    - heading "Frequency Response" [level=2] [ref=f5e22]
+                    - paragraph [ref=f5e23]: 20Hz – 20kHz · 1/48th octave smoothing · IEC 60318-4 coupler
+                  - img [ref=f5e25]:
+                    - generic [ref=f5e27]:
+                      - generic [ref=f5e28]: "+10"
+                      - generic [ref=f5e29]: "+5"
+                      - generic [ref=f5e30]: "0"
+                      - generic [ref=f5e31]: "-5"
+                      - generic [ref=f5e32]: "-10"
+                      - generic [ref=f5e33]: "20"
+                      - generic [ref=f5e34]: "100"
+                      - generic [ref=f5e35]: "500"
+                      - generic [ref=f5e36]: 1k
+                      - generic [ref=f5e37]: 3k
+                      - generic [ref=f5e38]: 8k
+                      - generic [ref=f5e39]: 20k
+                  - generic [ref=f5e41]:
+                    - generic [ref=f5e42]: THD < 0.05%
+                    - generic [ref=f5e43]: SNR 120dB
+                    - generic [ref=f5e44]: 20Hz – 20kHz
+                    - generic [ref=f5e45]: Impedance 32Ω
+                    - generic [ref=f5e46]: Max SPL 126dB
+                - generic [ref=f5e48]:
+                  - generic [ref=f5e49]:
+                    - generic [ref=f5e50]: // ENGINEERING BENCH
+                    - generic [ref=f5e51]: ● LIVE
+                  - generic [ref=f5e52]:
+                    - generic [ref=f5e53]:
+                      - generic [ref=f5e54]:
+                        - generic [ref=f5e55]: "CH1: INPUT"
+                        - generic [ref=f5e56]: "CH2: OUTPUT"
+                        - generic [ref=f5e57]: 500mV/div 5ms/div
+                      - generic [ref=f5e59]:
+                        - generic [ref=f5e60]: "PERSISTENCE: ∞"
+                        - generic [ref=f5e61]: "TRIGGER: AUTO"
+                        - generic [ref=f5e62]: "COUPLING: DC"
+                        - generic [ref=f5e63]: + ACTIVE
+                    - generic [ref=f5e64]:
+                      - generic [ref=f5e65]:
+                        - generic [ref=f5e66]: DYNAMIC RANGE [A-WTG]
+                        - generic [ref=f5e67]: 0dB
+                        - generic [ref=f5e68]: 1kHz ref • 24-bit depth
+                      - generic [ref=f5e69]:
+                        - generic [ref=f5e70]: THD + NOISE [1kHz]
+                        - generic [ref=f5e71]: 0.000%
+                        - generic [ref=f5e72]: 20Hz–20kHz BW • 94dB SPL
+                      - generic [ref=f5e73]:
+                        - generic [ref=f5e74]: SYSTEM LATENCY [USB-C]
+                        - generic [ref=f5e75]: 0ms
+                        - generic [ref=f5e76]: 96kHz/24-bit • wired mode
+                  - generic [ref=f5e77]:
+                    - generic [ref=f5e80]: SOURCE
+                    - generic [ref=f5e85]: ADC
+                    - generic [ref=f5e90]: DSP
+                    - generic [ref=f5e95]: DAC
+                    - generic [ref=f5e100]: AMP
+                    - generic [ref=f5e105]: OUT
+                - generic [ref=f5e107]:
+                  - heading "Press & Reviews" [level=2] [ref=f5e109]
+                  - generic [ref=f5e110]:
+                    - generic [ref=f5e111]:
+                      - generic [ref=f5e112]:
+                        - generic [ref=f5e117]: review_output.log
+                        - generic [ref=f5e118]:
+                          - generic [ref=f5e119]:
+                            - generic [ref=f5e120]: $ "The Aurora headphones redefine what's possible at this price point. The imaging is holographic — each instrument occupies its own precise space in the soundstage. Astonishing clarity."
+                            - generic [ref=f5e122]: — What Hi-Fi? ★★★★★
+                          - generic [ref=f5e123]:
+                            - generic [ref=f5e124]: $
+                            - textbox "type a command..." [ref=f5e125]
+                      - generic [ref=f5e127]:
+                        - generic [ref=f5e132]: field_test_report.cfg
+                        - generic [ref=f5e133]:
+                          - generic [ref=f5e134]:
+                            - generic [ref=f5e135]: $ "Build quality is an unequivocal 10/10. CNC-machined aluminum, precision tolerances, zero flex. These will outlast every other component in your signal chain."
+                            - generic [ref=f5e137]: — Darko.Audio
+                          - generic [ref=f5e138]:
+                            - generic [ref=f5e139]: $
+                            - textbox "type a command..." [ref=f5e140]
+                    - generic [ref=f5e142]:
+                      - generic [ref=f5e147]: analysis_session.sh
+                      - generic [ref=f5e148]:
+                        - generic [ref=f5e149]:
+                          - generic [ref=f5e150]: $ "The frequency response is remarkably neutral — within ±1.5dB from 30Hz to 16kHz. This is genuine studio-reference territory previously reserved for electrostatic designs."
+                          - generic [ref=f5e152]: — AudioScience Review
+                        - generic [ref=f5e153]:
+                          - generic [ref=f5e154]: $
+                          - textbox "type a command..." [ref=f5e155]
+                - generic [ref=f5e158]:
+                  - heading "Technical Specifications" [level=2] [ref=f5e160]
+                  - table [ref=f5e162]:
+                    - rowgroup [ref=f5e163]:
+                      - row "Parameter Value Condition" [ref=f5e164]:
+                        - columnheader "Parameter" [ref=f5e165]
+                        - columnheader "Value" [ref=f5e166]
+                        - columnheader "Condition" [ref=f5e167]
+                    - rowgroup [ref=f5e168]:
+                      - row "Driver type 40mm dynamic Neodymium magnet" [ref=f5e169]:
+                        - cell "Driver type" [ref=f5e170]
+                        - cell "40mm dynamic" [ref=f5e171]
+                        - cell "Neodymium magnet" [ref=f5e172]
+                      - row "Frequency range 20Hz – 20kHz IEC 60318-4" [ref=f5e173]:
+                        - cell "Frequency range" [ref=f5e174]
+                        - cell "20Hz – 20kHz" [ref=f5e175]
+                        - cell "IEC 60318-4" [ref=f5e176]
+                      - row "Impedance 32Ω ± 15% @ 1kHz" [ref=f5e177]:
+                        - cell "Impedance" [ref=f5e178]
+                        - cell "32Ω ± 15%" [ref=f5e179]
+                        - cell "@ 1kHz" [ref=f5e180]
+                      - row "Sensitivity 102dB SPL/mW @ 1kHz" [ref=f5e181]:
+                        - cell "Sensitivity" [ref=f5e182]
+                        - cell "102dB SPL/mW" [ref=f5e183]
+                        - cell "@ 1kHz" [ref=f5e184]
+                      - row "THD < 0.05% @ 1kHz, 94dB SPL" [ref=f5e185]:
+                        - cell "THD" [ref=f5e186]
+                        - cell "< 0.05%" [ref=f5e187]
+                        - cell "@ 1kHz, 94dB SPL" [ref=f5e188]
+                      - row "SNR 120dB A-weighted" [ref=f5e189]:
+                        - cell "SNR" [ref=f5e190]
+                        - cell "120dB" [ref=f5e191]
+                        - cell "A-weighted" [ref=f5e192]
+                      - row "Latency 40ms USB-C wired" [ref=f5e193]:
+                        - cell "Latency" [ref=f5e194]
+                        - cell "40ms" [ref=f5e195]
+                        - cell "USB-C wired" [ref=f5e196]
+                      - row "Weight 254g Without cable" [ref=f5e197]:
+                        - cell "Weight" [ref=f5e198]
+                        - cell "254g" [ref=f5e199]
+                        - cell "Without cable" [ref=f5e200]
+                      - row "Connectivity USB-C, 3.5mm TRS Dual input" [ref=f5e201]:
+                        - cell "Connectivity" [ref=f5e202]
+                        - cell "USB-C, 3.5mm TRS" [ref=f5e203]
+                        - cell "Dual input" [ref=f5e204]
+                      - row "Cable 1.4m OFC Detachable, 4-pin mini-XLR" [ref=f5e205]:
+                        - cell "Cable" [ref=f5e206]
+                        - cell "1.4m OFC" [ref=f5e207]
+                        - cell "Detachable, 4-pin mini-XLR" [ref=f5e208]
+                - contentinfo [ref=f5e209]:
+                  - generic [ref=f5e211]: // SHOWCASE DEMO
+                  - generic [ref=f5e212]:
+                    - generic [ref=f5e213]:
+                      - heading "Aurora" [level=3] [ref=f5e214]
+                      - paragraph [ref=f5e215]:
+                        - text: This is not a real audio company.
+                        - strong [ref=f5e216]: Aurora
+                        - text: is a fictional audio hardware concept built to showcase what BLOK. WebDev Studio can craft for premium product, audio brand, and industrial design websites.
+                    - generic [ref=f5e217]:
+                      - heading "Demo status" [level=3] [ref=f5e218]
+                      - list [ref=f5e219]:
+                        - listitem [ref=f5e220]: · No products are available for purchase.
+                        - listitem [ref=f5e221]: · Specifications and measurements are demonstrative.
+                        - listitem [ref=f5e222]: · Images and 3D renders are visual placeholders.
+                        - listitem [ref=f5e223]: · This page is a frontend prototype, not a storefront.
+                    - generic [ref=f5e224]:
+                      - heading "Studio" [level=3] [ref=f5e225]
+                      - paragraph [ref=f5e226]:
+                        - strong [ref=f5e227]: BLOK. WebDev Studio
+                        - text: Concept, interface, and frontend build.
+                      - link "> View the studio on Fiverr →" [ref=f5e228] [cursor=pointer]:
+                        - /url: https://www.fiverr.com/musa_murad
+                  - generic [ref=f5e230]:
+                    - paragraph [ref=f5e231]: © 2026 BLOK. WebDev Studio showcase.
+                    - generic [ref=f5e232]:
+                      - link "Privacy" [ref=f5e233] [cursor=pointer]:
+                        - /url: "#"
+                      - link "Terms" [ref=f5e234] [cursor=pointer]:
+                        - /url: "#"
+                      - link "Fiverr" [ref=f5e235] [cursor=pointer]:
+                        - /url: https://www.fiverr.com/musa_murad
+            - generic [ref=e129]: A U R O R A
+          - generic [ref=e130]:
+            - generic [ref=e131]: Demo
+            - generic [ref=e132]: Aurora Audio Systems
+            - paragraph [ref=e133]: Premium audio hardware concept. CNC-machined precision, studio-reference clarity, and industrial design showcase.
+        - link "Iron & Shears preview I R O N Demo Iron & Shears Traditional barbershop with a modern edge. Straight-razor shaves, classic cuts, and dark atmosphere." [ref=e134] [cursor=pointer]:
+          - /url: https://blok-web-studio.github.io/demo-sites/barbershop_ironnshears/index.html
+          - generic [ref=e135]:
+            - iframe [ref=e136]:
+              - generic [active] [ref=f6e1]:
+                - generic [ref=f6e4]:
+                  - paragraph [ref=f6e5]: Est. 2024
+                  - heading "Iron & Shears" [level=1] [ref=f6e6]
+                  - paragraph [ref=f6e7]: Traditional Craft. Modern Edge.
+                  - link "Book Now" [ref=f6e8] [cursor=pointer]:
+                    - /url: "#"
+                    - generic [ref=f6e9]: Book Now
+                    - img [ref=f6e10]
+                - generic [ref=f6e18]:
+                  - paragraph [ref=f6e19]: The Menu
+                  - heading "Services" [level=2] [ref=f6e20]
+                  - paragraph [ref=f6e21]: Traditional cuts · Straight-razor shaves · Modern styling
+                  - generic [ref=f6e22]:
+                    - img [ref=f6e26]
+                    - img [ref=f6e33]
+                - generic [ref=f6e38]:
+                  - paragraph [ref=f6e39]: The Craftsmen
+                  - heading "Our Team" [level=2] [ref=f6e40]
+                  - paragraph [ref=f6e41]: Master barbers with decades of experience
+                  - generic [ref=f6e42]:
+                    - generic [ref=f6e43]:
+                      - generic [ref=f6e44]:
+                        - img "Marco Rivera portrait" [ref=f6e46]
+                        - generic [ref=f6e47]: Classic Cuts
+                      - generic [ref=f6e48]:
+                        - generic [ref=f6e49]: ✦ ✦ ✦
+                        - heading "Marco Rivera" [level=3] [ref=f6e50]
+                        - paragraph [ref=f6e51]: Master Barber · 14 yr
+                    - generic [ref=f6e52]:
+                      - generic [ref=f6e53]:
+                        - img "Elias Voss portrait" [ref=f6e55]
+                        - generic [ref=f6e56]: Straight Razor
+                      - generic [ref=f6e57]:
+                        - generic [ref=f6e58]: ✦ ✦ ✦
+                        - heading "Elias Voss" [level=3] [ref=f6e59]
+                        - paragraph [ref=f6e60]: Razor Specialist · 9 yr
+                    - generic [ref=f6e61]:
+                      - generic [ref=f6e62]:
+                        - img "Simone Cross portrait" [ref=f6e64]
+                        - generic [ref=f6e65]: Modern Fades
+                      - generic [ref=f6e66]:
+                        - generic [ref=f6e67]: ✦ ✦ ✦
+                        - heading "Simone Cross" [level=3] [ref=f6e68]
+                        - paragraph [ref=f6e69]: Creative Stylist · 7 yr
+                - generic [ref=f6e71]:
+                  - generic [ref=f6e72]:
+                    - paragraph [ref=f6e73]: The Shop
+                    - heading "Gallery" [level=2] [ref=f6e74]
+                    - paragraph [ref=f6e75]: Scroll to explore
+                  - generic [ref=f6e76]:
+                    - generic [ref=f6e77]:
+                      - img "Man in barber chair getting a haircut" [ref=f6e79]
+                      - generic [ref=f6e80]: The Chair
+                    - generic [ref=f6e81]:
+                      - img "Barbershop interior with chairs and mirrors" [ref=f6e83]
+                      - generic [ref=f6e84]: Interior
+                    - generic [ref=f6e85]:
+                      - img "Barber holding a straight razor" [ref=f6e87]
+                      - generic [ref=f6e88]: Details
+                    - generic [ref=f6e89]:
+                      - img "Barber tools comb and scissors" [ref=f6e91]
+                      - generic [ref=f6e92]: Tools
+                    - generic [ref=f6e93]:
+                      - img "Portrait with dramatic lighting" [ref=f6e95]
+                      - generic [ref=f6e96]: Light
+                    - generic [ref=f6e97]:
+                      - img "Woman barber styling a client's hair" [ref=f6e99]
+                      - generic [ref=f6e100]: Atmosphere
+                - generic [ref=f6e102]:
+                  - paragraph [ref=f6e103]: Word of Mouth
+                  - heading "What Clients Say" [level=2] [ref=f6e104]
+                  - paragraph [ref=f6e105]: Pinned to the board since day one
+                  - generic [ref=f6e106]:
+                    - generic [ref=f6e107]:
+                      - img
+                      - paragraph [ref=f6e111]: "\"Best barbershop in the city. The hot towel shave is transformative — I walk out feeling like a new man.\""
+                      - paragraph [ref=f6e112]: — T. Chen
+                    - generic [ref=f6e113]:
+                      - img
+                      - paragraph [ref=f6e117]: "\"Marco has been cutting my hair for three years. Never once a bad cut. The consistency is what keeps me coming back.\""
+                      - paragraph [ref=f6e118]: — D. Patel
+                    - generic [ref=f6e119]:
+                      - img
+                      - paragraph [ref=f6e123]: "\"The atmosphere is unmatched. Dark wood, bourbon, good conversation. Feels like stepping into a 1960s social club.\""
+                      - paragraph [ref=f6e124]: — J. Morrison
+                - contentinfo [ref=f6e125]:
+                  - generic [ref=f6e126]:
+                    - generic [ref=f6e127]:
+                      - generic [ref=f6e128]:
+                        - paragraph [ref=f6e129]: Showcase Demo
+                        - paragraph [ref=f6e130]: Iron & Shears
+                        - paragraph [ref=f6e131]: This is not a real barbershop. Iron & Shears is a fictional hospitality concept built to showcase what BLOK. WebDev Studio can craft for grooming, salon, and local business websites.
+                      - generic [ref=f6e132]:
+                        - paragraph [ref=f6e133]: Demo Status
+                        - list [ref=f6e134]:
+                          - listitem [ref=f6e135]: No bookings are submitted.
+                          - listitem [ref=f6e136]: Services and prices are fictional.
+                          - listitem [ref=f6e137]: Staff profiles are demonstrative.
+                          - listitem [ref=f6e138]: Images from Pexels (free for commercial use).
+                      - generic [ref=f6e139]:
+                        - paragraph [ref=f6e140]: Studio
+                        - paragraph [ref=f6e141]: BLOK. WebDev Studio
+                        - paragraph [ref=f6e142]: Concept, interface, and frontend build.
+                        - link "View the studio on Fiverr →" [ref=f6e143] [cursor=pointer]:
+                          - /url: https://www.fiverr.com/musa_murad
+                          - text: View the studio on Fiverr
+                          - generic [ref=f6e144]: →
+                    - paragraph [ref=f6e146]: © 2026 BLOK. WebDev Studio showcase.
+            - generic [ref=e137]: I R O N
+          - generic [ref=e138]:
+            - generic [ref=e139]: Demo
+            - generic [ref=e140]: Iron & Shears
+            - paragraph [ref=e141]: Traditional barbershop with a modern edge. Straight-razor shaves, classic cuts, and dark atmosphere.
+        - link "L'ambre preview L' A M B R E Demo L'ambre Mediterranean bistro concept. Candlelit Aegean flavors, wood-fired hearth, and warm hospitality." [ref=e142] [cursor=pointer]:
+          - /url: https://blok-web-studio.github.io/demo-sites/cafe_lambre/index.html
+          - generic [ref=e143]:
+            - iframe [ref=e144]:
+              - generic [active] [ref=f7e1]:
+                - generic [ref=f7e4]:
+                  - heading "L ' a m b r e" [level=1] [ref=f7e5]:
+                    - generic [ref=f7e6]: L
+                    - generic [ref=f7e7]: "'"
+                    - generic [ref=f7e8]: a
+                    - generic [ref=f7e9]: m
+                    - generic [ref=f7e10]: b
+                    - generic [ref=f7e11]: r
+                    - generic [ref=f7e12]: e
+                  - paragraph [ref=f7e13]: Candlelit flavors from the Aegean coast.
+                - generic [ref=f7e14]:
+                  - heading "The Menu" [level=2] [ref=f7e15]
+                  - generic [ref=f7e16]:
+                    - generic [ref=f7e17] [cursor=pointer]:
+                      - img "Spiced Lamb Flatbread" [ref=f7e18]
+                      - generic [ref=f7e19]:
+                        - heading "Spiced Lamb Flatbread" [level=3] [ref=f7e20]
+                        - paragraph [ref=f7e21]: With Herb Yogurt & Charred Bread
+                    - generic [ref=f7e22] [cursor=pointer]:
+                      - img "Rosemary Beef Frites" [ref=f7e23]
+                      - generic [ref=f7e24]:
+                        - heading "Rosemary Beef Frites" [level=3] [ref=f7e25]
+                        - paragraph [ref=f7e26]: Seared Beef, Fries & Port Jus
+                    - generic [ref=f7e27] [cursor=pointer]:
+                      - img "Burrata with tomatoes" [ref=f7e28]
+                      - generic [ref=f7e29]:
+                        - heading "Sunset Burrata" [level=3] [ref=f7e30]
+                        - paragraph [ref=f7e31]: Tomato, Basil Oil & Aged Balsamic
+                    - generic [ref=f7e32] [cursor=pointer]:
+                      - img "Truffled Polenta with mushrooms" [ref=f7e33]
+                      - generic [ref=f7e34]:
+                        - heading "Truffled Polenta" [level=3] [ref=f7e35]
+                        - paragraph [ref=f7e36]: Wild Mushroom & Parmesan Cream
+                    - generic [ref=f7e37] [cursor=pointer]:
+                      - img "Aegean fish fillet" [ref=f7e38]
+                      - generic [ref=f7e39]:
+                        - heading "Aegean Fish Fillet" [level=3] [ref=f7e40]
+                        - paragraph [ref=f7e41]: Pan-seared with Herb Infusion
+                    - generic [ref=f7e42] [cursor=pointer]:
+                      - img "Mediterranean mezze platter" [ref=f7e43]
+                      - generic [ref=f7e44]:
+                        - heading "Mezze Board" [level=3] [ref=f7e45]
+                        - paragraph [ref=f7e46]: Hummus, Tabbouleh & Warm Flatbread
+                    - generic [ref=f7e47] [cursor=pointer]:
+                      - img "Pistachio kadayif dessert" [ref=f7e48]
+                      - generic [ref=f7e49]:
+                        - heading "Pistachio Kadayif" [level=3] [ref=f7e50]
+                        - paragraph [ref=f7e51]: Rose Syrup & Clotted Cream
+                    - generic [ref=f7e52] [cursor=pointer]:
+                      - img "Lemon olive oil cake" [ref=f7e53]
+                      - generic [ref=f7e54]:
+                        - heading "Citrus Olive Cake" [level=3] [ref=f7e55]
+                        - paragraph [ref=f7e56]: Lemon Peel, Sea Salt & Cream
+                    - generic [ref=f7e57] [cursor=pointer]:
+                      - img "Halloumi fig kale salad" [ref=f7e58]
+                      - generic [ref=f7e59]:
+                        - heading "Fig Halloumi Salad" [level=3] [ref=f7e60]
+                        - paragraph [ref=f7e61]: Kale, Grains & Toasted Almond
+                - generic [ref=f7e63]:
+                  - generic [ref=f7e64]: Est. 0
+                  - blockquote [ref=f7e65]: "\"Born from the salt-sprayed cliffs of the Aegean, L'ambre is a sanctuary where fire meets the sea. Our kitchen honors the ancient alchemy of wood-fired hearths and cold-pressed olives.\""
+                - generic [ref=f7e68]:
+                  - heading "Book a Table" [level=2] [ref=f7e69]
+                  - generic [ref=f7e70]:
+                    - textbox "Name" [ref=f7e71]
+                    - textbox [ref=f7e72]
+                    - textbox [ref=f7e73]
+                    - spinbutton [ref=f7e74]
+                    - button "Request Invitation" [ref=f7e75] [cursor=pointer]
+                - contentinfo [ref=f7e76]:
+                  - generic: BLOK
+                  - generic [ref=f7e77]:
+                    - generic [ref=f7e78]:
+                      - paragraph [ref=f7e79]: Showcase demo
+                      - generic [ref=f7e80]: L'ambre
+                      - paragraph [ref=f7e81]:
+                        - text: This is not a real restaurant. L'ambre is a fictional hospitality concept built to showcase what
+                        - strong [ref=f7e82]: BLOK. WebDev Studio
+                        - text: can craft for dining, venue, and local business websites.
+                    - generic [ref=f7e83]:
+                      - heading "Demo status" [level=4] [ref=f7e84]
+                      - paragraph [ref=f7e85]: No bookings are submitted.
+                      - paragraph [ref=f7e86]: Addresses and menu items are fictional.
+                      - paragraph [ref=f7e87]: Images are used as visual placeholders.
+                    - generic [ref=f7e88]:
+                      - heading "Studio" [level=4] [ref=f7e89]
+                      - paragraph [ref=f7e90]: BLOK. WebDev Studio
+                      - paragraph [ref=f7e91]: Concept, interface, and frontend build.
+                      - paragraph [ref=f7e92]:
+                        - link "View the studio on Fiverr" [ref=f7e93] [cursor=pointer]:
+                          - /url: https://www.fiverr.com/musa_murad
+                  - generic [ref=f7e94]:
+                    - paragraph [ref=f7e95]: © 2026 BLOK. WebDev Studio showcase.
+                    - paragraph [ref=f7e96]: Fictional brand, real web design demo.
+                - generic [ref=f7e97]:
+                  - generic [ref=f7e98]: DEMO SITE — Limited functionality
+                  - generic [ref=f7e99]: BLOK. WebDev Studio
+                  - link "View on Fiverr →" [ref=f7e100] [cursor=pointer]:
+                    - /url: https://www.fiverr.com/musa_murad
+            - generic [ref=e145]: L' A M B R E
+          - generic [ref=e146]:
+            - generic [ref=e147]: Demo
+            - generic [ref=e148]: L'ambre
+            - paragraph [ref=e149]: Mediterranean bistro concept. Candlelit Aegean flavors, wood-fired hearth, and warm hospitality.
+        - link "Vanguard preview V A N G U A R D Demo Vanguard Corporate law firm with cold precision. Authoritative defense, ironclad strategy, and professional service design." [ref=e150] [cursor=pointer]:
+          - /url: https://blok-web-studio.github.io/demo-sites/lawfirm_vanguard/index.html
+          - generic [ref=e151]:
+            - iframe [ref=e152]:
+              - generic [active] [ref=f8e1]:
+                - banner [ref=f8e2]:
+                  - heading "VANGUARD" [level=1] [ref=f8e3]
+                  - paragraph [ref=f8e5]: COLD LOGIC. AUTHORITATIVE DEFENSE.
+                - generic [ref=f8e6]:
+                  - generic [ref=f8e7]: 01 / PRACTICE AREAS
+                  - generic [ref=f8e8] [cursor=pointer]:
+                    - generic [ref=f8e9]:
+                      - heading "CORPORATE" [level=2] [ref=f8e10]
+                      - generic: "01"
+                    - paragraph: Precise structuring and rigorous governance for high-stakes ventures. We handle complexity so you can lead with certainty.
+                  - generic [ref=f8e11] [cursor=pointer]:
+                    - generic [ref=f8e12]:
+                      - heading "LITIGATION" [level=2] [ref=f8e13]
+                      - generic: "02"
+                    - paragraph: Aggressive, logic-driven advocacy. We dismantle opposition with cold precision and unyielding legal authority.
+                  - generic [ref=f8e14] [cursor=pointer]:
+                    - generic [ref=f8e15]:
+                      - heading "REAL ESTATE" [level=2] [ref=f8e16]
+                      - generic: "03"
+                    - paragraph: Securing physical and legal foundations. Our approach to property law is as solid as the assets we protect.
+                  - generic [ref=f8e17] [cursor=pointer]:
+                    - generic [ref=f8e18]:
+                      - heading "TECH & IP" [level=2] [ref=f8e19]
+                      - generic: "04"
+                    - paragraph: Protecting the intangible with ironclad strategy. Future-proofing innovation through authoritative defense.
+                  - generic [ref=f8e20] [cursor=pointer]:
+                    - generic [ref=f8e21]:
+                      - heading "ENERGY" [level=2] [ref=f8e22]
+                      - generic: "05"
+                    - paragraph: Navigating the transition with logical precision. From traditional fossil fuels to the new frontiers of renewables.
+                - generic [ref=f8e23]:
+                  - generic [ref=f8e24]: 02 / ATTORNEYS
+                  - generic [ref=f8e25]:
+                    - generic [ref=f8e26]:
+                      - img
+                      - img "Marcus Thorne" [ref=f8e28]
+                      - heading "MARCUS THORNE" [level=3] [ref=f8e29]
+                      - paragraph [ref=f8e30]: MANAGING PARTNER
+                    - generic [ref=f8e31]:
+                      - img
+                      - img "Elena Vane" [ref=f8e33]
+                      - heading "ELENA VANE" [level=3] [ref=f8e34]
+                      - paragraph [ref=f8e35]: LITIGATION CHIEF
+                    - generic [ref=f8e36]:
+                      - img
+                      - img "Julian Reed" [ref=f8e38]
+                      - heading "JULIAN REED" [level=3] [ref=f8e39]
+                      - paragraph [ref=f8e40]: HEAD OF STRATEGY
+                - generic [ref=f8e41]:
+                  - generic [ref=f8e42]:
+                    - generic [ref=f8e43]: "0"
+                    - generic [ref=f8e44]: CASES WON
+                  - generic [ref=f8e45]:
+                    - generic [ref=f8e46]: "0"
+                    - generic [ref=f8e47]: YEARS ACTIVE
+                  - generic [ref=f8e48]:
+                    - generic [ref=f8e49]: "0"
+                    - generic [ref=f8e50]: COUNTRIES
+                - generic [ref=f8e51]:
+                  - generic [ref=f8e52]: 03 / CONTACT
+                  - generic [ref=f8e54]:
+                    - generic [ref=f8e55]:
+                      - generic [ref=f8e56]:
+                        - generic [ref=f8e57]: NAME
+                        - textbox "NAME" [ref=f8e58]:
+                          - /placeholder: YOUR FULL NAME
+                      - generic [ref=f8e59]:
+                        - generic [ref=f8e60]: EMAIL
+                        - textbox "EMAIL" [ref=f8e61]:
+                          - /placeholder: YOUR@EMAIL.COM
+                      - generic [ref=f8e62]:
+                        - generic [ref=f8e63]: MESSAGE
+                        - textbox "MESSAGE" [ref=f8e64]:
+                          - /placeholder: DESCRIBE YOUR CASE
+                    - button "SEND INQUIRY" [ref=f8e65] [cursor=pointer]
+                - contentinfo "Demo site disclosure" [ref=f8e66]:
+                  - generic [ref=f8e67]:
+                    - generic [ref=f8e68]:
+                      - generic [ref=f8e69]: SHOWCASE DEMO / NOT A REAL LAW FIRM
+                      - heading "VANGUARD" [level=2] [ref=f8e70]
+                      - paragraph [ref=f8e72]:
+                        - text: This is not a real law firm. Vanguard is a fictional legal brand built to showcase what
+                        - link "BLOK. WebDev Studio" [ref=f8e73] [cursor=pointer]:
+                          - /url: https://www.fiverr.com/musa_murad
+                        - text: can craft for professional service websites.
+                    - generic [ref=f8e74]:
+                      - generic [ref=f8e75]: DEMO STATUS
+                      - paragraph [ref=f8e76]: No consultations are submitted.
+                      - paragraph [ref=f8e77]: Attorneys and case statistics are fictional.
+                      - paragraph [ref=f8e78]: Contact details are visual placeholders.
+                    - generic [ref=f8e79]:
+                      - generic [ref=f8e80]: STUDIO
+                      - paragraph [ref=f8e81]: BLOK. WebDev Studio
+                      - paragraph [ref=f8e82]: Concept, interface, and frontend build.
+                      - paragraph [ref=f8e83]:
+                        - link "View the studio on Fiverr" [ref=f8e84] [cursor=pointer]:
+                          - /url: https://www.fiverr.com/musa_murad
+                  - generic: BLOK.
+                  - generic [ref=f8e85]:
+                    - generic [ref=f8e86]: Demo by BLOK. WebDev Studio
+                    - generic [ref=f8e87]: © 2026 BLOK. WebDev Studio showcase.
+                - status "Demo site notice" [ref=f8e88]:
+                  - generic [ref=f8e89]:
+                    - generic [ref=f8e90]: BLOK. WebDev Studio
+                    - link "View on Fiverr →" [ref=f8e91] [cursor=pointer]:
+                      - /url: https://www.fiverr.com/musa_murad
+                  - generic [ref=f8e92]: DEMO SITE — Limited functionality
+            - generic [ref=e153]: V A N G U A R D
+          - generic [ref=e154]:
+            - generic [ref=e155]: Demo
+            - generic [ref=e156]: Vanguard
+            - paragraph [ref=e157]: Corporate law firm with cold precision. Authoritative defense, ironclad strategy, and professional service design.
+    - generic [ref=e160]:
+      - generic [ref=e162]:
+        - generic [ref=e163]: Construction Schedule
+        - heading "From brief to launch." [level=2] [ref=e164]
+      - generic [ref=e166]:
+        - generic [ref=e167]:
+          - generic [ref=e168]: "01"
+          - generic [ref=e169]: Brief & Brand
+          - paragraph [ref=e170]: Message me your business details and any branding you have. One focused share, no fluff.
+        - generic [ref=e171]:
+          - generic [ref=e172]: "02"
+          - generic [ref=e173]: Free Demo Build
+          - paragraph [ref=e174]: I build a working demo on the house — no payment needed. You see the vision before committing a cent.
+        - generic [ref=e175]:
+          - generic [ref=e176]: "03"
+          - generic [ref=e177]: You Decide
+          - paragraph [ref=e178]: Love it? We proceed to refine and build the full site. Not the right fit? No pressure, no hard feelings.
+        - generic [ref=e179]:
+          - generic [ref=e180]: "04"
+          - generic [ref=e181]: Build & Refine
+          - paragraph [ref=e182]: Full site build-out block by block. You get a live preview as we go — feedback is quick, changes are cheap early.
+        - generic [ref=e183]:
+          - generic [ref=e184]: "05"
+          - generic [ref=e185]: Launch & Host
+          - paragraph [ref=e186]: Final site delivered and live out of the box — free hosting included. You're never left hanging after launch day.
+    - generic [ref=e188]:
+      - generic [ref=e189]:
+        - generic [ref=e190]: Client Reports
+        - heading "What clients say." [level=2] [ref=e191]
+      - generic [ref=e192]:
+        - generic [ref=e193]:
+          - generic [ref=e194]: Brand Identity
+          - paragraph [ref=e195]: "\"BLOK. took our vague ideas and turned them into a site that actually feels like us. No template could've done what they did.\""
+          - generic [ref=e196]:
+            - generic [ref=e197]:
+              - generic [ref=e198]: JD
+              - generic [ref=e199]: Jordan Davis, Bent Creative
+            - generic [ref=e200]: LOAD 98%
+        - generic [ref=e201]:
+          - generic [ref=e202]: Web Design
+          - paragraph [ref=e203]: "\"We'd been burned by agencies before. BLOK. was straight up about timeline and budget — and they actually delivered on both.\""
+          - generic [ref=e204]:
+            - generic [ref=e205]:
+              - generic [ref=e206]: MK
+              - generic [ref=e207]: Maya Krishnan, Form Arch.
+            - generic [ref=e208]: LOAD 96%
+        - generic [ref=e209]:
+          - generic [ref=e210]: Brand + Site
+          - paragraph [ref=e211]: "\"BLOK. doesn't do 'I'll have my people call your people.' You talk directly to the people building your site.\""
+          - generic [ref=e212]:
+            - generic [ref=e213]:
+              - generic [ref=e214]: TN
+              - generic [ref=e215]: Taylor Nguyen, Common Ground
+            - generic [ref=e216]: LOAD 93%
+        - generic [ref=e217]:
+          - generic [ref=e218]: Full Site
+          - paragraph [ref=e219]: "\"The design is brutalist but warm — that's a hard line to walk. They nailed it.\""
+          - generic [ref=e220]:
+            - generic [ref=e221]:
+              - generic [ref=e222]: LC
+              - generic [ref=e223]: Lena Cruz, Studio 8
+            - generic [ref=e224]: LOAD 97%
+        - generic [ref=e225]:
+          - generic [ref=e226]: E-Commerce
+          - paragraph [ref=e227]: "\"I've worked with six agencies. BLOK. is the only one I'd recommend to a friend.\""
+          - generic [ref=e228]:
+            - generic [ref=e229]:
+              - generic [ref=e230]: CW
+              - generic [ref=e231]: Chris Wong, Ridgetop Gear
+            - generic [ref=e232]: LOAD 99%
+        - generic [ref=e233]:
+          - generic [ref=e234]: Web App
+          - paragraph [ref=e235]: "\"BLOK. is the real deal. No ego, no jargon, just excellent craft.\""
+          - generic [ref=e236]:
+            - generic [ref=e237]:
+              - generic [ref=e238]: MH
+              - generic [ref=e239]: Marcus Hall, Overlap Studio
+            - generic [ref=e240]: LOAD 96%
+    - generic [ref=e243]:
+      - generic [ref=e244]: Next Steps
+      - heading "Ready to build something monumental?" [level=2] [ref=e245]:
+        - text: Ready to build
+        - text: something monumental?
+      - paragraph [ref=e246]:
+        - text: Projects start from
+        - strong [ref=e247]: $400
+        - text: . No pitch decks. No pressure. Just tell us about your thing and we'll see if we click.
+      - generic [ref=e248]:
+        - link "Order on Fiverr " [ref=e249] [cursor=pointer]:
+          - /url: https://www.fiverr.com/musa_murad/design-and-build-a-custom-website-for-your-startup
+          - text: Order on Fiverr
+          - generic [ref=e250]: 
+        - link "Start a project " [ref=e251] [cursor=pointer]:
+          - /url: "#contact"
+          - text: Start a project
+          - generic [ref=e252]: 
+    - generic [ref=e254]:
+      - generic [ref=e255]:
+        - generic [ref=e256]: Site Office
+        - heading "Tell us about your thing." [level=2] [ref=e257]
+      - generic [ref=e258]:
+        - generic [ref=e259]:
+          - paragraph [ref=e260]: We'll listen, ask smart questions, and let you know if we're a good fit. No obligation, no follow-up spam — we hate that as much as you do.
+          - generic [ref=e261]:
+            - generic [ref=e262]: 
+            - link "blok_webdev@proton.me" [ref=e263] [cursor=pointer]:
+              - /url: mailto:blok_webdev@proton.me
+          - generic [ref=e264]:
+            - generic [ref=e265]: 
+            - generic [ref=e266]:
+              - text: Reply within
+              - strong [ref=e267]: 1–4 hours
+              - text: . Usually faster.
+          - generic [ref=e268]:
+            - generic [ref=e269]: 
+            - link "Fiverr " [ref=e270] [cursor=pointer]:
+              - /url: https://www.fiverr.com/musa_murad/design-and-build-a-custom-website-for-your-startup
+              - text: Fiverr
+              - generic [ref=e271]: 
+          - generic [ref=e272]:
+            - generic [ref=e273]: 
+            - link "@blok.webdev" [ref=e274] [cursor=pointer]:
+              - /url: https://instagram.com/blok.webdev
+          - generic [ref=e275]:
+            - generic [ref=e276]: 
+            - link "+90 506 781 46 86" [ref=e277] [cursor=pointer]:
+              - /url: https://wa.me/905067814686
+        - generic [ref=e278]:
+          - generic [ref=e279]:
+            - generic [ref=e280]: Project Brief
+            - generic [ref=e281]: 1 / 2
+          - generic [ref=e282]:
+            - generic [ref=e283]:
+              - generic [ref=e284]: Your Name *
+              - textbox "Your Name *" [ref=e285]:
+                - /placeholder: e.g. Jamie Chen
+            - generic [ref=e286]:
+              - generic [ref=e287]: Email *
+              - textbox "Email *" [ref=e288]:
+                - /placeholder: jamie@example.com
+            - generic [ref=e289]:
+              - generic [ref=e290]:
+                - generic [ref=e291]: Company
+                - textbox "Company" [ref=e292]:
+                  - /placeholder: Your studio or brand
+              - generic [ref=e293]:
+                - generic [ref=e294]: Phone
+                - textbox "Phone" [ref=e295]:
+                  - /placeholder: +1 555 000 0000
+          - generic [ref=e296]:
+            - text: 
+            - button "Next " [ref=e297] [cursor=pointer]:
+              - text: Next
+              - generic [ref=e298]: 
+            - text:  
+        - text:    
+  - contentinfo [ref=e299]:
+    - generic [ref=e301]:
+      - generic [ref=e302]:
+        - generic [ref=e303]:
+          - generic [ref=e304]: BLOK.
+          - paragraph [ref=e305]:
+            - text: WebDev Studio. Building bold websites for people who thought they couldn't afford it.
+            - strong [ref=e306]: Projects from $400.
+        - generic [ref=e307]:
+          - generic [ref=e308]: Navigation
+          - generic [ref=e309]:
+            - link "Services" [ref=e310] [cursor=pointer]:
+              - /url: "#services"
+            - link "Work" [ref=e311] [cursor=pointer]:
+              - /url: "#work"
+            - link "Process" [ref=e312] [cursor=pointer]:
+              - /url: "#process"
+            - link "Get Started" [ref=e313] [cursor=pointer]:
+              - /url: "#cta"
+        - generic [ref=e314]:
+          - generic [ref=e315]: Services
+          - generic [ref=e316]:
+            - link "Web Design" [ref=e317] [cursor=pointer]:
+              - /url: "#services"
+            - link "Web Development" [ref=e318] [cursor=pointer]:
+              - /url: "#services"
+            - link "E-Commerce" [ref=e319] [cursor=pointer]:
+              - /url: "#services"
+            - link "Consulting" [ref=e320] [cursor=pointer]:
+              - /url: "#services"
+        - generic [ref=e321]:
+          - generic [ref=e322]: Connect
+          - generic [ref=e323]:
+            - link "blok_webdev@proton.me" [ref=e324] [cursor=pointer]:
+              - /url: mailto:blok_webdev@proton.me
+            - generic [ref=e325]:
+              - link "Fiverr" [ref=e326] [cursor=pointer]:
+                - /url: https://www.fiverr.com/musa_murad/design-and-build-a-custom-website-for-your-startup
+                - generic [ref=e327]: 
+              - link "Instagram" [ref=e328] [cursor=pointer]:
+                - /url: https://instagram.com/blok.webdev
+                - generic [ref=e329]: 
+              - link "WhatsApp" [ref=e330] [cursor=pointer]:
+                - /url: https://wa.me/905067814686
+                - generic [ref=e331]: 
+      - generic [ref=e332]:
+        - generic [ref=e333]: © 2026 BLOK. WebDev Studio. All rights reserved.
+        - link "⚙ Admin" [ref=e334] [cursor=pointer]:
+          - /url: admin/login.html
