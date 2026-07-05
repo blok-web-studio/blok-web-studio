@@ -1038,24 +1038,16 @@ a.work-item {
   margin-bottom: 8px;
 }
 
-/* ── Form: Coming Soon overlay ── */
-.form-structural--disabled {
-  position: relative;
-}
-
-.form-coming-soon {
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-  background: color-mix(in oklch, var(--surface) 85%, transparent);
-  backdrop-filter: blur(6px);
+/* ── Form: Coming Soon card ── */
+.form-coming-soon-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 40px 24px;
+  padding: 48px 32px;
   gap: 16px;
+  min-height: 320px;
 }
 
 .form-coming-soon__icon {
@@ -1308,7 +1300,6 @@ a.work-item {
   border: var(--border-w) solid var(--border);
   padding: 32px;
   background: var(--surface);
-  margin-top: -60px;
 }
 
 @media (max-width: 700px) {
