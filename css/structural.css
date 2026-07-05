@@ -1253,7 +1253,7 @@ a.work-item {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--gutter);
-  align-items: start;
+  align-items: center;
 }
 
 @media (max-width: 700px) {
@@ -1921,7 +1921,9 @@ a.work-item {
 .bottom-tabs,
 .floor-pill,
 .bottom-sheet,
-.sheet-overlay { display: none; }
+.sheet-overlay,
+.hero__discipline-blocks,
+.hero__scroll-hint { display: none; }
 
 @media (max-width: 768px) {
   body {
