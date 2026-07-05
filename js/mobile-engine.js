@@ -190,7 +190,7 @@
     dots.forEach(function (dot) {
       dot.addEventListener('click', function () {
         const idx = parseInt(dot.getAttribute('data-index'), 10);
-        const cards = container.querySelectorAll('.service-card, .testimonial-block');
+      const cards = container.querySelectorAll('.service-card');
         if (cards[idx]) {
           cards[idx].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
         }
@@ -201,7 +201,6 @@
   }
 
   initCarouselDots('serviceGrid', 'serviceDots');
-  initCarouselDots('testimonialWall', 'testimonialDots');
 
   // ── 5. SMOOTH SCROLL FOR TABS ─────────────────────────────
 

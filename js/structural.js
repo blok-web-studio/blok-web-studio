@@ -605,57 +605,6 @@
   }
 
   // =============================================================
-  // 4. Stats Counter — Animate numbers on scroll
-  // =============================================================
-
-  const statNums = document.querySelectorAll('.stat-block__num[data-count]');
-
-  const statObserver = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        const el = entry.target;
-        const target = parseInt(el.getAttribute('data-count'), 10);
-        animateCounter(el, target);
-        statObserver.unobserve(el);
-
-        // Activate the meter fill
-        const block = el.closest('.stat-block');
-        if (block) {
-          block.classList.add('stat-block__fill--active');
-        }
-      }
-    });
-  }, { threshold: 0.3 });
-
-  statNums.forEach(function (el) {
-    statObserver.observe(el);
-  });
-
-  function animateCounter(el, target) {
-    const suffix = el.getAttribute('data-suffix') || '';
-    const duration = 1500;
-    const startTime = performance.now();
-    const startVal = 0;
-
-    function tick(now) {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const current = Math.round(eased * target);
-      el.textContent = current + suffix;
-
-      if (progress < 1) {
-        requestAnimationFrame(tick);
-      } else {
-        el.textContent = target + suffix;
-      }
-    }
-
-    requestAnimationFrame(tick);
-  }
-
-  // =============================================================
   // 5. Floor Tracking — Navigation and floor indicator
   // =============================================================
 
