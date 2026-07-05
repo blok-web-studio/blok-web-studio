@@ -1852,6 +1852,12 @@ a.work-item {
    Same brutalist style, reimagined for thumb-driven navigation.
    ================================================================ */
 
+/* ── Hide mobile-only nav on desktop ── */
+.bottom-tabs,
+.floor-pill,
+.bottom-sheet,
+.sheet-overlay { display: none; }
+
 @media (max-width: 768px) {
   body {
     padding-left: 0;
