@@ -640,6 +640,14 @@
     font-size: 0.55rem;
   }
 
+  /* Simpler card animation on mobile — just fade, no slide */
+  .work-item.filtering-out {
+    transform: none;
+  }
+  .work-item.filtering-in {
+    transform: none;
+  }
+
   .work-grid {
     display: flex;
     flex-direction: column;

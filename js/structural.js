@@ -822,10 +822,32 @@
 
   const filterBtns = document.querySelectorAll('.work-filter');
   const workItems = document.querySelectorAll('.work-item');
+  const filterIndicator = document.getElementById('filterIndicator');
+
+  // Position the sliding indicator on a button
+  function slideIndicator(btn) {
+    if (!filterIndicator || !btn) return;
+    var parent = btn.parentElement;
+    var parentRect = parent.getBoundingClientRect();
+    var btnRect = btn.getBoundingClientRect();
+    filterIndicator.style.left = (btnRect.left - parentRect.left) + 'px';
+    filterIndicator.style.width = btnRect.width + 'px';
+  }
+
+  // Set initial position on load
+  var activeBtn = document.querySelector('.work-filter--active');
+  if (activeBtn) {
+    // Wait for fonts to settle so widths are correct
+    setTimeout(function () { slideIndicator(activeBtn); }, 100);
+    window.addEventListener('load', function () { slideIndicator(activeBtn); });
+  }
 
   filterBtns.forEach(function (btn) {
     btn.addEventListener('click', function () {
       const filter = btn.getAttribute('data-filter');
+
+      // Slide indicator to clicked button
+      slideIndicator(btn);
 
       // Update button states
       filterBtns.forEach(function (b) {
@@ -834,7 +856,6 @@
       btn.classList.add('work-filter--active');
 
       // Phase 1: Hide non-matching items
-      var visibleIndex = 0;
       workItems.forEach(function (item) {
         var cats = item.getAttribute('data-category');
         var match = filter === 'all' || cats === filter;
@@ -842,7 +863,6 @@
         if (!match) {
           item.classList.add('filtering-out');
           item.classList.remove('filtering-in');
-          // Remove from layout after exit transition
           setTimeout(function () {
             if (item.classList.contains('filtering-out')) {
               item.style.display = 'none';
@@ -851,7 +871,7 @@
         }
       });
 
-      // Phase 2: Show matching items with stagger (after a tiny delay so exits start first)
+      // Phase 2: Show matching items with stagger
       setTimeout(function () {
         var showIndex = 0;
         workItems.forEach(function (item) {
@@ -861,16 +881,13 @@
           if (match) {
             item.style.display = '';
             item.classList.remove('filtering-out');
-            // Stagger based on position among VISIBLE items, not global index
             item.style.transitionDelay = (showIndex * 40) + 'ms';
-            // Force reflow so the browser registers the starting state
             void item.offsetWidth;
             item.classList.add('filtering-in');
             showIndex++;
           }
         });
 
-        // Clean up delays after animations finish
         setTimeout(function () {
           workItems.forEach(function (item) {
             item.style.transitionDelay = '';
