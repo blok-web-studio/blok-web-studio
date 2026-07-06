@@ -817,7 +817,7 @@
   }
 
   // =============================================================
-  // 8. Work Filters
+  // 8. Work Filters (animated)
   // =============================================================
 
   const filterBtns = document.querySelectorAll('.work-filter');
@@ -833,13 +833,29 @@
       });
       btn.classList.add('work-filter--active');
 
-      // Filter items
-      workItems.forEach(function (item) {
+      // Animate items
+      workItems.forEach(function (item, i) {
         const cats = item.getAttribute('data-category');
-        if (filter === 'all' || cats === filter) {
+        const match = filter === 'all' || cats === filter;
+
+        if (match) {
+          // Stagger the show-in
+          item.classList.remove('filter-hide');
           item.style.display = '';
+          item.style.transitionDelay = (i * 30) + 'ms';
+          requestAnimationFrame(function () {
+            item.classList.add('filter-show');
+          });
         } else {
-          item.style.display = 'none';
+          item.classList.remove('filter-show');
+          item.classList.add('filter-hide');
+          item.style.transitionDelay = '0ms';
+          // Remove from layout after transition
+          setTimeout(function () {
+            if (item.classList.contains('filter-hide')) {
+              item.style.display = 'none';
+            }
+          }, 250);
         }
       });
     });
