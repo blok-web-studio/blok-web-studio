@@ -1008,28 +1008,37 @@ h3 { font-size: clamp(20px, 2vw, 28px); }
 a.work-item {
   border: var(--border-w) solid var(--border);
   background: var(--surface);
-  transition: all 0.3s;
   position: relative;
   overflow: hidden;
   cursor: pointer;
   display: block;
   text-decoration: none;
   color: inherit;
+  /* Filter animation — only opacity + transform, nothing else */
+  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+  will-change: opacity, transform;
 }
 
-.work-item:hover {
-  border-color: var(--fg);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+/* Hover — separate transition, fast and subtle */
+@media (hover: hover) and (pointer: fine) {
+  .work-item {
+    transition: opacity 0.25s ease-out, transform 0.25s ease-out,
+                border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .work-item:hover {
+    border-color: var(--fg);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
 }
 
-/* Filter transition animations */
-.work-item.filter-hide {
+/* Filter states */
+.work-item.filtering-out {
   opacity: 0;
-  transform: scale(0.95);
+  transform: scale(0.96);
   pointer-events: none;
 }
-.work-item.filter-show {
+.work-item.filtering-in {
   opacity: 1;
   transform: scale(1);
 }

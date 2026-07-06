@@ -833,31 +833,50 @@
       });
       btn.classList.add('work-filter--active');
 
-      // Animate items
-      workItems.forEach(function (item, i) {
-        const cats = item.getAttribute('data-category');
-        const match = filter === 'all' || cats === filter;
+      // Phase 1: Hide non-matching items
+      var visibleIndex = 0;
+      workItems.forEach(function (item) {
+        var cats = item.getAttribute('data-category');
+        var match = filter === 'all' || cats === filter;
 
-        if (match) {
-          // Stagger the show-in
-          item.classList.remove('filter-hide');
-          item.style.display = '';
-          item.style.transitionDelay = (i * 30) + 'ms';
-          requestAnimationFrame(function () {
-            item.classList.add('filter-show');
-          });
-        } else {
-          item.classList.remove('filter-show');
-          item.classList.add('filter-hide');
-          item.style.transitionDelay = '0ms';
-          // Remove from layout after transition
+        if (!match) {
+          item.classList.add('filtering-out');
+          item.classList.remove('filtering-in');
+          // Remove from layout after exit transition
           setTimeout(function () {
-            if (item.classList.contains('filter-hide')) {
+            if (item.classList.contains('filtering-out')) {
               item.style.display = 'none';
             }
-          }, 250);
+          }, 280);
         }
       });
+
+      // Phase 2: Show matching items with stagger (after a tiny delay so exits start first)
+      setTimeout(function () {
+        var showIndex = 0;
+        workItems.forEach(function (item) {
+          var cats = item.getAttribute('data-category');
+          var match = filter === 'all' || cats === filter;
+
+          if (match) {
+            item.style.display = '';
+            item.classList.remove('filtering-out');
+            // Stagger based on position among VISIBLE items, not global index
+            item.style.transitionDelay = (showIndex * 40) + 'ms';
+            // Force reflow so the browser registers the starting state
+            void item.offsetWidth;
+            item.classList.add('filtering-in');
+            showIndex++;
+          }
+        });
+
+        // Clean up delays after animations finish
+        setTimeout(function () {
+          workItems.forEach(function (item) {
+            item.style.transitionDelay = '';
+          });
+        }, showIndex * 40 + 300);
+      }, 80);
     });
   });
 
