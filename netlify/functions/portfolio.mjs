@@ -25,6 +25,7 @@ const DEFAULT_PORTFOLIO = [
   { title: 'Vanguard', tag: 'Demo', desc: 'Corporate law firm with cold precision.', url: 'https://blok-web-studio.github.io/demo-sites/lawfirm_vanguard/index.html' },
   { title: 'Conserv', tag: 'Demo', desc: 'Greenhouse wellness tincture concept. Botanical glassmorphism.', url: 'https://blok-web-studio.github.io/demo-sites/conserv/index.html' },
   { title: 'Conserv 3D', tag: 'Demo', desc: '3D botanical experience. Three.js particles, scroll-driven depth, glassmorphism.', url: 'https://blok-web-studio.github.io/conserv-3d/' },
+  { title: 'MORPH', tag: 'Demo', desc: 'Browser-based 3D design tool concept. 22K scroll-driven particles, morphing shapes, amber on dark.', url: 'https://blok-web-studio.github.io/morph/' },
 ];
 
 function withIds(items) {
