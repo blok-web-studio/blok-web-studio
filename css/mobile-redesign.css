@@ -663,8 +663,6 @@
     height: 160px;
   }
 
-  .work-item__iframe { display: none; }
-
   .work-item__body {
     padding: 12px 14px;
   }
@@ -1275,7 +1273,6 @@
   /* ── 17. TOUCH POLISH ──────────────────────────────────── */
   @media (hover: none) and (pointer: coarse) {
     .btn, .work-filter, .bottom-tab, .form-checkbox { cursor: default; }
-    .work-item__iframe { pointer-events: none; }
     .form-checkbox { padding: 10px 14px; }
   }
 }
