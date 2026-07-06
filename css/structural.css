@@ -965,6 +965,34 @@ h3 { font-size: clamp(20px, 2vw, 28px); }
   gap: var(--gutter);
 }
 
+/* Featured items — first two hero pieces */
+.work-item--featured {
+  grid-column: span 2;
+}
+.work-item--featured .work-item__thumb {
+  height: 300px;
+}
+.work-item--featured .work-item__title {
+  font-size: 1.4rem;
+}
+.work-item--featured .work-item__desc {
+  font-size: 0.95rem;
+}
+
+@media (max-width: 900px) {
+  .work-item--featured {
+    grid-column: span 2;
+  }
+}
+@media (max-width: 600px) {
+  .work-item--featured {
+    grid-column: span 1;
+  }
+  .work-item--featured .work-item__thumb {
+    height: 200px;
+  }
+}
+
 @media (max-width: 900px) {
   .work-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1043,9 +1071,9 @@ a.work-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
-  padding: 48px 32px;
+  padding: 52px 32px 32px;
   gap: 16px;
   min-height: 320px;
 }
@@ -1245,7 +1273,7 @@ a.work-item {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--gutter);
-  align-items: center;
+  align-items: start;
 }
 
 @media (max-width: 700px) {

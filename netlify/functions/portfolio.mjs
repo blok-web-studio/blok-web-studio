@@ -19,13 +19,21 @@ import {
 const STORE_NAME = 'blok-portfolio';
 
 const DEFAULT_PORTFOLIO = [
+  // Featured showcases
+  { title: 'MORPH', tag: 'Showcase', desc: 'Browser-based 3D design tool concept. 22K scroll-driven particles, amber-on-dark.', url: 'https://blok-web-studio.github.io/demo-sites/morph/', featured: true },
+  { title: 'Conserv 3D', tag: 'Showcase', desc: '3D botanical experience. Three.js particles, scroll-driven depth, glassmorphism.', url: 'https://blok-web-studio.github.io/conserv-3d/', featured: true },
+  // Demos
+  { title: 'Conserv', tag: 'Demo', desc: 'Greenhouse wellness tincture concept. Botanical glassmorphism.', url: 'https://blok-web-studio.github.io/demo-sites/conserv/index.html' },
   { title: 'Aurora Audio Systems', tag: 'Demo', desc: 'Premium audio hardware concept. CNC-machined precision.', url: 'https://blok-web-studio.github.io/demo-sites/audiosystem_aurora/index.html' },
-  { title: 'Iron & Shears', tag: 'Demo', desc: 'Traditional barbershop with a modern edge.', url: 'https://blok-web-studio.github.io/demo-sites/barbershop_ironnshears/index.html' },
   { title: "L'ambre", tag: 'Demo', desc: 'Mediterranean bistro concept. Wood-fired hearth.', url: 'https://blok-web-studio.github.io/demo-sites/cafe_lambre/index.html' },
   { title: 'Vanguard', tag: 'Demo', desc: 'Corporate law firm with cold precision.', url: 'https://blok-web-studio.github.io/demo-sites/lawfirm_vanguard/index.html' },
-  { title: 'Conserv', tag: 'Demo', desc: 'Greenhouse wellness tincture concept. Botanical glassmorphism.', url: 'https://blok-web-studio.github.io/demo-sites/conserv/index.html' },
-  { title: 'Conserv 3D', tag: 'Demo', desc: '3D botanical experience. Three.js particles, scroll-driven depth, glassmorphism.', url: 'https://blok-web-studio.github.io/demo-sites/conserv-3d/' },
-  { title: 'MORPH', tag: 'Demo', desc: 'Browser-based 3D design tool concept. 22K scroll-driven particles, morphing shapes, amber on dark.', url: 'https://blok-web-studio.github.io/demo-sites/morph/' },
+  // Clients — outbound concepts
+  { title: 'Canvas Editor', tag: 'Client — Concept', desc: 'Rich text editor. The Loom — textile metaphor with spring physics.', url: 'https://blok-web-studio.github.io/canvas-editor-loom/' },
+  { title: 'OmniRoute', tag: 'Client — Concept', desc: 'Developer tool. Network routing visualization with dark technical aesthetic.', url: 'https://blok-web-studio.github.io/omniroute/' },
+  { title: 'OpenMontage', tag: 'Client — Concept', desc: 'Open-source video production. Film timeline concept with Factory dark palette.', url: 'https://blok-web-studio.github.io/openmontage/' },
+  // Clients — Turkish businesses
+  { title: 'Öyküm Pastanesi', tag: 'Client — Concept', desc: 'Artisan pastry shop. Warm cream and gold, scrollable timeline, poetic narrative.', url: 'https://blok-web-studio.github.io/oykum-pastanesi/' },
+  { title: 'Dora Dondurma', tag: 'Client — Concept', desc: 'Dessert shop window. Neon pink/cyan, sundae glass metaphor, Fraunces serif.', url: 'https://blok-web-studio.github.io/dora-dondurma/' },
 ];
 
 function withIds(items) {
